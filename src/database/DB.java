@@ -48,10 +48,18 @@ public class DB {
                 + "question TEXT NOT NULL, "
                 + "answer TEXT NOT NULL, "
                 + "user_role TEXT NOT NULL, "
-                + "status BLOB NOT NULL, "
+                + "status TEXT NOT NULL, "
                 + "date NUMERIC)";
         
-        String queryB = "CREATE TABLE IF NOT EXISTS items ("
+        String queryB = "CREATE TABLE IF NOT EXISTS employees ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "username TEXT NOT NULL, "
+                + "password TEXT NOT NULL, "
+                + "user_role TEXT NOT NULL, "
+                + "status TEXT NOT NULL, "
+                + "date NUMERIC)";
+        
+        String queryC = "CREATE TABLE IF NOT EXISTS items ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "items_code TEXT NOT NULL, "
                 + "items_name TEXT NOT NULL, "
@@ -63,8 +71,7 @@ public class DB {
                 + "image TEXT NOT NULL, "
                 + "date NUMERIC)";
 
-
-        String queryC = "CREATE TABLE IF NOT EXISTS expenses ("
+        String queryD = "CREATE TABLE IF NOT EXISTS expenses ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "ex_amount REAL NOT NULL, "
                 + "ex_category TEXT NOT NULL, "
@@ -90,7 +97,7 @@ public class DB {
                             insertStatement.setString(3, "What is your favorite person?");
                             insertStatement.setString(4, "admin");
                             insertStatement.setString(5, "Admin");
-                            insertStatement.setBoolean(6, true);
+                            insertStatement.setString(6, "Active");
                             insertStatement.setLong(7, System.currentTimeMillis());
 
                             insertStatement.executeUpdate();
@@ -119,6 +126,12 @@ public class DB {
             logger.info(e.toString());
             //e.printStackTrace();
         }
+        try (PreparedStatement statementD = connection.prepareStatement(queryD)) {
+            statementD.executeUpdate();
+        } catch (Exception e) {
+            logger.info(e.toString());
+            //e.printStackTrace();
+        }
 
         
     }
@@ -130,9 +143,7 @@ public class DB {
         
         System.out.println(sdf.format(resultdate.getTime()));      
     }
-    
-    
-    
+
     private void closeConnection() throws SQLException {
         if(connection != null || !connection.isClosed()) {
             connection.close();
@@ -152,25 +163,18 @@ public class DB {
     public double getTodayExpenses() {
         return getExpenseSum("SELECT SUM(ex_amount) FROM expenses WHERE DATE(datetime(ex_date / 1000, 'unixepoch', 'localtime')) = DATE('now', 'localtime')");
     }
-    
     public double getYesterdayExpenses() {
         return getExpenseSum("SELECT SUM(ex_amount) FROM expenses WHERE DATE(datetime(ex_date / 1000, 'unixepoch', 'localtime')) = DATE('now', '-1 day', 'localtime')");
     }
-
-
-
     public double getThisWeekExpenses() {
         return getExpenseSum("SELECT SUM(ex_amount) FROM expenses WHERE strftime('%Y-%W', datetime(ex_date / 1000, 'unixepoch')) = strftime('%Y-%W', 'now')");
     }
-
     public double getThisMonthExpenses() {
         return getExpenseSum("SELECT SUM(ex_amount) FROM expenses WHERE strftime('%Y-%m', datetime(ex_date / 1000, 'unixepoch')) = strftime('%Y-%m', 'now')");
     }
-
     public double getThisYearExpenses() {
         return getExpenseSum("SELECT SUM(ex_amount) FROM expenses WHERE strftime('%Y', datetime(ex_date / 1000, 'unixepoch')) = strftime('%Y', 'now')");
     }
-
     public double getTotalExpenses() {
         return getExpenseSum("SELECT SUM(ex_amount) FROM expenses");
     }
@@ -187,9 +191,6 @@ public class DB {
         }
         return total;
     }
-    
-    
-    
     public double getExpensesForDate(long selectedDateMillis) {
     // Convert selectedDateMillis to the start and end of the day (milliseconds)
     long dayStartMillis = selectedDateMillis;
@@ -212,8 +213,6 @@ public class DB {
     }
     return total;
     }
-    
-    
     public double getExpensesForDateRange(long startMillis, long endMillis) {
     String query = "SELECT SUM(ex_amount) FROM expenses WHERE ex_date BETWEEN ? AND ?";
     double total = 0.0;

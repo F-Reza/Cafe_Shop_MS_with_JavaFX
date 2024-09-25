@@ -5,70 +5,56 @@
  */
 package models;
 
+import java.util.Date;
+
 /**
  *
  * @author F_Reza
  */
-
-
-import java.util.Date;
-
-
-public class UserDataModel {
+public class EmployeeDataModel {
+    
     private int id;
     private String username;
     private String password;
-    private String question;
-    private String answer;
     private String userRole;
     private String status;
     private Date date;
     
     // Corrected Constructor
-    public UserDataModel (
+    public EmployeeDataModel (
             int id, 
             String username, 
             String password, 
-            String question, 
-            String answer, 
             String userRole, 
             String status, 
             Date date) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.question = question; 
-        this.answer = answer;
         this.userRole = userRole;
         this.status = status; 
         this.date = date;
     }
 
-    public int getId(){
+    public int getEmpId(){
         return id;
     }
-    public String getUserName(){
+    public String getEmpUserName(){
         return username;
     }
-    public String getPassword(){
+    public String getEmpPassword(){
         return password;
     }
-    public String getQuestion(){
-        return question;
-    }
-    public String getAnswer(){
-        return answer;
-    }
-    public String getUserRole(){
+    public String getEmpUserRole(){
         return userRole;
     }
-    public String getStatus(){
+    public String getEmpStatus(){
         return status;
     }
     public Date getDate(){
         return date;
     }
     
-
+    
     
 }

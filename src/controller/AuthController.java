@@ -105,13 +105,10 @@ public class AuthController implements Initializable {
     private Button side_createBtn;
 
     @FXML
-    private TextField su_answer;
-
-    @FXML
     private PasswordField su_password;
 
     @FXML
-    private ComboBox<?> su_question;
+    private ComboBox<?> su_user_role;
 
     @FXML
     private Button su_signupBtn;
@@ -127,12 +124,14 @@ public class AuthController implements Initializable {
         "What is your favorite Color?",
         "What is your favorite food?",
         "What is your favorite person?"};
+    
+    private String[] useRoleList = {"Manager","Cashier"};
 
     public void loginBtn() {
 
         if (si_username.getText().isEmpty() || si_password.getText().isEmpty()) {
-            alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Information Message");
+            alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Warning Message");
             alert.setHeaderText("Enter Your Username and Password");
             //alert.setContentText("Please Username and Password.");
             //alert = new Alert(AlertType.ERROR);
@@ -143,16 +142,30 @@ public class AuthController implements Initializable {
         } else {
 
             String selctData = "SELECT username, password FROM users WHERE username = ? and password = ?";
+            String selctDataE = "SELECT username, password FROM employees WHERE username = ? and password = ?";
+            String selctDataER = "SELECT username, user_role FROM employees WHERE username = ? and user_role = ?";
+            String selctDataES= "SELECT username, status FROM employees WHERE username = ? and status = ?";
 
             db.getConnection();
 
-            try (PreparedStatement statement = db.connection.prepareStatement(selctData)) {
-
-                //prepare = db.connection.prepareStatement(selctData);
-                statement.setString(1, si_username.getText());
-                statement.setString(2, si_password.getText());
-
-                result = statement.executeQuery();
+//            try (PreparedStatement statement = db.connection.prepareStatement(selctData)) {
+//                
+//                statement.setString(1, si_username.getText());
+//                statement.setString(2, si_password.getText());
+//                result = statement.executeQuery();
+                
+            try {
+                   prepare = db.connection.prepareStatement(selctData);
+                   
+                   prepare.setString(1, si_username.getText());
+                   prepare.setString(2, si_password.getText());
+                   result = prepare.executeQuery();
+                   
+                   prepare = db.connection.prepareStatement(selctDataE);
+                   prepare.setString(1, si_username.getText());
+                   prepare.setString(2, si_password.getText());
+                   ResultSet rstE = prepare.executeQuery();
+                    
                 // IF SUCCESSFULLY LOGIN, THEN PROCEED TO ANOTHER FORM WHICH IS OUR MAIN FORM 
                 if (result.next()) {
                     // TO GET THE USERNAME THAT USER USED
@@ -163,7 +176,7 @@ public class AuthController implements Initializable {
                     alert.setHeaderText(null);
                     alert.setContentText("Successfully Login!");
                     alert.showAndWait();
-
+                    System.out.println("Successfully Login! [You are a Admin[");
                     // LINK YOUR MAIN FORM
                     Parent root = FXMLLoader.load(getClass().getResource("/view/mainForm.fxml"));
 
@@ -179,6 +192,54 @@ public class AuthController implements Initializable {
 
                     si_loginBtn.getScene().getWindow().hide();
 
+                } else if (rstE.next()) {
+                    try {
+                        prepare = db.connection.prepareStatement(selctDataER);
+                        prepare.setString(1, si_username.getText());
+                        prepare.setString(2, "Manager");
+                        ResultSet rstER = prepare.executeQuery();
+                        if (rstER.next()) {
+                            System.out.println("-> Successfully Login! [You are a Maneger]");
+                            try {
+                                prepare = db.connection.prepareStatement(selctDataES);
+                                prepare.setString(1, si_username.getText());
+                                prepare.setString(2, "Active");
+                                ResultSet rstES = prepare.executeQuery();
+                                if (rstES.next()) {
+                                    System.out.println("-> Active!");
+                                } else {
+                                    System.out.println("-> Deactive");
+                                }
+
+                            } catch (Exception e) {
+                                    e.printStackTrace();
+                                    logger.info(e.toString());
+                            }
+                            
+                        } else {
+                            System.out.println("-> Successfully Login! [You are a Cashier]");
+                            try {
+                                prepare = db.connection.prepareStatement(selctDataES);
+                                prepare.setString(1, si_username.getText());
+                                prepare.setString(2, "Active");
+                                ResultSet rstES = prepare.executeQuery();
+                                if (rstES.next()) {
+                                    System.out.println("-> Active!");
+                                } else {
+                                    System.out.println("-> Deactive");
+                                }
+
+                            } catch (Exception e) {
+                                    e.printStackTrace();
+                                    logger.info(e.toString());
+                            }
+                        }
+
+                    } catch (Exception e) {
+                            e.printStackTrace();
+                            logger.info(e.toString());
+                    }
+                    
                 } else { // IF NOT, THEN THE ERROR MESSAGE WILL APPEAR
                     alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Error Message");
@@ -200,10 +261,11 @@ public class AuthController implements Initializable {
     public void regBtn() {
         db.getConnection();
         
+        String chkusername = su_username.getText();
+        
         if (su_username.getText().isEmpty() 
             || su_password.getText().isEmpty()
-            || su_question.getSelectionModel().getSelectedItem() == null 
-            || su_answer.getText().isEmpty()) {
+            || su_user_role.getSelectionModel().getSelectedItem() == null) {
 
             alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error Message");
@@ -211,24 +273,41 @@ public class AuthController implements Initializable {
             alert.setContentText("Please fill all blank fields");
             alert.showAndWait();
 
-        } else{
+        }
+        if(!chkusername.matches("^[\\w]+$")) {
+            alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Invalid username: "+chkusername+"\nEnsures only word characters (letters, digits, and underscores) with no spaces");
+            alert.showAndWait();
+        }
+        
+        else{
             
-            String regData = "INSERT INTO users (username, password, question, answer, user_role, status, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String regData = "INSERT INTO employees (username, password, user_role, status, date) VALUES (?, ?, ?, ?, ?)";
 
             try {
 
-                // CHECK IF THE USERNAME IS ALREADY RECORDED
-                String checkUsername = "SELECT username FROM users WHERE username = '"
+                // CHECK IF THE USERNAME IS ALREADY RECORDED IN employees Table
+                String checkUsername = "SELECT username FROM employees WHERE username = '"
                         + su_username.getText() + "'";
 
                 prepare = db.connection.prepareStatement(checkUsername);
                 result = prepare.executeQuery();
+                
+                // CHECK IF THE USERNAME IS ALREADY RECORDED In users Table
+                String checkUsernameE = "SELECT username FROM users WHERE username = '"
+                        + su_username.getText() + "'";
 
-                if (result.next()) {
+                prepare = db.connection.prepareStatement(checkUsernameE);
+                ResultSet rs = prepare.executeQuery();
+
+
+                if (result.next() || rs.next()) {
                     alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Error Message");
                     alert.setHeaderText(null);
-                    alert.setContentText(su_username.getText() + " is already taken");
+                    alert.setContentText(su_username.getText() + " is already taken, now change username and try again!");
                     alert.showAndWait();
                 } else if (su_password.getText().length() < 6) {
                     alert = new Alert(AlertType.ERROR);
@@ -241,11 +320,9 @@ public class AuthController implements Initializable {
 
                     prepare.setString(1, su_username.getText());
                     prepare.setString(2, su_password.getText());
-                    prepare.setString(3, (String) su_question.getSelectionModel().getSelectedItem());
-                    prepare.setString(4, su_answer.getText());
-                    prepare.setString(5, "Undefined");
-                    prepare.setBoolean(6, false);
-                    prepare.setLong(7, System.currentTimeMillis());
+                    prepare.setString(3, (String) su_user_role.getSelectionModel().getSelectedItem());
+                    prepare.setString(4, "Deactive");
+                    prepare.setLong(5, System.currentTimeMillis());
     //                Date date = new Date();
     //                java.sql.Date sqlDate = new java.sql.Date(date.getTime());
     //                prepare.setString(7, String.valueOf(sqlDate));
@@ -261,8 +338,7 @@ public class AuthController implements Initializable {
 
                     su_username.setText("");
                     su_password.setText("");
-                    su_question.getSelectionModel().clearSelection();
-                    su_answer.setText("");
+                    su_user_role.getSelectionModel().clearSelection();
 
                     TranslateTransition slider = new TranslateTransition();
 
@@ -291,12 +367,12 @@ public class AuthController implements Initializable {
     public void regQuestionList() {
         List<String> listQ = new ArrayList<>();
 
-        for (String data : questionList) {
+        for (String data : useRoleList) {
             listQ.add(data);
         }
 
         ObservableList listData = FXCollections.observableArrayList(listQ);
-        su_question.setItems(listData);
+        su_user_role.setItems(listData);
     }
 
     public void forgotPassQuestionList() {

@@ -81,11 +81,10 @@
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="su_username" layoutX="40.0" layoutY="117.0" onAction="#regBtn" prefHeight="30.0" prefWidth="220.0" promptText="Username" styleClass="textfield" stylesheets="@../css/loginDesign.css" />
-                  <PasswordField fx:id="su_password" layoutX="40.0" layoutY="159.0" onAction="#regBtn" prefHeight="30.0" prefWidth="220.0" promptText="Password" styleClass="textfield" stylesheets="@../css/loginDesign.css" />
-                  <ComboBox fx:id="su_question" layoutX="40.0" layoutY="201.0" prefHeight="30.0" prefWidth="220.0" promptText="Question" styleClass="textfield" stylesheets="@../css/loginDesign.css" />
-                  <TextField fx:id="su_answer" layoutX="40.0" layoutY="243.0" onAction="#regBtn" prefHeight="30.0" prefWidth="220.0" promptText="Answer" styleClass="textfield" stylesheets="@../css/loginDesign.css" />
-                  <Button fx:id="su_signupBtn" layoutX="40.0" layoutY="299.0" mnemonicParsing="false" onAction="#regBtn" prefHeight="40.0" prefWidth="220.0" styleClass="login-btn" stylesheets="@../css/loginDesign.css" text="Sign Up" textFill="WHITE" />
+                  <TextField fx:id="su_username" layoutX="40.0" layoutY="133.0" onAction="#regBtn" prefHeight="30.0" prefWidth="220.0" promptText="Username" styleClass="textfield" stylesheets="@../css/loginDesign.css" />
+                  <PasswordField fx:id="su_password" layoutX="40.0" layoutY="175.0" onAction="#regBtn" prefHeight="30.0" prefWidth="220.0" promptText="Password" styleClass="textfield" stylesheets="@../css/loginDesign.css" />
+                  <ComboBox fx:id="su_user_role" layoutX="40.0" layoutY="217.0" prefHeight="30.0" prefWidth="220.0" promptText="Select User Role" styleClass="textfield" stylesheets="@../css/loginDesign.css" />
+                  <Button fx:id="su_signupBtn" layoutX="40.0" layoutY="266.0" mnemonicParsing="false" onAction="#regBtn" prefHeight="40.0" prefWidth="220.0" styleClass="login-btn" stylesheets="@../css/loginDesign.css" text="Sign Up" textFill="WHITE" />
                   <Label layoutX="111.0" layoutY="386.0" text="Powered By NextDigit" AnchorPane.bottomAnchor="4.0">
                      <font>
                         <Font size="8.0" />
