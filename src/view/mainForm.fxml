@@ -666,18 +666,29 @@
                                        </font>
                                     </Label>
                                     <DatePicker fx:id="expense_Date" layoutX="426.0" layoutY="187.0" prefHeight="26.0" prefWidth="137.0" AnchorPane.leftAnchor="426.0" />
-                                    <Label layoutX="647.0" layoutY="26.0" prefHeight="17.0" prefWidth="94.0" text="todayExpense" />
-                                    <Label layoutX="647.0" layoutY="55.0" prefHeight="17.0" prefWidth="94.0" text="yesterdayExpense" />
-                                    <Label layoutX="647.0" layoutY="86.0" prefHeight="17.0" prefWidth="94.0" text="thisweekExpense" />
-                                    <Label layoutX="647.0" layoutY="115.0" prefHeight="17.0" prefWidth="94.0" text="thismonthExpense" />
-                                    <Label layoutX="647.0" layoutY="145.0" prefHeight="17.0" prefWidth="94.0" text="thisyearExpense" />
-                                    <Label layoutX="647.0" layoutY="172.0" prefHeight="17.0" prefWidth="94.0" text="totalExpense" />
-                                    <Label fx:id="todayExpense" layoutX="750.0" layoutY="28.0" prefHeight="17.0" prefWidth="94.0" text="todayExpense" />
-                                    <Label fx:id="yesterdayExpense" layoutX="750.0" layoutY="57.0" prefHeight="17.0" prefWidth="94.0" text="yesterdayExpense" />
-                                    <Label fx:id="thisweekExpense" layoutX="750.0" layoutY="88.0" prefHeight="17.0" prefWidth="94.0" text="thisweekExpense" />
-                                    <Label fx:id="thismonthExpense" layoutX="750.0" layoutY="117.0" prefHeight="17.0" prefWidth="94.0" text="thismonthExpense" />
-                                    <Label fx:id="thisyearExpense" layoutX="750.0" layoutY="147.0" prefHeight="17.0" prefWidth="94.0" text="thisyearExpense" />
-                                    <Label fx:id="totalExpense" layoutX="750.0" layoutY="174.0" prefHeight="17.0" prefWidth="94.0" text="totalExpense" />
+                                    <Label layoutX="605.0" layoutY="36.0" prefHeight="17.0" prefWidth="43.0" text="Today :" />
+                                    <Label layoutX="605.0" layoutY="66.0" prefHeight="17.0" prefWidth="61.0" text="Yesterday :" />
+                                    <Label layoutX="605.0" layoutY="94.0" prefHeight="17.0" prefWidth="63.0" text="This Week :" />
+                                    <Label layoutX="605.0" layoutY="123.0" prefHeight="17.0" prefWidth="68.0" text="This Month :" />
+                                    <Label layoutX="605.0" layoutY="152.0" prefHeight="17.0" prefWidth="56.0" text="This Year :" />
+                                    <Label layoutX="605.0" layoutY="180.0" prefHeight="17.0" prefWidth="80.0" text="Total Expense :" />
+                                    <Label fx:id="todayExpense" layoutX="697.0" layoutY="36.0" prefHeight="17.0" prefWidth="94.0" text="todayExpense" />
+                                    <Label fx:id="yesterdayExpense" layoutX="697.0" layoutY="66.0" prefHeight="17.0" prefWidth="94.0" text="yesterdayExpense" />
+                                    <Label fx:id="thisweekExpense" layoutX="697.0" layoutY="94.0" prefHeight="17.0" prefWidth="94.0" text="thisweekExpense" />
+                                    <Label fx:id="thismonthExpense" layoutX="697.0" layoutY="123.0" prefHeight="17.0" prefWidth="94.0" text="thismonthExpense" />
+                                    <Label fx:id="thisyearExpense" layoutX="697.0" layoutY="152.0" prefHeight="17.0" prefWidth="94.0" text="thisyearExpense" />
+                                    <Label fx:id="totalExpense" layoutX="697.0" layoutY="180.0" prefHeight="17.0" prefWidth="94.0" text="totalExpense" />
+                                    <DatePicker fx:id="expenseDatePicker" layoutX="821.0" layoutY="54.0" />
+                                    <DatePicker fx:id="startExpDatePicker" layoutX="821.0" layoutY="124.0" promptText="From" />
+                                    <DatePicker fx:id="endExpDatePicker" layoutX="821.0" layoutY="155.0" promptText="To" />
+                                    <Label layoutX="821.0" layoutY="31.0" prefHeight="17.0" prefWidth="77.0" text="Specific Date :" />
+                                    <Label layoutX="821.0" layoutY="102.0" prefHeight="17.0" prefWidth="109.0" text="Dynamic Selection:" />
+                                    <Label layoutX="821.0" layoutY="182.0" prefHeight="17.0" prefWidth="49.0" text="Output :" />
+                                    <Label fx:id="dateRangeExpense" layoutX="868.0" layoutY="182.0" prefHeight="17.0" prefWidth="188.0" text="0.0" />
+                                    <Label fx:id="selectedDateExpense" layoutX="899.0" layoutY="31.0" prefHeight="17.0" prefWidth="156.0" text="0.0" />
+                                    <Button fx:id="getExpSpecificBtn" layoutX="1004.0" layoutY="54.0" mnemonicParsing="false" onAction="#getExpSpecificBtn" prefHeight="14.0" prefWidth="52.0" text="Get" />
+                                    <Button fx:id="getExpDateRangeBtn" layoutX="1004.0" layoutY="142.0" mnemonicParsing="false" onAction="#getExpDateRangeBtn" prefHeight="14.0" prefWidth="52.0" text="Get" />
+                                    <Button fx:id="getExp_ClearBtn" layoutX="1005.0" layoutY="97.0" mnemonicParsing="false" onAction="#getExp_ClearBtn" prefHeight="24.0" prefWidth="51.0" text="Clear" />
                                  </children>
                               </AnchorPane>
                            </children>

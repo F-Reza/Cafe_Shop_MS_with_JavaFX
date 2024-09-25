@@ -179,6 +179,52 @@ public class DB {
         return total;
     }
     
+    
+    
+    public double getExpensesForDate(long selectedDateMillis) {
+    // Convert selectedDateMillis to the start and end of the day (milliseconds)
+    long dayStartMillis = selectedDateMillis;
+    long dayEndMillis = selectedDateMillis + (24 * 60 * 60 * 1000) - 1;
+
+    String query = "SELECT SUM(ex_amount) FROM expenses WHERE ex_date BETWEEN ? AND ?";
+    double total = 0.0;
+
+    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+        pstmt.setLong(1, dayStartMillis);
+        pstmt.setLong(2, dayEndMillis);
+
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                total = rs.getDouble(1);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace(); // Add your logger here if you wish
+    }
+    return total;
+    }
+    
+    
+    public double getExpensesForDateRange(long startMillis, long endMillis) {
+    String query = "SELECT SUM(ex_amount) FROM expenses WHERE ex_date BETWEEN ? AND ?";
+    double total = 0.0;
+
+    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+        pstmt.setLong(1, startMillis);
+        pstmt.setLong(2, endMillis);
+
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                total = rs.getDouble(1);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();  // You can use a logger instead if preferred
+    }
+    return total;
+    }
+
+    
        
     //End Expenses Data Query Section
     

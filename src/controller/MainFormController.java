@@ -18,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -255,8 +256,25 @@ public class MainFormController implements Initializable {
     @FXML
     private TableColumn<ExpenseDataModel, String> expense_Col_ExpensedBy;
     @FXML
-    private TableColumn<ExpenseDataModel, String> expense_Col_Date;
+    private TableColumn<ExpenseDataModel, String> expense_Col_Date;  
     
+    @FXML
+    private DatePicker expenseDatePicker;
+    @FXML
+    private Label selectedDateExpense;
+    @FXML
+    private Button getExpSpecificBtn;
+    @FXML
+    private DatePicker startExpDatePicker;
+    @FXML
+    private DatePicker endExpDatePicker;
+    @FXML
+    private Label dateRangeExpense;
+    @FXML
+    private Button getExpDateRangeBtn;
+    @FXML
+    private Button getExp_ClearBtn;
+
     @FXML
     private Label todayExpense;
     @FXML
@@ -346,6 +364,7 @@ public class MainFormController implements Initializable {
             itemsClearBtn();
             expenseClearBtn();
             loadExpenseData();
+            
 
         } else if (event.getSource() == reportBtn) {
             dashboadrForm.setVisible(false);
@@ -800,7 +819,18 @@ public class MainFormController implements Initializable {
         items_TableView.setItems(itemsListData);
 
     }
-    public void itemsSelectData() {
+    private void setDynamicColumnWidthForItem() {
+        items_Col_ItemsSn.maxWidthProperty().bind(items_TableView.widthProperty().multiply(0.5));
+        items_Col_ItemsCode.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
+        items_Col_ItemsName.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.8));
+        items_Col_Category.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.2));
+        items_Col_Size.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
+        items_Col_Stock.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
+        items_Col_UnitPrice.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
+        items_Col_Status.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
+        items_Col_Date.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
+    }
+        public void itemsSelectData() {
 
         ItemsDataModel itemData = items_TableView.getSelectionModel().getSelectedItem();
         int num = items_TableView.getSelectionModel().getSelectedIndex();
@@ -826,17 +856,6 @@ public class MainFormController implements Initializable {
 
         image = new Image(path, 146, 146, false, true);
         items_ImageView.setImage(image);
-    }
-    private void setDynamicColumnWidthForItem() {
-        items_Col_ItemsSn.maxWidthProperty().bind(items_TableView.widthProperty().multiply(0.5));
-        items_Col_ItemsCode.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
-        items_Col_ItemsName.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.8));
-        items_Col_Category.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.2));
-        items_Col_Size.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
-        items_Col_Stock.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
-        items_Col_UnitPrice.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
-        items_Col_Status.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
-        items_Col_Date.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
     }
     //// END ITEM SECTION
     
@@ -980,7 +999,6 @@ public class MainFormController implements Initializable {
 
         String amountText = expense_Amount.getText();
         double expenseAmount = 0.0;
-
         
         if (expense_Amount.getText().isEmpty()
                 || expense_Category.getSelectionModel().getSelectedItem() == null
@@ -1306,8 +1324,8 @@ public class MainFormController implements Initializable {
                                         editStage.close();
                                     } else {
                                         // Show an alert if the amount is less than or equal to 0
-                                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                                        alert.setTitle("Error Message");
+                                        Alert alert = new Alert(Alert.AlertType.WARNING);
+                                        alert.setTitle("Warning Message");
                                         alert.setHeaderText(null);
                                         alert.setContentText("Amount should be greater than 0.");
                                         alert.showAndWait();
@@ -1387,6 +1405,14 @@ public class MainFormController implements Initializable {
         // Set the data for the TableView
         expense_TableView.setItems(expenseListData);
     }
+    private void setDynamicColumnWidthForExp() {
+        expense_Col_Sn.maxWidthProperty().bind(expense_TableView.widthProperty().multiply(0.6));
+        expense_Col_Amount.maxWidthProperty().bind(expense_TableView.widthProperty().multiply(1));
+        expense_Col_Category.maxWidthProperty().bind(expense_TableView.widthProperty().multiply(1.6));
+        expense_Col_Description.maxWidthProperty().bind(expense_TableView.widthProperty().multiply(3));
+        expense_Col_ExpensedBy.maxWidthProperty().bind(expense_TableView.widthProperty().multiply(1.3));
+        expense_Col_Date.maxWidthProperty().bind(expense_TableView.widthProperty().multiply(1));
+    }
     private void loadExpenseData() {
         // Check if any label is null before proceeding
         if (todayExpense != null && yesterdayExpense != null && thisweekExpense != null && 
@@ -1402,14 +1428,78 @@ public class MainFormController implements Initializable {
             System.err.println("One or more labels are not initialized!");
         }
     }
-    private void setDynamicColumnWidthForExp() {
-        expense_Col_Sn.maxWidthProperty().bind(expense_TableView.widthProperty().multiply(0.6));
-        expense_Col_Amount.maxWidthProperty().bind(expense_TableView.widthProperty().multiply(1));
-        expense_Col_Category.maxWidthProperty().bind(expense_TableView.widthProperty().multiply(1.6));
-        expense_Col_Description.maxWidthProperty().bind(expense_TableView.widthProperty().multiply(3));
-        expense_Col_ExpensedBy.maxWidthProperty().bind(expense_TableView.widthProperty().multiply(1.3));
-        expense_Col_Date.maxWidthProperty().bind(expense_TableView.widthProperty().multiply(1));
+    public void getExpSpecificBtn() {
+        System.out.println("-> Expense Date Selecet");
+        onDateSelected();
     }
+    public void onDateRangeSelected() {
+        LocalDate startDate = startExpDatePicker.getValue();
+        LocalDate endDate = endExpDatePicker.getValue();
+        
+        if (startDate == null || endDate == null) {
+            if (startDate == null) {
+            alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Warning Message");
+            alert.setHeaderText(null);
+            alert.setContentText("From date is Empty!");
+            alert.showAndWait();
+            } else{
+                alert = new Alert(AlertType.WARNING);
+                alert.setTitle("Warning Message");
+                alert.setHeaderText(null);
+                alert.setContentText("To date is Empty!");
+                alert.showAndWait();
+            }
+            return;  
+        } 
+
+        if (startDate != null && endDate != null) {
+            // Validation: Check if the start date is after the end date
+            if (startDate.isAfter(endDate)) {
+                dateRangeExpense.setText("Invalid Date Range!");
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Invalid Date Range\nplease select 'From date' to 'To Date' correctly and get data.");
+                alert.showAndWait();
+                return;
+            }
+
+            // Convert LocalDate to milliseconds
+            long startMillis = Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime();
+            long endMillis = Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime() 
+                             + (24 * 60 * 60 * 1000) - 1;  // Set the end time to the end of the day
+
+            // Fetch and display expense for the selected date range
+            double expenseForDateRange = db.getExpensesForDateRange(startMillis, endMillis);
+            dateRangeExpense.setText(String.format("%.2f", expenseForDateRange));
+        }
+        
+    }
+    public void getExpDateRangeBtn() {
+        onDateRangeSelected();
+    }
+    public void onDateSelected() {
+        LocalDate selectedDate = expenseDatePicker.getValue();
+        if (selectedDate != null) {
+            // Convert LocalDate to Date in milliseconds
+            Date date = Date.from(selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            long millis = date.getTime(); // Convert to milliseconds
+
+            // Fetch and display expense for the selected date
+            double expenseForSelectedDate = db.getExpensesForDate(millis);
+            selectedDateExpense.setText(String.format("%.2f TK", expenseForSelectedDate));
+        }
+    }
+    public void getExp_ClearBtn() {
+        selectedDateExpense.setText("0.0");
+        expenseDatePicker.setValue(null);
+        dateRangeExpense.setText("0.0");
+        startExpDatePicker.setValue(null);
+        endExpDatePicker.setValue(null);
+    } 
+      
+
     //// END EXPENSE SECTION
     
     
