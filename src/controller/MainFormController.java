@@ -365,6 +365,7 @@ public class MainFormController implements Initializable {
             expenseClearBtn();
             loadExpenseData();
             
+            
 
         } else if (event.getSource() == reportBtn) {
             dashboadrForm.setVisible(false);
@@ -467,7 +468,6 @@ public class MainFormController implements Initializable {
         items_Status.setItems(listData);
 
     }
-    
     // LETS MAKE A BEHAVIOR FOR IMPORT BTN FIRST
     public void itemsImportBtn() {
         
@@ -930,7 +930,6 @@ public class MainFormController implements Initializable {
             }
         }
     }
-
     private final String[] menuOrderTypeList = {"Table", "Parcel"};
     public void menuOrderTypeList() {
 
@@ -1132,6 +1131,7 @@ public class MainFormController implements Initializable {
             
             // Refresh the table and clear fields
             expenseShowData();
+            loadExpenseData();
             expenseClearBtn();
 
 
@@ -1418,19 +1418,33 @@ public class MainFormController implements Initializable {
         if (todayExpense != null && yesterdayExpense != null && thisweekExpense != null && 
             thismonthExpense != null && thisyearExpense != null && totalExpense != null) {
             
-            todayExpense.setText(String.format("%.2f", db.getTodayExpenses()));
-            yesterdayExpense.setText(String.format("%.2f", db.getYesterdayExpenses()));
-            thisweekExpense.setText(String.format("%.2f", db.getThisWeekExpenses()));
-            thismonthExpense.setText(String.format("%.2f", db.getThisMonthExpenses()));
-            thisyearExpense.setText(String.format("%.2f", db.getThisYearExpenses()));
-            totalExpense.setText(String.format("%.2f", db.getTotalExpenses()));
+            todayExpense.setText(String.format("%.2f TK", db.getTodayExpenses()));
+            yesterdayExpense.setText(String.format("%.2f TK", db.getYesterdayExpenses()));
+            thisweekExpense.setText(String.format("%.2f TK", db.getThisWeekExpenses()));
+            thismonthExpense.setText(String.format("%.2f TK", db.getThisMonthExpenses()));
+            thisyearExpense.setText(String.format("%.2f TK", db.getThisYearExpenses()));
+            totalExpense.setText(String.format("%.2f TK", db.getTotalExpenses()));
         } else {
             System.err.println("One or more labels are not initialized!");
         }
     }
     public void getExpSpecificBtn() {
-        System.out.println("-> Expense Date Selecet");
         onDateSelected();
+    }
+    public void onDateSelected() {
+        LocalDate selectedDate = expenseDatePicker.getValue();
+        if (selectedDate != null) {
+            // Convert LocalDate to Date in milliseconds
+            Date date = Date.from(selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            long millis = date.getTime(); // Convert to milliseconds
+
+            // Fetch and display expense for the selected date
+            double expenseForSelectedDate = db.getExpensesForDate(millis);
+            selectedDateExpense.setText(String.format("%.2f TK", expenseForSelectedDate));
+        }
+    }
+    public void getExpDateRangeBtn() {
+        onDateRangeSelected();
     }
     public void onDateRangeSelected() {
         LocalDate startDate = startExpDatePicker.getValue();
@@ -1472,24 +1486,9 @@ public class MainFormController implements Initializable {
 
             // Fetch and display expense for the selected date range
             double expenseForDateRange = db.getExpensesForDateRange(startMillis, endMillis);
-            dateRangeExpense.setText(String.format("%.2f", expenseForDateRange));
+            dateRangeExpense.setText(String.format("%.2f TK", expenseForDateRange));
         }
         
-    }
-    public void getExpDateRangeBtn() {
-        onDateRangeSelected();
-    }
-    public void onDateSelected() {
-        LocalDate selectedDate = expenseDatePicker.getValue();
-        if (selectedDate != null) {
-            // Convert LocalDate to Date in milliseconds
-            Date date = Date.from(selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            long millis = date.getTime(); // Convert to milliseconds
-
-            // Fetch and display expense for the selected date
-            double expenseForSelectedDate = db.getExpensesForDate(millis);
-            selectedDateExpense.setText(String.format("%.2f TK", expenseForSelectedDate));
-        }
     }
     public void getExp_ClearBtn() {
         selectedDateExpense.setText("0.0");

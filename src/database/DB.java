@@ -142,13 +142,22 @@ public class DB {
     
     // Get Expenses Data Query Section
     
-    public double getTodayExpenses() {
+    public double getTodayExpenses1() {
         return getExpenseSum("SELECT SUM(ex_amount) FROM expenses WHERE DATE(datetime(ex_date / 1000, 'unixepoch')) = DATE('now')");
     }
-
-    public double getYesterdayExpenses() {
+    public double getYesterdayExpenses1() {
         return getExpenseSum("SELECT SUM(ex_amount) FROM expenses WHERE DATE(datetime(ex_date / 1000, 'unixepoch')) = DATE('now', '-1 day')");
     }
+    
+    public double getTodayExpenses() {
+        return getExpenseSum("SELECT SUM(ex_amount) FROM expenses WHERE DATE(datetime(ex_date / 1000, 'unixepoch', 'localtime')) = DATE('now', 'localtime')");
+    }
+    
+    public double getYesterdayExpenses() {
+        return getExpenseSum("SELECT SUM(ex_amount) FROM expenses WHERE DATE(datetime(ex_date / 1000, 'unixepoch', 'localtime')) = DATE('now', '-1 day', 'localtime')");
+    }
+
+
 
     public double getThisWeekExpenses() {
         return getExpenseSum("SELECT SUM(ex_amount) FROM expenses WHERE strftime('%Y-%W', datetime(ex_date / 1000, 'unixepoch')) = strftime('%Y-%W', 'now')");
