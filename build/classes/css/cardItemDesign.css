@@ -1,0 +1,41 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Sep 1, 2024, 5:46:33 PM
+    Author     : F_Reza
+*/
+
+.card{
+    -fx-background-color: #fff;
+    -fx-background-radius: 5px;
+}
+
+.shadow{
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5,0,0,0);
+}
+.radius{
+    -fx-background-radius: 50px;
+}
+
+.btn1{
+    -fx-background-color: linear-gradient(to bottom right, #098c53, #246861); 
+    -fx-cursor: hand;
+    -fx-text-fill: #fff;
+    -fx-font-size: 12px;
+}
+.btn1:hover{
+    -fx-background-color: linear-gradient(to bottom right, #0fb565, #399a8f); 
+}
+
+.btn{
+    -fx-background-color: linear-gradient(to bottom right, #000, #000); 
+    -fx-cursor: hand;
+    -fx-text-fill: #fff;
+    -fx-font-size: 12px;
+}
+.btn:hover{
+    -fx-background-color: linear-gradient(to bottom right, #726f6f, #0a0303); 
+}
