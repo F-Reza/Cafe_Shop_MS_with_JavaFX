@@ -11,17 +11,18 @@ import java.util.Date;
  *
  * @author F_Reza
  */
+
 public class EmployeeDataModel {
-    
+
     private int id;
     private String username;
     private String password;
     private String userRole;
     private String status;
     private Date date;
-    
-    // Corrected Constructor
-    public EmployeeDataModel (
+
+    // Corrected Construc
+    public EmployeeDataModel(
             int id, 
             String username, 
             String password, 
@@ -32,29 +33,33 @@ public class EmployeeDataModel {
         this.username = username;
         this.password = password;
         this.userRole = userRole;
-        this.status = status; 
+        this.status = status;
         this.date = date;
     }
 
-    public int getEmpId(){
+    // Corrected getter methods to match field names
+    public int getId() {
         return id;
     }
-    public String getEmpUserName(){
+
+    public String getUsername() {
         return username;
     }
-    public String getEmpPassword(){
+
+    public String getPassword() {
         return password;
     }
-    public String getEmpUserRole(){
+
+    public String getUserRole() {
         return userRole;
     }
-    public String getEmpStatus(){
+
+    public String getStatus() {
         return status;
     }
-    public Date getDate(){
+
+    public Date getDate() {
         return date;
     }
-    
-    
-    
 }
+

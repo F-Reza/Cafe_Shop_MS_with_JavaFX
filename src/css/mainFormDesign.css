@@ -106,6 +106,16 @@ and open the template in the editor.
     -fx-background-color: linear-gradient(to bottom right, #ee9eb7, #f22761); 
 }
 
+.btn-edit{
+    -fx-background-color: linear-gradient(to bottom right, #699eff, #5594f8); 
+    -fx-cursor: hand;
+    -fx-text-fill: #fff;
+    -fx-font-size: 12px;
+}
+.btn-edit:hover{
+    -fx-background-color: linear-gradient(to bottom right, #8eb7ff, #699eff); 
+}
+
 .btn-signout{
     -fx-background-color: linear-gradient(to bottom right, #000, #000); 
     -fx-cursor: hand;

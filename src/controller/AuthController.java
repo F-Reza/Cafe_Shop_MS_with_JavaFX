@@ -141,7 +141,7 @@ public class AuthController implements Initializable {
             alert.showAndWait();
         } else {
 
-            String selctData = "SELECT username, password FROM users WHERE username = ? and password = ?";
+            String selctData = "SELECT username, password FROM admin WHERE username = ? and password = ?";
             String selctDataE = "SELECT username, password FROM employees WHERE username = ? and password = ?";
             String selctDataER = "SELECT username, user_role FROM employees WHERE username = ? and user_role = ?";
             String selctDataES= "SELECT username, status FROM employees WHERE username = ? and status = ?";
@@ -296,7 +296,7 @@ public class AuthController implements Initializable {
                 result = prepare.executeQuery();
                 
                 // CHECK IF THE USERNAME IS ALREADY RECORDED In users Table
-                String checkUsernameE = "SELECT username FROM users WHERE username = '"
+                String checkUsernameE = "SELECT username FROM admin WHERE username = '"
                         + su_username.getText() + "'";
 
                 prepare = db.connection.prepareStatement(checkUsernameE);
@@ -408,7 +408,7 @@ public class AuthController implements Initializable {
 
         } else {
 
-            String selectData = "SELECT username, question, answer FROM users WHERE username = ? AND question = ? AND answer = ?";
+            String selectData = "SELECT username, question, answer FROM admin WHERE username = ? AND question = ? AND answer = ?";
             db.getConnection();
 
             try {
@@ -456,7 +456,7 @@ public class AuthController implements Initializable {
         } else {
 
             if (np_password.getText().equals(np_confirmPassword.getText())) {
-                String getDate = "SELECT date FROM users WHERE username = '"
+                String getDate = "SELECT date FROM admin WHERE username = '"
                         + fp_username.getText() + "'";
 
                 db.getConnection();
@@ -471,7 +471,7 @@ public class AuthController implements Initializable {
                         date = result.getString("date");
                     }
 
-                    String updatePass = "UPDATE users SET password = '"
+                    String updatePass = "UPDATE admin SET password = '"
                             + np_password.getText() + "', question = '"
                             + fp_question.getSelectionModel().getSelectedItem() + "', answer = '"
                             + fp_answer.getText() + "', date = '"

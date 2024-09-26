@@ -18,10 +18,12 @@ public class UserDataModel {
     private int id;
     private String username;
     private String password;
+    private String displayName;
     private String question;
     private String answer;
     private String userRole;
     private String status;
+    private String image;
     private Date date;
     
     // Corrected Constructor
@@ -29,18 +31,22 @@ public class UserDataModel {
             int id, 
             String username, 
             String password, 
-            String question, 
+            String displayName, 
+            String question,
             String answer, 
             String userRole, 
-            String status, 
+            String status,
+            String image, 
             Date date) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.displayName = displayName;
         this.question = question; 
         this.answer = answer;
         this.userRole = userRole;
-        this.status = status; 
+        this.status = status;
+        this.image = image;
         this.date = date;
     }
 
@@ -52,6 +58,9 @@ public class UserDataModel {
     }
     public String getPassword(){
         return password;
+    }
+    public String getDisplayName(){
+        return displayName;
     }
     public String getQuestion(){
         return question;
@@ -65,10 +74,16 @@ public class UserDataModel {
     public String getStatus(){
         return status;
     }
+    public String getImage(){
+        return image;
+    }
     public Date getDate(){
         return date;
     }
     
+    
 
     
 }
+
+

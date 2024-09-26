@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 import javafx.scene.image.Image;
+import models.UserDataModel;
 
 /**
  *
@@ -23,7 +24,7 @@ public class DB {
     public Connection connection;
     private PreparedStatement prepare;
     private Logger logger = Logger.getLogger(this.getClass().getName());
-    private final Image placeholderImage = new Image("file:item_image_GoPpo.jpeg"); 
+    private final Image placeholderImage = new Image("file:../imgusers.jpg"); 
 
     public void getConnection() {
 
@@ -41,14 +42,16 @@ public class DB {
     private void createTable() {
         //getConnection();
 
-        String queryA = "CREATE TABLE IF NOT EXISTS users ("
+        String queryA = "CREATE TABLE IF NOT EXISTS admin ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "username TEXT NOT NULL, "
                 + "password TEXT NOT NULL, "
+                + "display_name TEXT NOT NULL, "
                 + "question TEXT NOT NULL, "
                 + "answer TEXT NOT NULL, "
                 + "user_role TEXT NOT NULL, "
                 + "status TEXT NOT NULL, "
+                + "image TEXT NOT NULL, "
                 + "date NUMERIC)";
         
         String queryB = "CREATE TABLE IF NOT EXISTS employees ("
@@ -84,21 +87,23 @@ public class DB {
             statement.executeUpdate();
 
             // Check if the admin user already exists
-            String checkQuery = "SELECT COUNT(*) FROM users WHERE username = ?";
+            String checkQuery = "SELECT COUNT(*) FROM admin WHERE username = ?";
             try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
                 checkStatement.setString(1, "a");
                 try (ResultSet resultSet = checkStatement.executeQuery()) {
                     if (resultSet.next() && resultSet.getInt(1) == 0) {
                         // If admin doesn't exist, insert admin user
-                        String insertQuery = "INSERT INTO users (username, password, question, answer, user_role, status, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                        String insertQuery = "INSERT INTO admin (username, password, display_name, question, answer, user_role, status, image, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
                         try (PreparedStatement insertStatement = connection.prepareStatement(insertQuery)) {
-                            insertStatement.setString(1, "a");
+                            insertStatement.setString(1, "a"); //username
                             insertStatement.setString(2, "a"); //password123
-                            insertStatement.setString(3, "What is your favorite person?");
-                            insertStatement.setString(4, "admin");
-                            insertStatement.setString(5, "Admin");
-                            insertStatement.setString(6, "Active");
-                            insertStatement.setLong(7, System.currentTimeMillis());
+                            insertStatement.setString(3, "Set Your Name"); //display_name
+                            insertStatement.setString(4, "What is your favorite person?");
+                            insertStatement.setString(5, "admin"); //answer
+                            insertStatement.setString(6, "Admin"); //user_role
+                            insertStatement.setString(7, "Active"); //status
+                            insertStatement.setString(8, "..\\img\\users.jpg"); //image
+                            insertStatement.setLong(9, System.currentTimeMillis()); //date
 
                             insertStatement.executeUpdate();
                             System.out.println("-> Initial admin user created.\n------------------------------------------------");
@@ -143,12 +148,46 @@ public class DB {
         
         System.out.println(sdf.format(resultdate.getTime()));      
     }
-
     private void closeConnection() throws SQLException {
         if(connection != null || !connection.isClosed()) {
             connection.close();
         }
     }
+    
+    //ADMIN GET DATA SECTION
+    public UserDataModel getAdminUserData(int adminId) {
+        UserDataModel user = null;
+        String query = "SELECT * FROM admin WHERE id = ?";
+
+        try {
+            getConnection(); // Ensure connection is established
+            prepare = connection.prepareStatement(query);
+            prepare.setInt(1, adminId);
+            ResultSet resultSet = prepare.executeQuery();
+
+            if (resultSet.next()) {
+                user = new UserDataModel(
+                    resultSet.getInt("id"),
+                    resultSet.getString("username"),
+                    resultSet.getString("password"),
+                    resultSet.getString("display_name"),
+                    resultSet.getString("question"),               
+                    resultSet.getString("answer"),
+                    resultSet.getString("user_role"),
+                    resultSet.getString("status"),
+                    resultSet.getString("image"),
+                    new Date(resultSet.getLong("date")) // Assuming 'date' is stored in milliseconds
+                );
+            }
+
+        } catch (SQLException e) {
+            logger.info(e.toString());
+        }
+
+        return user;
+    }
+    
+    
     
     
     // Get Expenses Data Query Section
@@ -231,9 +270,7 @@ public class DB {
     }
     return total;
     }
-
-    
-       
+ 
     //End Expenses Data Query Section
     
     

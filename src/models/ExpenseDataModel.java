@@ -23,7 +23,13 @@ public class ExpenseDataModel {
     private Date exDate;
     
     // Corrected Constructor
-    public ExpenseDataModel (int id, Double exAmount, String exCategory, String exDescription, String exBy, Date exDate) {
+    public ExpenseDataModel (
+            int id, 
+            Double exAmount, 
+            String exCategory, 
+            String exDescription, 
+            String exBy, 
+            Date exDate) {
         this.id = id;
         this.exAmount = exAmount;
         this.exCategory = exCategory;

@@ -43,6 +43,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -62,6 +63,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
+import models.EmployeeDataModel;
+import models.UserDataModel;
 
 /**
  *
@@ -81,6 +84,7 @@ public class MainFormController implements Initializable {
     private static String imagePath;
     private Image image;
     private static final String IMAGE_DIR = "Images";
+    private static String getEmpDate;
     
     //All Form Section Start
     @FXML
@@ -98,6 +102,8 @@ public class MainFormController implements Initializable {
     @FXML
     private AnchorPane reportForm;
     @FXML
+    private AnchorPane usersForm;
+    @FXML
     private AnchorPane settingsForm;
     //End
 
@@ -114,6 +120,8 @@ public class MainFormController implements Initializable {
     private Button expensesBtn;
     @FXML
     private Button reportBtn;
+    @FXML
+    private Button usersBtn;
     @FXML
     private Button settingsBtn;
 
@@ -294,6 +302,60 @@ public class MainFormController implements Initializable {
     //Reports Section Start
     //End
     
+    
+    //Users Section Start
+    
+    @FXML
+    private Label userDisplayName; 
+    @FXML
+    private ImageView userImage;    
+    @FXML
+    private Label adminUserName;
+    @FXML
+    private Label userRole;
+    @FXML
+    private Label userStatus;
+    @FXML
+    private Label activeQuestion;
+    @FXML
+    private Label userDate;
+    @FXML
+    private Button editProfileBtn;
+    @FXML
+    private Button changeUserPassBtn;
+
+
+    @FXML
+    private Button empAddBtn;
+    @FXML
+    private Button empUpdateBtn;
+    @FXML
+    private Button empDeleteBtn;
+
+    @FXML
+    private TextField emp_username;
+    @FXML
+    private PasswordField emp_password;
+    @FXML
+    private ComboBox<String> emp_user_role;
+    @FXML
+    private ComboBox<String> emp_user_status;
+
+    @FXML
+    private TableView<EmployeeDataModel> empUser_TableView;
+    @FXML
+    private TableColumn<EmployeeDataModel, String> emp_Col_Sn;
+    @FXML
+    private TableColumn<EmployeeDataModel, String> emp_Col_UserName;
+    @FXML
+    private TableColumn<EmployeeDataModel, String> emp_Col_Password;
+    @FXML
+    private TableColumn<EmployeeDataModel, String> emp_Col_UserRole;
+    @FXML
+    private TableColumn<EmployeeDataModel, String> emp_Col_Status;
+    @FXML
+    private TableColumn<EmployeeDataModel, String> emp_Col_Date;
+    //End
 
     //Settings Section Start
     //End
@@ -308,7 +370,10 @@ public class MainFormController implements Initializable {
             invoicesForm.setVisible(false);
             expensesForm.setVisible(false);
             reportForm.setVisible(false);
+            usersForm.setVisible(false);
             settingsForm.setVisible(false);
+            
+            loadAdminData(1);
 
         } else if (event.getSource() == itemsBtn) {
             dashboadrForm.setVisible(false);
@@ -317,6 +382,7 @@ public class MainFormController implements Initializable {
             invoicesForm.setVisible(false);
             expensesForm.setVisible(false);
             reportForm.setVisible(false);
+            usersForm.setVisible(false);
             settingsForm.setVisible(false);
             
             itemsCategoryList();
@@ -333,6 +399,7 @@ public class MainFormController implements Initializable {
             invoicesForm.setVisible(false);
             expensesForm.setVisible(false);
             reportForm.setVisible(false);
+            usersForm.setVisible(false);
             settingsForm.setVisible(false);
 
             menuDisplayCard();
@@ -346,6 +413,7 @@ public class MainFormController implements Initializable {
             invoicesForm.setVisible(true);
             expensesForm.setVisible(false);
             reportForm.setVisible(false);
+            usersForm.setVisible(false);
             settingsForm.setVisible(false);
             
             itemsClearBtn();
@@ -358,6 +426,7 @@ public class MainFormController implements Initializable {
             invoicesForm.setVisible(false);
             expensesForm.setVisible(true);
             reportForm.setVisible(false);
+            usersForm.setVisible(false);
             settingsForm.setVisible(false);
             
             expenseCategoryList();
@@ -378,8 +447,27 @@ public class MainFormController implements Initializable {
             invoicesForm.setVisible(false);
             expensesForm.setVisible(false);
             reportForm.setVisible(true);
+            usersForm.setVisible(false);
             settingsForm.setVisible(false);
             
+            itemsClearBtn();
+            expenseClearBtn();
+
+        } else if (event.getSource() == usersBtn) {
+            dashboadrForm.setVisible(false);
+            itemsForm.setVisible(false);
+            posMenuForm.setVisible(false);
+            invoicesForm.setVisible(false);
+            expensesForm.setVisible(false);
+            reportForm.setVisible(false);
+            usersForm.setVisible(true);
+            settingsForm.setVisible(false);
+            
+            loadAdminData(1);
+            empUserRoleList();
+            empUserStatusList();
+            empUserShowData();
+            empClearBtn();
             itemsClearBtn();
             expenseClearBtn();
 
@@ -390,6 +478,7 @@ public class MainFormController implements Initializable {
             invoicesForm.setVisible(false);
             expensesForm.setVisible(false);
             reportForm.setVisible(false);
+            usersForm.setVisible(false);
             settingsForm.setVisible(true);
             
             itemsClearBtn();
@@ -404,7 +493,7 @@ public class MainFormController implements Initializable {
         try {
 
             alert = new Alert(AlertType.CONFIRMATION);
-            alert.setTitle("Error Message");
+            alert.setTitle("Confirmation Message");
             alert.setHeaderText(null);
             alert.setContentText("Are you sure you want to logout?");
             Optional<ButtonType> option = alert.showAndWait();
@@ -450,25 +539,25 @@ public class MainFormController implements Initializable {
     private final String[] itemsCategoryList = {"Meals", "Drinks", "Packages", "Others"};
     public void itemsCategoryList() {
 
-        List<String> xValue = new ArrayList<>();
+        List<String> xVal = new ArrayList<>();
 
         for (String data : itemsCategoryList) {
-            xValue.add(data);
+            xVal.add(data);
         }
 
-        ObservableList listData = FXCollections.observableArrayList(xValue);
+        ObservableList listData = FXCollections.observableArrayList(xVal);
         items_Category.setItems(listData);
     }
     private final String[] itemsStatusList = {"Available", "Unavailable"};
     public void itemsStatusList() {
 
-        List<String> xValue = new ArrayList<>();
+        List<String> xVal = new ArrayList<>();
 
         for (String data : itemsStatusList) {
-            xValue.add(data);
+            xVal.add(data);
         }
 
-        ObservableList listData = FXCollections.observableArrayList(xValue);
+        ObservableList listData = FXCollections.observableArrayList(xVal);
         items_Status.setItems(listData);
 
     }
@@ -834,33 +923,33 @@ public class MainFormController implements Initializable {
         items_Col_Status.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
         items_Col_Date.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
     }
-        public void itemsSelectData() {
+    public void itemsSelectData() {
 
-        ItemsDataModel itemData = items_TableView.getSelectionModel().getSelectedItem();
-        int num = items_TableView.getSelectionModel().getSelectedIndex();
+    ItemsDataModel itemData = items_TableView.getSelectionModel().getSelectedItem();
+    int num = items_TableView.getSelectionModel().getSelectedIndex();
 
-        if ((num - 1) < -1) {
-            return;
-        }
-
-        items_Code.setText(itemData.getItemsCode());
-        items_Name.setText(itemData.getItemsName());
-        items_Size.setText(itemData.getSize());
-        items_Stock.setText(String.valueOf(itemData.getStock()));
-        items_UnitPrice.setText(String.valueOf(itemData.getUnitPrice()));
-        
-        items_Category.setValue(itemData.getCategory());
-        items_Status.setValue(itemData.getStatus()); 
-        
-        xValue.date = String.valueOf(itemData.getDate());
-        
-        imagePath = itemData.getImage();
-        String path = "File:" + itemData.getImage();
-        id = itemData.getId();
-
-        image = new Image(path, 146, 146, false, true);
-        items_ImageView.setImage(image);
+    if ((num - 1) < -1) {
+        return;
     }
+
+    items_Code.setText(itemData.getItemsCode());
+    items_Name.setText(itemData.getItemsName());
+    items_Size.setText(itemData.getSize());
+    items_Stock.setText(String.valueOf(itemData.getStock()));
+    items_UnitPrice.setText(String.valueOf(itemData.getUnitPrice()));
+
+    items_Category.setValue(itemData.getCategory());
+    items_Status.setValue(itemData.getStatus()); 
+
+    xValue.date = String.valueOf(itemData.getDate());
+
+    imagePath = itemData.getImage();
+    String path = "File:" + itemData.getImage();
+    id = itemData.getId();
+
+    image = new Image(path, 146, 146, false, true);
+    items_ImageView.setImage(image);
+}
     //// END ITEM SECTION
     
     //// START POS MENU SECTION
@@ -937,13 +1026,13 @@ public class MainFormController implements Initializable {
     private final String[] menuOrderTypeList = {"Table", "Parcel"};
     public void menuOrderTypeList() {
 
-        List<String> xValue = new ArrayList<>();
+        List<String> xVal = new ArrayList<>();
 
         for (String data : menuOrderTypeList) {
-            xValue.add(data);
+            xVal.add(data);
         }
 
-        ObservableList listData = FXCollections.observableArrayList(xValue);
+        ObservableList listData = FXCollections.observableArrayList(xVal);
         menu_OrderType.setItems(listData);
     }
     //// END POS MENU SECTION
@@ -952,13 +1041,13 @@ public class MainFormController implements Initializable {
     private final String[] expenseCategoryList = {"Eutility Bill", "Living Cost", "Emplyee Salery", "Buy Goods"};
     public void expenseCategoryList() {
 
-        List<String> xValue = new ArrayList<>();
+        List<String> xVal = new ArrayList<>();
 
         for (String data : expenseCategoryList) {
-            xValue.add(data);
+            xVal.add(data);
         }
 
-        ObservableList listData = FXCollections.observableArrayList(xValue);
+        ObservableList listData = FXCollections.observableArrayList(xVal);
         expense_Category.setItems(listData);
     }
     private void expenseInsertQry() {
@@ -1065,7 +1154,7 @@ public class MainFormController implements Initializable {
         
         try {
 
-            alert = new Alert(AlertType.INFORMATION);
+            alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Confirmation Message");
             alert.setHeaderText(null);
             alert.setContentText("Are you sure you want to UPDATE an Expense Item?");
@@ -1155,7 +1244,7 @@ public class MainFormController implements Initializable {
     public ObservableList<ExpenseDataModel> expenseDataList() {
         ObservableList<ExpenseDataModel> listData = FXCollections.observableArrayList();
         
-        String sql = "SELECT * FROM expenses";
+        String sql = "SELECT * FROM expenses ORDER BY id DESC";
         db.getConnection();
 
         try {
@@ -1169,7 +1258,7 @@ public class MainFormController implements Initializable {
 
                 expData = new ExpenseDataModel(
                         result.getInt("id"),
-						result.getDouble("ex_amount"),
+			result.getDouble("ex_amount"),
                         result.getString("ex_category"),
                         result.getString("ex_description"),
                         result.getString("ex_by"),
@@ -1256,6 +1345,7 @@ public class MainFormController implements Initializable {
                         LocalDate localDate = sqlDate.toLocalDate();  // Convert to LocalDate
                         //expense_Date.setValue(localDate); 
                         DatePicker datePicker = new DatePicker(localDate);
+                        getExpDateValidationForUpdate(datePicker);
                         
                         // Set preferred width and height for the TextFields
                         amountField.setMinHeight(30);
@@ -1535,11 +1625,297 @@ public class MainFormController implements Initializable {
         
         expense_Date.setDayCellFactory(dayCellFactory);
     }
+    public void getExpDateValidationForUpdate(DatePicker dateValue) {    
+        // Disable previous dates
+        Callback<DatePicker, DateCell> dayCellFactory = dp -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                
+                // Disable all past dates
+                if (item.isAfter(LocalDate.now())) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #EEEEEE;");
+                }
+            }
+        };
+        
+        dateValue.setDayCellFactory(dayCellFactory);
+    }
       
+    /// END EXPENSE SECTION/
+    
+    
+    //// START USERS SECTION
+    public void loadAdminData(int adminId) {
+    UserDataModel user = db.getAdminUserData(adminId);
+
+    if (user != null) {
+        userDisplayName.setText(user.getDisplayName());
+        adminUserName.setText(user.getUserName());
+        userRole.setText(user.getUserRole());
+        userStatus.setText(user.getStatus());
+        activeQuestion.setText(user.getQuestion());
+        userDate.setText(user.getDate().toString()); // Format the date as needed
+        // Load image (if stored as a file path)
+        Image userImg = new Image("file:" + user.getImage());
+        //userImage.setImage(userImg);
+        System.out.println("-------> : "+ user.getImage());
+    }
+}
+    
+    private final String[] empUserRoleList = {"Manager","Cashier"};
+    public void empUserRoleList() {
+
+        List<String> xVal = new ArrayList<>();
+
+        for (String data : empUserRoleList) {
+            xVal.add(data);
+        }
+
+        ObservableList listData = FXCollections.observableArrayList(xVal);
+        emp_user_role.setItems(listData);
+    }
+    private final String[] empUserStatusList = {"Active","Deactive"};
+    public void empUserStatusList() {
+
+        List<String> xVal = new ArrayList<>();
+
+        for (String data : empUserStatusList) {
+            xVal.add(data);
+        }
+
+        ObservableList listData = FXCollections.observableArrayList(xVal);
+        emp_user_status.setItems(listData);
+    }
+    // MERGE ALL DATAS
+    public ObservableList<EmployeeDataModel> empUserDataList() {
+        ObservableList<EmployeeDataModel> listData = FXCollections.observableArrayList();
+        
+        String sql = "SELECT * FROM employees";
+        db.getConnection();
+
+        try {
+
+            prepare = db.connection.prepareStatement(sql);
+            result = prepare.executeQuery();
+
+            EmployeeDataModel empData;
+            
+            while (result.next()) {
+
+                empData = new EmployeeDataModel(
+                        result.getInt("id"),
+                        result.getString("username"),
+                        result.getString("password"),
+                        result.getString("user_role"),
+                        result.getString("status"),
+                        result.getDate("date"));
+
+                listData.add(empData);
+            } 
+            
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listData;
+    }
+    private ObservableList<EmployeeDataModel> empUserListData;
+    public void empUserShowData() {
+        empUserListData = empUserDataList();
+
+        emp_Col_Sn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        emp_Col_Sn.setCellValueFactory(cellData -> {
+            int index = empUser_TableView.getItems().indexOf(cellData.getValue()) + 1;
+            return new SimpleStringProperty(String.valueOf(index));
+        });
+        // Setting up the columns for the TableView
+        emp_Col_UserName.setCellValueFactory(new PropertyValueFactory<>("username"));
+        emp_Col_Password.setCellValueFactory(new PropertyValueFactory<>("password"));
+        emp_Col_UserRole.setCellValueFactory(new PropertyValueFactory<>("userRole"));
+        emp_Col_Status.setCellValueFactory(new PropertyValueFactory<>("status"));
+        emp_Col_Date.setCellValueFactory(new PropertyValueFactory<>("date"));
+
+        // Set the data for the TableView
+        empUser_TableView.setItems(empUserListData);
+    }
+    public void empSelectData() {
+
+        EmployeeDataModel empData = empUser_TableView.getSelectionModel().getSelectedItem();
+        int num = empUser_TableView.getSelectionModel().getSelectedIndex();
+
+        if ((num - 1) < -1) {
+            return;
+        }
+        
+        id = empData.getId();
+        emp_username.setText(empData.getUsername());
+        emp_password.setText(empData.getPassword());
+        emp_user_role.setValue(empData.getUserRole());
+        emp_user_status.setValue(empData.getStatus());
+        
+        getEmpDate = String.valueOf(empData.getDate());
+        System.out.println("-> : " + getEmpDate);
+    }
+    public void empClearBtn() {
+        emp_username.setText("");
+        emp_password.setText("");
+        emp_user_role.getSelectionModel().clearSelection();
+        emp_user_status.getSelectionModel().clearSelection();
+        getEmpDate = "";
+        id = 0;
+    }
+    public void empDeleteBtn() {
+        if (id == 0) {
+
+            alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Warning Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Please Select Item");
+            alert.showAndWait();
+
+        } else {
+            alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to DELETE User: " + emp_username.getText() + "?");
+            Optional<ButtonType> option = alert.showAndWait();
+
+            if (option.get().equals(ButtonType.OK)) {
+                String deleteData = "DELETE FROM employees WHERE id = " + id;
+                try {
+                    prepare = db.connection.prepareStatement(deleteData);
+                    prepare.executeUpdate();
+
+                    alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Success Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("successfully Deleted!");
+                    alert.showAndWait();
+
+                    System.out.println("-> User Deleted!");
+                    // TO UPDATE YOUR TABLE VIEW
+                    empUserShowData();
+                    // TO CLEAR YOUR FIELDS
+                    empClearBtn();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Cancelled");
+                alert.showAndWait();
+            }
+        }
+    }
+    
+    private void empUpdateQry() {
+        String updateData = "UPDATE items SET "
+                    + "items_code = '" + items_Code.getText() + "', "
+                    + "items_name = '" + items_Name.getText() + "', "
+                    + "category = '" + items_Category.getSelectionModel().getSelectedItem() + "', "
+                    + "size = '" + items_Size.getText() + "', "
+                    + "stock = '" + items_Stock.getText() + "', "
+                    + "unit_price = '" + items_UnitPrice.getText() + "', "
+                    + "status = '" + items_Status.getSelectionModel().getSelectedItem() + "', "
+                    + "image = '" + imagePath + "', "
+                    + "date = '" + System.currentTimeMillis() + "' WHERE id = " + 
+                    items_TableView.getSelectionModel().getSelectedItem().getId();
+        
+        try {
+
+            alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to UPDATE Item Code: " + items_Code.getText() + "?");
+            Optional<ButtonType> option = alert.showAndWait();
+
+            if (option.get().equals(ButtonType.OK)) {
+                prepare = db.connection.prepareStatement(updateData);
+                prepare.executeUpdate();
+
+                alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Success Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Successfully Updated!");
+                alert.showAndWait();
+
+                System.out.println("-> Item Data Updated!");
+                // TO UPDATE YOUR TABLE VIEW
+                itemsShowData();
+                // TO CLEAR YOUR FIELDS
+                itemsClearBtn();
+            } else {
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Cancelled.");
+                alert.showAndWait();
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+            System.out.println("-> "+e);
+        }
+    }
+    public void empUpdateBtn() {
+        db.getConnection();
+
+        if (items_Code.getText().isEmpty()
+                || items_Name.getText().isEmpty()
+                || items_Category.getSelectionModel().getSelectedItem() == null
+                || items_Stock.getText().isEmpty()
+                || items_UnitPrice.getText().isEmpty()
+                || items_Status.getSelectionModel().getSelectedItem() == null
+                || imagePath.isEmpty() || imagePath == null 
+                || items_TableView.getSelectionModel().getSelectedItem().getId() == 0) {
+
+            alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Warning Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Please fill all blank fields");
+            alert.showAndWait();
+
+        } else if(items_Code.getText() == null ? 
+                items_TableView.getSelectionModel()
+                        .getSelectedItem().getItemsCode() == null : 
+                items_Code.getText().equals(items_TableView.getSelectionModel()
+                        .getSelectedItem().getItemsCode())) {
+            empUpdateQry();
+            
+        } else {
+
+            // CHECK ITEMS CODE
+            String checkItemsCode = "SELECT items_Code FROM items WHERE items_Code = '"
+            + items_Code.getText() + "'";
+
+            try {
+                prepare = db.connection.prepareStatement(checkItemsCode);
+                result = prepare.executeQuery();
+
+                if (result.next()) {
+                    alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText(items_Code.getText() + " is already taken, Change and try again.");
+                    alert.showAndWait();
+                } else {
+                    itemUpdateQry();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                //System.out.println("-> "+e);
+            }
+
+        }
+    }
 
     
-    
-    //// END EXPENSE SECTION
+    /// END USERS SECTION/
     
     
     @Override
@@ -1549,7 +1925,9 @@ public class MainFormController implements Initializable {
         if (!folder.exists()) {
             folder.mkdir();
         }
-        //displayUsername();     
+        loadAdminData(1);
+        //displayUsername(); 
+        
         //dashboardDisplayNC();
         //dashboardDisplayTI();
         //dashboardTotalI();
@@ -1575,6 +1953,11 @@ public class MainFormController implements Initializable {
         expenseShowData();
         setDynamicColumnWidthForExp();
         loadExpenseData();
+        
+        
+        empUserRoleList();
+        empUserStatusList();
+        empUserShowData();
         
     }
 
