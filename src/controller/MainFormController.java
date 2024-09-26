@@ -40,6 +40,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -60,6 +61,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
 
 /**
  *
@@ -291,7 +293,7 @@ public class MainFormController implements Initializable {
 	
     //Reports Section Start
     //End
-	
+    
 
     //Settings Section Start
     //End
@@ -364,6 +366,8 @@ public class MainFormController implements Initializable {
             itemsClearBtn();
             expenseClearBtn();
             loadExpenseData();
+            getExpDateValidation();
+            getExpDateRangeValidation();
             
             
 
@@ -1497,8 +1501,44 @@ public class MainFormController implements Initializable {
         startExpDatePicker.setValue(null);
         endExpDatePicker.setValue(null);
     } 
+    public void getExpDateRangeValidation() {    
+        // Disable previous dates
+        Callback<DatePicker, DateCell> dayCellFactory = dp -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                
+                // Disable all past dates
+                if (item.isBefore(startExpDatePicker.getValue())) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #EEEEEE;"); // Optional: Grey out past dates
+                }
+            }
+        };
+        
+        endExpDatePicker.setDayCellFactory(dayCellFactory);
+    }
+    public void getExpDateValidation() {    
+        // Disable previous dates
+        Callback<DatePicker, DateCell> dayCellFactory = dp -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                
+                // Disable all past dates
+                if (item.isAfter(LocalDate.now())) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #EEEEEE;");
+                }
+            }
+        };
+        
+        expense_Date.setDayCellFactory(dayCellFactory);
+    }
       
 
+    
+    
     //// END EXPENSE SECTION
     
     
@@ -1509,7 +1549,6 @@ public class MainFormController implements Initializable {
         if (!folder.exists()) {
             folder.mkdir();
         }
-        
         //displayUsername();     
         //dashboardDisplayNC();
         //dashboardDisplayTI();
@@ -1530,6 +1569,8 @@ public class MainFormController implements Initializable {
         //menuShowOrderData();
         //customersShowData();
         
+        getExpDateValidation();
+        getExpDateRangeValidation();
         expenseCategoryList();
         expenseShowData();
         setDynamicColumnWidthForExp();

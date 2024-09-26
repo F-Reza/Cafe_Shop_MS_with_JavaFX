@@ -53,6 +53,7 @@
                   <FontAwesomeIcon glyphName="ANGLE_LEFT" layoutX="128.0" layoutY="364.0" size="1.5em" />
                   <TextField fx:id="fp_username" layoutX="41.0" layoutY="124.0" prefHeight="30.0" prefWidth="220.0" promptText="Username" styleClass="textfield" stylesheets="@../css/loginDesign.css" />
                   <TextField fx:id="fp_answer" layoutX="41.0" layoutY="202.0" prefHeight="30.0" prefWidth="220.0" promptText="Answer" styleClass="textfield" stylesheets="@../css/loginDesign.css" />
+                  <Label layoutX="52.0" layoutY="89.0" prefHeight="17.0" prefWidth="182.0" text="Note: this feature only for admin" />
                </children>
             </AnchorPane>
             <AnchorPane fx:id="np_newPassForm" layoutX="300.0" prefHeight="400.0" prefWidth="300.0" styleClass="white-form" stylesheets="@../css/loginDesign.css" visible="false">
