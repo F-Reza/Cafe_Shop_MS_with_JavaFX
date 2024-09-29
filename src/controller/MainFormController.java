@@ -39,6 +39,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
@@ -57,6 +58,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -340,7 +342,12 @@ public class MainFormController implements Initializable {
     private ComboBox<String> emp_user_role;
     @FXML
     private ComboBox<String> emp_user_status;
-
+    
+    @FXML
+    private TextField emp_passPlainText;
+    @FXML
+    private CheckBox showPassCheckBox;
+    
     @FXML
     private TableView<EmployeeDataModel> empUser_TableView;
     @FXML
@@ -467,6 +474,7 @@ public class MainFormController implements Initializable {
             empUserRoleList();
             empUserStatusList();
             empUserShowData();
+            showPass();
             empClearBtn();
             itemsClearBtn();
             expenseClearBtn();
@@ -1737,27 +1745,125 @@ public class MainFormController implements Initializable {
         emp_Col_Status.setCellValueFactory(new PropertyValueFactory<>("status"));
         emp_Col_Date.setCellValueFactory(new PropertyValueFactory<>("date"));
 
-        // Set the data for the TableView
+        // Custom cell factory for the password column to show/hide password
+        emp_Col_Password.setCellFactory(column -> new TableCell<EmployeeDataModel, String>() {
+            private final Button showHideBtn = new Button("Show");
+            private boolean isPasswordVisible = false;
+
+            @Override
+            protected void updateItem(String password, boolean empty) {
+                super.updateItem(password, empty);
+
+                if (empty || password == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    if (isPasswordVisible) {
+                        setText(password); // Show the plain password
+                        showHideBtn.setText("Hide");
+                    } else {
+                        setText(maskPassword(password)); // Show masked password
+                        showHideBtn.setText("Show");
+                    }
+
+                    // Style the button: height 20, grey background
+                    showHideBtn.setStyle("-fx-background-color: #e4ae61; -fx-pref-height: 20px; -fx-font-size: 10px;");
+
+                    // Toggle the password visibility when the button is clicked
+                    showHideBtn.setOnAction(e -> {
+                        isPasswordVisible = !isPasswordVisible;
+                        updateItem(password, false);
+                    });
+
+                    setGraphic(showHideBtn); // Add the button to the cell
+                }
+            }
+
+            // Method to mask the password (replace with asterisks)
+            private String maskPassword(String password) {
+                StringBuilder maskedPassword = new StringBuilder();
+                for (int i = 0; i < password.length(); i++) {
+                    maskedPassword.append('*');  // You can use any character, like '•'
+                }
+                return maskedPassword.toString();
+            }
+        });
+
+        // Set the list of items for the TableView
         empUser_TableView.setItems(empUserListData);
     }
-    public void empSelectData() {
 
+    public void showPass1() {
+        showPassCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                System.out.println("->> Check In");
+                // Show password
+                emp_password.setText(emp_password.getText()); // Set the current text
+                emp_password.setPromptText(""); // Clear prompt text
+                //emp_password.setStyle("-fx-opacity: 1; -fx-background-color: white;");
+            } else {
+                System.out.println("->> Check Out");
+                // Hide password
+                String currentText = emp_password.getText();
+                emp_password.setText(currentText); // Set the current text
+                emp_password.setPromptText("Password"); // Restore prompt text
+                //emp_password.setStyle("-fx-opacity: 0.8; -fx-background-color: white;");
+            }
+        });
+    }
+    
+    public void showPass() {
+        // Listener for the show/hide password CheckBox
+        showPassCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                // Show password in plain text
+                emp_passPlainText.setText(emp_password.getText()); // Display current text
+                emp_passPlainText.setVisible(true); // Show plain text field
+                emp_password.setVisible(false); // Hide PasswordField
+            } else {
+                // Hide password
+                emp_password.setText(emp_passPlainText.getText()); // Set back to masked field
+                emp_password.setVisible(true); // Show PasswordField
+                emp_passPlainText.setVisible(false); // Hide plain text field
+            }
+        });
+    }
+   
+    public void empSelectData() {
         EmployeeDataModel empData = empUser_TableView.getSelectionModel().getSelectedItem();
         int num = empUser_TableView.getSelectionModel().getSelectedIndex();
 
-        if ((num - 1) < -1) {
-            return;
+        if (num < 0) {
+            return; // Ensure a valid selection
         }
-        
-        id = empData.getId();
+
+        // Populate the fields with selected data
         emp_username.setText(empData.getUsername());
-        emp_password.setText(empData.getPassword());
+        emp_password.setText(empData.getPassword()); // Set the password (masked)
         emp_user_role.setValue(empData.getUserRole());
         emp_user_status.setValue(empData.getStatus());
-        
-        getEmpDate = String.valueOf(empData.getDate());
-        System.out.println("-> : " + getEmpDate);
+
+        // Reset CheckBox state to keep password hidden when selecting new employee
+        showPassCheckBox.setSelected(false);
+        emp_passPlainText.setVisible(false); // Hide plain text field initially
     }
+    
+    public void empSelectData1() {
+    EmployeeDataModel empData = empUser_TableView.getSelectionModel().getSelectedItem();
+    int num = empUser_TableView.getSelectionModel().getSelectedIndex();
+
+    if ((num - 1) < -1) {
+        return;
+    }
+
+        id = empData.getId();
+        emp_username.setText(empData.getUsername());
+        emp_password.setText(empData.getPassword()); // Initially mask the password
+        emp_user_role.setValue(empData.getUserRole());
+        emp_user_status.setValue(empData.getStatus());
+        getEmpDate = String.valueOf(empData.getDate());
+    }
+
     public void empClearBtn() {
         emp_username.setText("");
         emp_password.setText("");
@@ -1958,6 +2064,7 @@ public class MainFormController implements Initializable {
         empUserRoleList();
         empUserStatusList();
         empUserShowData();
+        showPass();
         
     }
 
