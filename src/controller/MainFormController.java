@@ -1676,7 +1676,7 @@ public class MainFormController implements Initializable {
         // Load image (if stored as a file path)
         Image userImg = new Image("file:" + user.getImage());
         //userImage.setImage(userImg);
-        System.out.println("-------> : "+ user.getImage());
+        //System.out.println("-------> : "+ user.getImage());
     }
 }
     
@@ -2107,6 +2107,306 @@ public class MainFormController implements Initializable {
         getEmpDate = "";
         emp_id = 0;
         id = 0;
+    }
+    
+    public void editProfile() {
+        db.getConnection();
+        UserDataModel user = db.getAdminUserData(1);
+        
+        // Set up edit button action
+        editProfileBtn.setOnAction(event -> {
+
+            // Create a new Stage (window) for editing
+            Stage editStage = new Stage();
+            editStage.initModality(Modality.APPLICATION_MODAL); // Make the stage modal
+            editStage.setTitle("Edit Profile");
+            editStage.initStyle(StageStyle.UTILITY); // Make the window undecorated
+
+            // Create a layout for the new window
+            VBox editLayout = new VBox(10);
+            editLayout.setPadding(new Insets(10));
+
+            // Create fields for Name, Description, Amount, Date, and Category
+            TextField userNameField = new TextField(user.getUserName().toString()); 
+            TextField displayNameField = new TextField(user.getDisplayName().toString()); 
+            TextField profilePhotoField = new TextField(user.getImage().toString()); 
+            
+            // Set preferred width and height for the TextFields
+            userNameField.setMinHeight(30);
+            userNameField.setStyle("-fx-font-size: 14px;"); 
+
+            displayNameField.setMinHeight(30);
+            displayNameField.setStyle("-fx-font-size: 14px;"); 
+
+            profilePhotoField.setMinHeight(30);
+            profilePhotoField.setMinWidth(240);
+
+            // Add fields to the layout
+            editLayout.getChildren().addAll(
+                new Label("User Name:"), userNameField,
+                new Label("Display Name:"), displayNameField,
+                new Label("Profile Photo:"), profilePhotoField
+            );
+
+            // Create an Update button to confirm edits
+            Button updateButton = new Button("Update");
+            // Set button styling
+            updateButton.setStyle("-fx-background-color: black; -fx-text-fill: white;");
+
+            updateButton.setOnAction(updateEvent -> {
+
+                // Get the values from the input fields
+                String userNameText = userNameField.getText();
+                String displayNameText = displayNameField.getText();
+                String profilePhotoText = profilePhotoField.getText();
+
+                // Check if any fields are empty
+                if (userNameText.isEmpty()
+                        || displayNameText.isEmpty()
+                        ||profilePhotoText.isEmpty() ) {
+                    System.out.println("-> User Data Empty!");
+
+                    // Show alert if any field is empty
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Warning Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Please fill all blank fields");
+                    alert.showAndWait();
+
+                } else {
+                    // Proceed with the update query since all validations passed
+                    updateProfile(userNameText, displayNameText, profilePhotoText);
+                    System.out.println("-> User Data Updated!");
+                    editStage.close();
+                }
+            });
+
+            // Create a Close button
+            Button closeButton= new Button("Close");
+            closeButton.setOnAction(closeEvent -> editStage.close());
+
+            // Add buttons to the layout
+            HBox buttonLayout = new HBox(20, updateButton, closeButton);
+            editLayout.getChildren().add(buttonLayout);
+            buttonLayout.setAlignment(Pos.CENTER);
+            VBox.setVgrow(buttonLayout, Priority.ALWAYS);
+
+            // Set the scene and show the stage
+            Scene editScene = new Scene(editLayout, 522, 446);
+
+            editStage.setMinWidth(522);
+            editStage.setMaxWidth(522);
+            editStage.setMinHeight(440);
+            editStage.setMaxHeight(440);
+
+            editStage.setScene(editScene);
+            editStage.show();
+        });
+    }
+    public void updateProfile(String userName, String displayName, String profilePhoto) {
+        db.getConnection();
+        
+//        String updateData = "UPDATE users SET "
+//                    + "ex_amount = '" + exp_amount + "', "
+//                    + "ex_category = '" + exp_category + "', "
+//                    + "ex_description = '" + exp_discription + "', "
+//                    + "ex_by = '" + exp_by + "', "
+//                    + "ex_date = '" + millis + "' WHERE id = " + 
+//                    exp_id;
+        
+        try {
+
+            alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to UPDATE your profile info?");
+            Optional<ButtonType> option = alert.showAndWait();
+
+            if (option.get().equals(ButtonType.OK)) {
+                //prepare = db.connection.prepareStatement(updateData);
+                prepare.executeUpdate();
+
+                alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Success Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Successfully Updated!");
+                alert.showAndWait();
+
+                System.out.println("-> Your Password Updated!");
+                // TO UPDATE YOUR TABLE VIEW
+                expenseShowData();
+                loadExpenseData();
+                // TO CLEAR YOUR FIELDS
+                expenseClearBtn();
+            } else {
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Cancelled.");
+                alert.showAndWait();
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+            System.out.println("-> "+e);
+        }
+    }
+    
+    public void changePassword() {
+        db.getConnection();
+        UserDataModel user = db.getAdminUserData(1);
+        
+        // Set up edit button action
+        changeUserPassBtn.setOnAction(event -> {
+
+            // Create a new Stage (window) for editing
+            Stage editStage = new Stage();
+            editStage.initModality(Modality.APPLICATION_MODAL); // Make the stage modal
+            editStage.setTitle("Change Password");
+            editStage.initStyle(StageStyle.UTILITY); // Make the window undecorated
+
+            // Create a layout for the new window
+            VBox editLayout = new VBox(10);
+            editLayout.setPadding(new Insets(10));
+
+            // Create fields for Name, Description, Amount, Date, and Category
+            TextField passwordField = new TextField(user.getPassword().toString()); 
+            
+            ComboBox<String> questionComboBox = new ComboBox<>();
+            questionComboBox.getItems().addAll(
+                "What is your favorite Color?",
+                "What is your favorite food?",
+                "What is your favorite person?");
+            questionComboBox.setValue(user.getQuestion());
+            
+            TextField answerField = new TextField(user.getAnswer().toString()); 
+            
+            // Set preferred width and height for the TextFields
+            passwordField.setMinHeight(30);
+            passwordField.setStyle("-fx-font-size: 14px;"); 
+
+            questionComboBox.setMinHeight(30);
+            questionComboBox.setMinWidth(240);
+
+            answerField.setMinHeight(30);
+            answerField.setMinWidth(240);
+
+            // Add fields to the layout
+            editLayout.getChildren().addAll(
+                new Label("*Password :"), passwordField,
+                new Label("*Question? :"), questionComboBox,
+                new Label("*Your Answer :"), answerField
+            );
+
+            // Create an Update button to confirm edits
+            Button updateButton = new Button("Update");
+            // Set button styling
+            updateButton.setStyle("-fx-background-color: black; -fx-text-fill: white;");
+
+            updateButton.setOnAction(updateEvent -> {
+
+                // Get the values from the input fields
+                String passwordText = passwordField.getText();
+                String questionText = questionComboBox.getValue();
+                String answerText = answerField.getText();
+
+                // Check if any fields are empty
+                if (passwordText.isEmpty()
+                        || questionComboBox == null
+                        ||answerText.isEmpty() ) {
+                    System.out.println("-> User Data Empty!");
+
+                    // Show alert if any field is empty
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Warning Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Please fill all blank fields");
+                    alert.showAndWait();
+
+                } else {
+                    // Proceed with the update query since all validations passed
+                    updateAdminPass(passwordText, questionText, answerText);
+                    System.out.println("-> Your Password Updated!");
+                    editStage.close();
+                }
+            });
+
+            // Create a Close button
+            Button closeButton= new Button("Close");
+            closeButton.setOnAction(closeEvent -> editStage.close());
+
+            // Add buttons to the layout
+            HBox buttonLayout = new HBox(20, updateButton, closeButton);
+            editLayout.getChildren().add(buttonLayout);
+            buttonLayout.setAlignment(Pos.CENTER);
+            VBox.setVgrow(buttonLayout, Priority.ALWAYS);
+
+            // Set the scene and show the stage
+            Scene editScene = new Scene(editLayout, 522, 446);
+
+            editStage.setMinWidth(522);
+            editStage.setMaxWidth(522);
+            editStage.setMinHeight(440);
+            editStage.setMaxHeight(440);
+
+            editStage.setScene(editScene);
+            editStage.show();
+        });
+    }
+    public void updateAdminPass(String password, String question, String answer) {
+        db.getConnection();
+        int user_id = 1;
+        
+        String updateData = "UPDATE admin SET password = '"
+                            + password + "', question = '"
+                            + question + "', answer = '"
+                            + answer + "' WHERE id = '"
+                            + user_id + "'";
+        
+        try {
+
+            alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to change your password?");
+            Optional<ButtonType> option = alert.showAndWait();
+
+            if (option.get().equals(ButtonType.OK)) {
+                prepare = db.connection.prepareStatement(updateData);
+                prepare.executeUpdate();
+
+                alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Success Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Successfully Updated!");
+                alert.showAndWait();
+
+                UserDataModel user = db.getAdminUserData(1);
+                
+//                // TO HIDE MAIN FORM 
+//                signoutBtn.getScene().getWindow().hide();
+//                
+//                // LINK YOUR LOGIN FORM AND SHOW IT 
+//                Parent root = FXMLLoader.load(getClass().getResource("/view/authPage.fxml"));
+//
+//                Stage stage = new Stage();
+//                Scene scene = new Scene(root);
+//
+//                stage.setTitle("GoPpo Management System");
+//
+//                stage.setScene(scene);
+//                stage.show();
+
+            } else {
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Cancelled.");
+                alert.showAndWait();
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+            System.out.println("-> "+e);
+        }
     }
     
     

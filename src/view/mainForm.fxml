@@ -1292,13 +1292,13 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <Button fx:id="editProfileBtn" layoutX="848.0" layoutY="23.0" mnemonicParsing="false" stylesheets="@../css/mainFormDesign.css" text="Edit Profile" AnchorPane.bottomAnchor="200.0" AnchorPane.rightAnchor="155.0">
+                                    <Button fx:id="editProfileBtn" layoutX="848.0" layoutY="23.0" mnemonicParsing="false" onAction="#editProfile" stylesheets="@../css/mainFormDesign.css" text="Edit Profile" AnchorPane.bottomAnchor="200.0" AnchorPane.rightAnchor="155.0">
                                        <styleClass>
                                           <String fx:value="btn-clear" />
                                           <String fx:value="btn-edit" />
                                        </styleClass>
                                     </Button>
-                                    <Button fx:id="changeUserPassBtn" layoutX="944.0" layoutY="23.0" mnemonicParsing="false" styleClass="btn-clear" stylesheets="@../css/mainFormDesign.css" text="Change Password" AnchorPane.bottomAnchor="200.0" AnchorPane.rightAnchor="23.0" />
+                                    <Button fx:id="changeUserPassBtn" layoutX="944.0" layoutY="23.0" mnemonicParsing="false" onAction="#changePassword" styleClass="btn-clear" stylesheets="@../css/mainFormDesign.css" text="Change Password" AnchorPane.bottomAnchor="200.0" AnchorPane.rightAnchor="23.0" />
                                  </children>
                               </AnchorPane>
                               <Label layoutX="20.0" layoutY="498.0" prefHeight="30.0" prefWidth="112.0" text="Users Admin" AnchorPane.bottomAnchor="272.0" AnchorPane.leftAnchor="20.0">
