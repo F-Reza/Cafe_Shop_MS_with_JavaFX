@@ -1184,14 +1184,15 @@
                                        </columnResizePolicy>
                                     </TableView>
                                     <TextField fx:id="emp_username" layoutX="24.0" layoutY="406.0" prefHeight="30.0" prefWidth="211.0" promptText="Username" styleClass="textfield" stylesheets="@../css/loginDesign.css" AnchorPane.bottomAnchor="22.0" />
-                                    <PasswordField fx:id="emp_password" layoutX="248.0" layoutY="406.0" prefHeight="30.0" prefWidth="196.0" promptText="Password" styleClass="textfield" stylesheets="@../css/loginDesign.css" />
-                                    <TextField fx:id="emp_passPlainText" layoutX="248.0" layoutY="406.0" prefHeight="30.0" prefWidth="196.0" promptText="Password" styleClass="textfield" stylesheets="@../css/loginDesign.css" visible="false" />
-                                    <ComboBox fx:id="emp_user_role" layoutX="457.0" layoutY="406.0" prefHeight="30.0" prefWidth="168.0" promptText="Select User Role" styleClass="textfield" stylesheets="@../css/loginDesign.css" AnchorPane.bottomAnchor="22.0" />
-                                    <ComboBox fx:id="emp_user_status" layoutX="637.0" layoutY="406.0" prefHeight="30.0" prefWidth="143.0" promptText="Select User Status" styleClass="textfield" stylesheets="@../css/loginDesign.css" AnchorPane.bottomAnchor="22.0" />
-                                    <Button fx:id="empAddBtn" layoutX="813.0" layoutY="406.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="74.0" styleClass="btn" stylesheets="@../css/loginDesign.css" text="ADD" AnchorPane.bottomAnchor="22.0" />
-                                    <Button fx:id="empUpdateBtn" layoutX="899.0" layoutY="406.0" mnemonicParsing="false" onAction="#empUpdateBtn" prefHeight="25.0" prefWidth="74.0" styleClass="btn" stylesheets="@../css/loginDesign.css" text="UPDATE" AnchorPane.bottomAnchor="22.0" />
-                                    <Button fx:id="empDeleteBtn" layoutX="985.0" layoutY="406.0" mnemonicParsing="false" onAction="#empDeleteBtn" prefHeight="25.0" prefWidth="74.0" styleClass="btn" stylesheets="@../css/loginDesign.css" text="DELETE" AnchorPane.bottomAnchor="22.0" />
-                                    <CheckBox fx:id="showPassCheckBox" layoutX="423.0" layoutY="412.0" mnemonicParsing="false" />
+                                    <PasswordField fx:id="emp_password" layoutX="248.0" layoutY="406.0" prefHeight="30.0" prefWidth="196.0" promptText="Password" styleClass="textfield" stylesheets="@../css/loginDesign.css" AnchorPane.bottomAnchor="22.0" />
+                                    <TextField fx:id="emp_passPlainText" layoutX="248.0" layoutY="406.0" prefHeight="30.0" prefWidth="196.0" promptText="Password" styleClass="textfield" stylesheets="@../css/loginDesign.css" visible="false" AnchorPane.bottomAnchor="22.0" />
+                                    <ComboBox fx:id="emp_user_role" layoutX="457.0" layoutY="406.0" prefHeight="30.0" prefWidth="150.0" promptText="Select User Role" styleClass="textfield" stylesheets="@../css/loginDesign.css" AnchorPane.bottomAnchor="22.0" />
+                                    <ComboBox fx:id="emp_user_status" layoutX="620.0" layoutY="406.0" prefHeight="30.0" prefWidth="139.0" promptText="Select User Status" styleClass="textfield" stylesheets="@../css/loginDesign.css" AnchorPane.bottomAnchor="22.0" />
+                                    <Button fx:id="empAddBtn" layoutX="829.0" layoutY="406.0" mnemonicParsing="false" onAction="#empRegBtn" prefHeight="25.0" prefWidth="74.0" styleClass="btn" stylesheets="@../css/loginDesign.css" text="ADD" AnchorPane.bottomAnchor="22.0" />
+                                    <Button fx:id="empUpdateBtn" layoutX="913.0" layoutY="406.0" mnemonicParsing="false" onAction="#empUpdateBtn" prefHeight="25.0" prefWidth="74.0" styleClass="btn" stylesheets="@../css/loginDesign.css" text="UPDATE" AnchorPane.bottomAnchor="22.0" />
+                                    <Button fx:id="empDeleteBtn" layoutX="996.0" layoutY="406.0" mnemonicParsing="false" onAction="#empDeleteBtn" prefHeight="25.0" prefWidth="74.0" styleClass="btn" stylesheets="@../css/loginDesign.css" text="DELETE" AnchorPane.bottomAnchor="22.0" />
+                                    <CheckBox fx:id="showPassCheckBox" layoutX="423.0" layoutY="412.0" mnemonicParsing="false" AnchorPane.bottomAnchor="29.0" />
+                                    <Button fx:id="empClearBtn" layoutX="771.0" layoutY="406.0" mnemonicParsing="false" onAction="#empClearBtn" prefHeight="30.0" prefWidth="47.0" styleClass="btn-clear" stylesheets="@../css/loginDesign.css" text="CLR" AnchorPane.bottomAnchor="22.0" />
 
                                  </children>
                               </AnchorPane>

@@ -307,7 +307,7 @@ public class AuthController implements Initializable {
                     alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Error Message");
                     alert.setHeaderText(null);
-                    alert.setContentText(su_username.getText() + " is already taken, now change username and try again!");
+                    alert.setContentText("'"+su_username.getText()+"'" + " is already taken, now change username and try again!");
                     alert.showAndWait();
                 } else if (su_password.getText().length() < 6) {
                     alert = new Alert(AlertType.ERROR);

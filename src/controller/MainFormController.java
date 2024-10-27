@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -24,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -65,6 +67,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import models.EmployeeDataModel;
 import models.UserDataModel;
 
@@ -334,6 +337,11 @@ public class MainFormController implements Initializable {
     @FXML
     private Button empDeleteBtn;
 
+    private static int emp_id;
+    private static boolean check_pass;
+    private static String emp_pass;
+    private static Date emp_date;
+    
     @FXML
     private TextField emp_username;
     @FXML
@@ -615,7 +623,7 @@ public class MainFormController implements Initializable {
                 alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Error Message");
                 alert.setHeaderText(null);
-                alert.setContentText(items_Code.getText() + " is already taken, Change and try again.");
+                alert.setContentText("'"+items_Code.getText()+"'" + " is already taken, change and try again.");
                 alert.showAndWait();
             } else {
                 String insertData = "INSERT INTO items "
@@ -786,7 +794,7 @@ public class MainFormController implements Initializable {
                     alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Error Message");
                     alert.setHeaderText(null);
-                    alert.setContentText(items_Code.getText() + " is already taken, Change and try again.");
+                    alert.setContentText(items_Code.getText() + " is already taken, change and try again.");
                     alert.showAndWait();
                 } else {
                     itemUpdateQry();
@@ -1792,35 +1800,18 @@ public class MainFormController implements Initializable {
         // Set the list of items for the TableView
         empUser_TableView.setItems(empUserListData);
     }
-
-    public void showPass1() {
-        showPassCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                System.out.println("->> Check In");
-                // Show password
-                emp_password.setText(emp_password.getText()); // Set the current text
-                emp_password.setPromptText(""); // Clear prompt text
-                //emp_password.setStyle("-fx-opacity: 1; -fx-background-color: white;");
-            } else {
-                System.out.println("->> Check Out");
-                // Hide password
-                String currentText = emp_password.getText();
-                emp_password.setText(currentText); // Set the current text
-                emp_password.setPromptText("Password"); // Restore prompt text
-                //emp_password.setStyle("-fx-opacity: 0.8; -fx-background-color: white;");
-            }
-        });
-    }
     
     public void showPass() {
         // Listener for the show/hide password CheckBox
         showPassCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
+                check_pass = true;
                 // Show password in plain text
                 emp_passPlainText.setText(emp_password.getText()); // Display current text
                 emp_passPlainText.setVisible(true); // Show plain text field
                 emp_password.setVisible(false); // Hide PasswordField
             } else {
+                check_pass = false;
                 // Hide password
                 emp_password.setText(emp_passPlainText.getText()); // Set back to masked field
                 emp_password.setVisible(true); // Show PasswordField
@@ -1833,10 +1824,12 @@ public class MainFormController implements Initializable {
         EmployeeDataModel empData = empUser_TableView.getSelectionModel().getSelectedItem();
         int num = empUser_TableView.getSelectionModel().getSelectedIndex();
 
-        if (num < 0) {
-            return; // Ensure a valid selection
+        if ((num - 1) < -1) {
+            return;
         }
 
+        emp_id = empData.getId();
+        emp_date = empData.getDate();
         // Populate the fields with selected data
         emp_username.setText(empData.getUsername());
         emp_password.setText(empData.getPassword()); // Set the password (masked)
@@ -1864,21 +1857,207 @@ public class MainFormController implements Initializable {
         getEmpDate = String.valueOf(empData.getDate());
     }
 
-    public void empClearBtn() {
-        emp_username.setText("");
-        emp_password.setText("");
-        emp_user_role.getSelectionModel().clearSelection();
-        emp_user_status.getSelectionModel().clearSelection();
-        getEmpDate = "";
-        id = 0;
+    public void empRegBtn() {
+        db.getConnection();
+        
+        String chkusername = emp_username.getText();
+        
+        if (emp_username.getText().isEmpty() 
+            || emp_password.getText().isEmpty()
+            || emp_user_role.getSelectionModel().getSelectedItem() == null) {
+
+            alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Please fill all blank fields");
+            alert.showAndWait();
+
+        }
+        if(!chkusername.matches("^[\\w]+$")) {
+            alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Invalid username: "+chkusername+"\nEnsures only word characters (letters, digits, and underscores) with no spaces");
+            alert.showAndWait();
+        }
+        
+        else{
+            
+            String regData = "INSERT INTO employees (username, password, user_role, status, date) VALUES (?, ?, ?, ?, ?)";
+
+            try {
+
+                // CHECK IF THE USERNAME IS ALREADY RECORDED IN employees Table
+                String checkUsername = "SELECT username FROM employees WHERE username = '"
+                        + emp_username.getText() + "'";
+
+                prepare = db.connection.prepareStatement(checkUsername);
+                result = prepare.executeQuery();
+                
+                // CHECK IF THE USERNAME IS ALREADY RECORDED In users Table
+                String checkUsernameE = "SELECT username FROM admin WHERE username = '"
+                        + emp_username.getText() + "'";
+
+                prepare = db.connection.prepareStatement(checkUsernameE);
+                ResultSet rs = prepare.executeQuery();
+
+
+                if (result.next() || rs.next()) {
+                    alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("'"+emp_username.getText()+"'" + " is already taken, now change username and try again!");
+                    alert.showAndWait();
+                } else if (emp_password.getText().length() < 6) {
+                    alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Invalid Password, atleast 6 characters are needed");
+                    alert.showAndWait();
+                } else {
+                    prepare = db.connection.prepareStatement(regData);
+
+                    prepare.setString(1, emp_username.getText());
+                    prepare.setString(2, emp_password.getText());
+                    prepare.setString(3, (String) emp_user_role.getSelectionModel().getSelectedItem());
+                    prepare.setString(4, "Deactive");
+                    prepare.setLong(5, System.currentTimeMillis());
+    //                Date date = new Date();
+    //                java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+    //                prepare.setString(7, String.valueOf(sqlDate));
+
+                    prepare.executeUpdate();
+                    System.out.println("-> Data Inserted!");
+
+                    alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully registered Account!");
+                    alert.showAndWait();
+                    
+                    empUserShowData();
+                    showPass();
+                    empClearBtn();
+                }
+
+            } catch (SQLException e) {
+                System.out.println("-> "+e.toString());
+            }
+        
+        }
+        
+
+    }
+    private void empUpdateQry() {
+        long millis = emp_date.getTime();
+        String pass1 = emp_password.getText();
+        String pass2 = emp_passPlainText.getText();
+        if(check_pass == true){
+            emp_pass = pass2;
+        }
+        else {
+            emp_pass = pass1;
+        }
+        
+        String updateData = "UPDATE employees SET "
+                    + "username = '" + emp_username.getText() + "', "
+                    + "password = '" + emp_pass + "', "
+                    + "user_role = '" + emp_user_role.getSelectionModel().getSelectedItem() + "', "
+                    + "status = '" + emp_user_status.getSelectionModel().getSelectedItem() + "', "
+                    + "date = '" + millis + "' WHERE id = " + 
+                    empUser_TableView.getSelectionModel().getSelectedItem().getId();
+        
+        try {
+
+            alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to UPDATE User Name: " + emp_username.getText() + "?");
+            Optional<ButtonType> option = alert.showAndWait();
+
+            if (option.get().equals(ButtonType.OK)) {
+                prepare = db.connection.prepareStatement(updateData);
+                prepare.executeUpdate();
+
+                alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Success Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Successfully Updated!");
+                alert.showAndWait();
+
+                System.out.println("-> Item Data Updated!");
+                // TO UPDATE YOUR TABLE VIEW
+                empUserShowData();
+                // TO CLEAR YOUR FIELDS
+                empClearBtn();
+            } else {
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Cancelled.");
+                alert.showAndWait();
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+            System.out.println("-> "+e);
+        }
+    }
+    public void empUpdateBtn() {
+        db.getConnection();
+        
+        if (emp_username.getText().isEmpty() 
+            || emp_password.getText().isEmpty()
+            || emp_user_role.getSelectionModel().getSelectedItem() == null) {
+
+            alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Please Select User");
+            alert.showAndWait();
+
+        } else if(emp_username.getText() == null ? 
+                empUser_TableView.getSelectionModel()
+                        .getSelectedItem().getUsername() == null : 
+                emp_username.getText().equals(empUser_TableView.getSelectionModel()
+                        .getSelectedItem().getUsername())) {
+            empUpdateQry();
+            //System.out.println("-> Update Done!");
+            
+        } else {
+
+            // CHECK ITEMS CODE
+            String checkUsername = "SELECT username FROM employees WHERE username = '"
+            + emp_username.getText() + "'";
+
+            try {
+                prepare = db.connection.prepareStatement(checkUsername);
+                result = prepare.executeQuery();
+
+                if (result.next()) {
+                    alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("'"+emp_username.getText()+"'" + " is already taken, change and try again.");
+                    alert.showAndWait();
+                } else {
+                    empUpdateQry();
+                    //System.out.println("-> Update Done!");
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                //System.out.println("-> "+e);
+            }
+
+        }
     }
     public void empDeleteBtn() {
-        if (id == 0) {
+        if (emp_id == 0) {
 
             alert = new Alert(AlertType.WARNING);
             alert.setTitle("Warning Message");
             alert.setHeaderText(null);
-            alert.setContentText("Please Select Item");
+            alert.setContentText("Please Select User");
             alert.showAndWait();
 
         } else {
@@ -1889,7 +2068,7 @@ public class MainFormController implements Initializable {
             Optional<ButtonType> option = alert.showAndWait();
 
             if (option.get().equals(ButtonType.OK)) {
-                String deleteData = "DELETE FROM employees WHERE id = " + id;
+                String deleteData = "DELETE FROM employees WHERE id = " + emp_id;
                 try {
                     prepare = db.connection.prepareStatement(deleteData);
                     prepare.executeUpdate();
@@ -1910,6 +2089,7 @@ public class MainFormController implements Initializable {
                     e.printStackTrace();
                 }
             } else {
+                emp_id = 0;
                 alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Error Message");
                 alert.setHeaderText(null);
@@ -1918,107 +2098,18 @@ public class MainFormController implements Initializable {
             }
         }
     }
+    public void empClearBtn() {
+        emp_username.setText("");
+        emp_password.setText("");
+        emp_passPlainText.setText("");
+        emp_user_role.getSelectionModel().clearSelection();
+        emp_user_status.getSelectionModel().clearSelection();
+        getEmpDate = "";
+        emp_id = 0;
+        id = 0;
+    }
     
-    private void empUpdateQry() {
-        String updateData = "UPDATE items SET "
-                    + "items_code = '" + items_Code.getText() + "', "
-                    + "items_name = '" + items_Name.getText() + "', "
-                    + "category = '" + items_Category.getSelectionModel().getSelectedItem() + "', "
-                    + "size = '" + items_Size.getText() + "', "
-                    + "stock = '" + items_Stock.getText() + "', "
-                    + "unit_price = '" + items_UnitPrice.getText() + "', "
-                    + "status = '" + items_Status.getSelectionModel().getSelectedItem() + "', "
-                    + "image = '" + imagePath + "', "
-                    + "date = '" + System.currentTimeMillis() + "' WHERE id = " + 
-                    items_TableView.getSelectionModel().getSelectedItem().getId();
-        
-        try {
-
-            alert = new Alert(AlertType.CONFIRMATION);
-            alert.setTitle("Confirmation Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Are you sure you want to UPDATE Item Code: " + items_Code.getText() + "?");
-            Optional<ButtonType> option = alert.showAndWait();
-
-            if (option.get().equals(ButtonType.OK)) {
-                prepare = db.connection.prepareStatement(updateData);
-                prepare.executeUpdate();
-
-                alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Success Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Successfully Updated!");
-                alert.showAndWait();
-
-                System.out.println("-> Item Data Updated!");
-                // TO UPDATE YOUR TABLE VIEW
-                itemsShowData();
-                // TO CLEAR YOUR FIELDS
-                itemsClearBtn();
-            } else {
-                alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Error Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Cancelled.");
-                alert.showAndWait();
-            }
-        } catch (Exception e) {
-            //e.printStackTrace();
-            System.out.println("-> "+e);
-        }
-    }
-    public void empUpdateBtn() {
-        db.getConnection();
-
-        if (items_Code.getText().isEmpty()
-                || items_Name.getText().isEmpty()
-                || items_Category.getSelectionModel().getSelectedItem() == null
-                || items_Stock.getText().isEmpty()
-                || items_UnitPrice.getText().isEmpty()
-                || items_Status.getSelectionModel().getSelectedItem() == null
-                || imagePath.isEmpty() || imagePath == null 
-                || items_TableView.getSelectionModel().getSelectedItem().getId() == 0) {
-
-            alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Warning Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Please fill all blank fields");
-            alert.showAndWait();
-
-        } else if(items_Code.getText() == null ? 
-                items_TableView.getSelectionModel()
-                        .getSelectedItem().getItemsCode() == null : 
-                items_Code.getText().equals(items_TableView.getSelectionModel()
-                        .getSelectedItem().getItemsCode())) {
-            empUpdateQry();
-            
-        } else {
-
-            // CHECK ITEMS CODE
-            String checkItemsCode = "SELECT items_Code FROM items WHERE items_Code = '"
-            + items_Code.getText() + "'";
-
-            try {
-                prepare = db.connection.prepareStatement(checkItemsCode);
-                result = prepare.executeQuery();
-
-                if (result.next()) {
-                    alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Error Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText(items_Code.getText() + " is already taken, Change and try again.");
-                    alert.showAndWait();
-                } else {
-                    itemUpdateQry();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                //System.out.println("-> "+e);
-            }
-
-        }
-    }
+    
 
     
     /// END USERS SECTION/
