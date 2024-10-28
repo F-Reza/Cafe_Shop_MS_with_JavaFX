@@ -2109,7 +2109,7 @@ public class MainFormController implements Initializable {
         id = 0;
     }
     
-    public void editProfile() {
+    public void editProfileFull() {
         db.getConnection();
         UserDataModel user = db.getAdminUserData(1);
         
@@ -2123,29 +2123,68 @@ public class MainFormController implements Initializable {
             editStage.initStyle(StageStyle.UTILITY); // Make the window undecorated
 
             // Create a layout for the new window
-            VBox editLayout = new VBox(10);
-            editLayout.setPadding(new Insets(10));
+            VBox editLayout = new VBox(6);
+            editLayout.setPadding(new Insets(6));
 
-            // Create fields for Name, Description, Amount, Date, and Category
-            TextField userNameField = new TextField(user.getUserName().toString()); 
+            // Create fields for User Name, Display Name , Image and others
+            //Label userName = new Label(user.getUserName().toString()); 
+ 
+            //TextField userNameField = new TextField(user.getUserName().toString()); 
+            HBox nameBox = new HBox();
+            nameBox.setPadding(new Insets(5));  // Add padding for visibility
+            TextField userNameField = new TextField(user.getUserName());
+            userNameField.setEditable(false);
+            userNameField.setMinHeight(30);
+            nameBox.getChildren().add(userNameField);
+            // Apply background and text color to be visible
+            userNameField.setStyle("-fx-background-color: lightgray; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
+    
             TextField displayNameField = new TextField(user.getDisplayName().toString()); 
             TextField profilePhotoField = new TextField(user.getImage().toString()); 
             
             // Set preferred width and height for the TextFields
-            userNameField.setMinHeight(30);
-            userNameField.setStyle("-fx-font-size: 14px;"); 
-
             displayNameField.setMinHeight(30);
             displayNameField.setStyle("-fx-font-size: 14px;"); 
-
+            
             profilePhotoField.setMinHeight(30);
             profilePhotoField.setMinWidth(240);
 
+            HBox userRoleBox = new HBox();
+            userRoleBox.setPadding(new Insets(5));  // Add padding for visibility
+            TextField userRoleField = new TextField(user.getUserRole());
+            userRoleField.setEditable(false);
+            userRoleField.setMinHeight(30);
+            userRoleBox.getChildren().add(userRoleField);
+            // Apply background and text color to be visible
+            userRoleField.setStyle("-fx-background-color: lightgray; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
+            
+            HBox statusBox = new HBox();
+            statusBox.setPadding(new Insets(5));  // Add padding for visibility
+            TextField statusField = new TextField(user.getStatus());
+            statusField.setEditable(false);
+            statusField.setMinHeight(30);
+            statusBox.getChildren().add(statusField);
+            // Apply background and text color to be visible
+            statusField.setStyle("-fx-background-color: lightgray; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
+           
+            HBox dateBox = new HBox();
+            dateBox.setPadding(new Insets(5));  // Add padding for visibility
+            TextField dateField = new TextField(user.getDate().toString());
+            dateField.setEditable(false);
+            dateField.setMinHeight(30);
+            dateBox.getChildren().add(dateField);
+            // Apply background and text color to be visible
+            dateField.setStyle("-fx-background-color: lightgray; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
+            
+            
             // Add fields to the layout
-            editLayout.getChildren().addAll(
-                new Label("User Name:"), userNameField,
+            editLayout.getChildren().addAll( 
+                new Label("User Name: *(Not Editable)"), userNameField,
                 new Label("Display Name:"), displayNameField,
-                new Label("Profile Photo:"), profilePhotoField
+                new Label("Profile Photo:"), profilePhotoField,
+                new Label("User Role: *(Not Editable)"), userRoleField,
+                new Label("Status: *(Not Editable)"), statusField,
+                new Label("Creation Date: *(Not Editable)"), dateField
             );
 
             // Create an Update button to confirm edits
@@ -2156,13 +2195,11 @@ public class MainFormController implements Initializable {
             updateButton.setOnAction(updateEvent -> {
 
                 // Get the values from the input fields
-                String userNameText = userNameField.getText();
                 String displayNameText = displayNameField.getText();
                 String profilePhotoText = profilePhotoField.getText();
 
                 // Check if any fields are empty
-                if (userNameText.isEmpty()
-                        || displayNameText.isEmpty()
+                if (displayNameText.isEmpty()
                         ||profilePhotoText.isEmpty() ) {
                     System.out.println("-> User Data Empty!");
 
@@ -2175,8 +2212,12 @@ public class MainFormController implements Initializable {
 
                 } else {
                     // Proceed with the update query since all validations passed
-                    updateProfile(userNameText, displayNameText, profilePhotoText);
-                    System.out.println("-> User Data Updated!");
+                    updateProfile(displayNameText, profilePhotoText);
+                    displayNameField.setText("");
+                    profilePhotoField.setText("");
+                    imagePath = "";
+                    
+                    //System.out.println("-> User Data Updated!");
                     editStage.close();
                 }
             });
@@ -2203,16 +2244,105 @@ public class MainFormController implements Initializable {
             editStage.show();
         });
     }
-    public void updateProfile(String userName, String displayName, String profilePhoto) {
+    public void editProfile() {
         db.getConnection();
+        UserDataModel user = db.getAdminUserData(1);
         
-//        String updateData = "UPDATE users SET "
-//                    + "ex_amount = '" + exp_amount + "', "
-//                    + "ex_category = '" + exp_category + "', "
-//                    + "ex_description = '" + exp_discription + "', "
-//                    + "ex_by = '" + exp_by + "', "
-//                    + "ex_date = '" + millis + "' WHERE id = " + 
-//                    exp_id;
+        // Set up edit button action
+        editProfileBtn.setOnAction(event -> {
+
+            // Create a new Stage (window) for editing
+            Stage editStage = new Stage();
+            editStage.initModality(Modality.APPLICATION_MODAL); // Make the stage modal
+            editStage.setTitle("Edit Profile");
+            editStage.initStyle(StageStyle.UTILITY); // Make the window undecorated
+
+            // Create a layout for the new window
+            VBox editLayout = new VBox(6);
+            editLayout.setPadding(new Insets(6));
+
+            // Create fields for Display Name, Profile Photo
+            TextField displayNameField = new TextField(user.getDisplayName().toString()); 
+            TextField profilePhotoField = new TextField(user.getImage().toString()); 
+            
+            // Set preferred width and height for the TextFields
+            displayNameField.setMinHeight(30);
+            displayNameField.setStyle("-fx-font-size: 14px;"); 
+            
+            profilePhotoField.setMinHeight(30);
+            profilePhotoField.setMinWidth(240);
+
+            // Add fields to the layout
+            editLayout.getChildren().addAll( 
+                new Label("Display Name:"), displayNameField,
+                new Label("Profile Photo:"), profilePhotoField
+            );
+
+            // Create an Update button to confirm edits
+            Button updateButton = new Button("Update");
+            // Set button styling
+            updateButton.setStyle("-fx-background-color: black; -fx-text-fill: white;");
+
+            updateButton.setOnAction(updateEvent -> {
+
+                // Get the values from the input fields
+                String displayNameText = displayNameField.getText();
+                String profilePhotoText = profilePhotoField.getText();
+
+                // Check if any fields are empty
+                if (displayNameText.isEmpty()
+                        ||profilePhotoText.isEmpty() ) {
+                    System.out.println("-> User Data Empty!");
+
+                    // Show alert if any field is empty
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Warning Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Please fill all blank fields");
+                    alert.showAndWait();
+
+                } else {
+                    // Proceed with the update query since all validations passed
+                    updateProfile(displayNameText, profilePhotoText);
+                    displayNameField.setText("");
+                    profilePhotoField.setText("");
+                    imagePath = "";
+                    
+                    //System.out.println("-> User Data Updated!");
+                    editStage.close();
+                }
+            });
+
+            // Create a Close button
+            Button closeButton= new Button("Close");
+            closeButton.setOnAction(closeEvent -> editStage.close());
+
+            // Add buttons to the layout
+            HBox buttonLayout = new HBox(20, updateButton, closeButton);
+            editLayout.getChildren().add(buttonLayout);
+            buttonLayout.setAlignment(Pos.CENTER);
+            VBox.setVgrow(buttonLayout, Priority.ALWAYS);
+
+            // Set the scene and show the stage
+            Scene editScene = new Scene(editLayout, 522, 446);
+
+            editStage.setMinWidth(522);
+            editStage.setMaxWidth(522);
+            editStage.setMinHeight(440);
+            editStage.setMaxHeight(440);
+
+            editStage.setScene(editScene);
+            editStage.show();
+        });
+    }
+    public void updateProfile(String displayName, String profilePhoto) {
+        db.getConnection();
+        int user_id = 1;
+        
+        String updateData = "UPDATE admin SET display_name = '"
+                            + displayName + "', image = '"
+                            + profilePhoto + "' WHERE id = '"
+                            + user_id + "'";
         
         try {
 
@@ -2223,7 +2353,7 @@ public class MainFormController implements Initializable {
             Optional<ButtonType> option = alert.showAndWait();
 
             if (option.get().equals(ButtonType.OK)) {
-                //prepare = db.connection.prepareStatement(updateData);
+                prepare = db.connection.prepareStatement(updateData);
                 prepare.executeUpdate();
 
                 alert = new Alert(AlertType.INFORMATION);
@@ -2232,12 +2362,10 @@ public class MainFormController implements Initializable {
                 alert.setContentText("Successfully Updated!");
                 alert.showAndWait();
 
-                System.out.println("-> Your Password Updated!");
+                System.out.println("-> Your Profile Updated!");
                 // TO UPDATE YOUR TABLE VIEW
-                expenseShowData();
-                loadExpenseData();
-                // TO CLEAR YOUR FIELDS
-                expenseClearBtn();
+                loadAdminData(1);
+                
             } else {
                 alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Error Message");
@@ -2269,16 +2397,14 @@ public class MainFormController implements Initializable {
             editLayout.setPadding(new Insets(10));
 
             // Create fields for Name, Description, Amount, Date, and Category
-            TextField passwordField = new TextField(user.getPassword().toString()); 
-            
             ComboBox<String> questionComboBox = new ComboBox<>();
             questionComboBox.getItems().addAll(
                 "What is your favorite Color?",
                 "What is your favorite food?",
                 "What is your favorite person?");
             questionComboBox.setValue(user.getQuestion());
-            
             TextField answerField = new TextField(user.getAnswer().toString()); 
+            TextField passwordField = new TextField(user.getPassword().toString()); 
             
             // Set preferred width and height for the TextFields
             passwordField.setMinHeight(30);
@@ -2292,9 +2418,9 @@ public class MainFormController implements Initializable {
 
             // Add fields to the layout
             editLayout.getChildren().addAll(
-                new Label("*Password :"), passwordField,
-                new Label("*Question? :"), questionComboBox,
-                new Label("*Your Answer :"), answerField
+                new Label("*Select Question? :"), questionComboBox,
+                new Label("*Set Your Answer :"), answerField,
+                new Label("*Set Your Password :"), passwordField
             );
 
             // Create an Update button to confirm edits
@@ -2305,9 +2431,9 @@ public class MainFormController implements Initializable {
             updateButton.setOnAction(updateEvent -> {
 
                 // Get the values from the input fields
-                String passwordText = passwordField.getText();
                 String questionText = questionComboBox.getValue();
                 String answerText = answerField.getText();
+                String passwordText = passwordField.getText();
 
                 // Check if any fields are empty
                 if (passwordText.isEmpty()
