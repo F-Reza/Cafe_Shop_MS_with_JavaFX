@@ -1675,10 +1675,10 @@ public class MainFormController implements Initializable {
         userDate.setText(user.getDate().toString()); // Format the date as needed
         // Load image (if stored as a file path)
         Image userImg = new Image("file:" + user.getImage());
-        //userImage.setImage(userImg);
+        userImage.setImage(userImg);
         //System.out.println("-------> : "+ user.getImage());
+        }
     }
-}
     
     private final String[] empUserRoleList = {"Manager","Cashier"};
     public void empUserRoleList() {
@@ -1800,7 +1800,6 @@ public class MainFormController implements Initializable {
         // Set the list of items for the TableView
         empUser_TableView.setItems(empUserListData);
     }
-    
     public void showPass() {
         // Listener for the show/hide password CheckBox
         showPassCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -1818,8 +1817,7 @@ public class MainFormController implements Initializable {
                 emp_passPlainText.setVisible(false); // Hide plain text field
             }
         });
-    }
-   
+    }  
     public void empSelectData() {
         EmployeeDataModel empData = empUser_TableView.getSelectionModel().getSelectedItem();
         int num = empUser_TableView.getSelectionModel().getSelectedIndex();
@@ -1839,8 +1837,7 @@ public class MainFormController implements Initializable {
         // Reset CheckBox state to keep password hidden when selecting new employee
         showPassCheckBox.setSelected(false);
         emp_passPlainText.setVisible(false); // Hide plain text field initially
-    }
-    
+    }    
     public void empSelectData1() {
     EmployeeDataModel empData = empUser_TableView.getSelectionModel().getSelectedItem();
     int num = empUser_TableView.getSelectionModel().getSelectedIndex();
@@ -1856,7 +1853,6 @@ public class MainFormController implements Initializable {
         emp_user_status.setValue(empData.getStatus());
         getEmpDate = String.valueOf(empData.getDate());
     }
-
     public void empRegBtn() {
         db.getConnection();
         
@@ -2108,7 +2104,6 @@ public class MainFormController implements Initializable {
         emp_id = 0;
         id = 0;
     }
-    
     public void editProfileFull() {
         db.getConnection();
         UserDataModel user = db.getAdminUserData(1);
@@ -2244,12 +2239,12 @@ public class MainFormController implements Initializable {
             editStage.show();
         });
     }
+    
     public void editProfile() {
-        db.getConnection();
-        UserDataModel user = db.getAdminUserData(1);
-        
         // Set up edit button action
         editProfileBtn.setOnAction(event -> {
+            db.getConnection();
+            UserDataModel user = db.getAdminUserData(1);
 
             // Create a new Stage (window) for editing
             Stage editStage = new Stage();
@@ -2258,25 +2253,67 @@ public class MainFormController implements Initializable {
             editStage.initStyle(StageStyle.UTILITY); // Make the window undecorated
 
             // Create a layout for the new window
-            VBox editLayout = new VBox(6);
-            editLayout.setPadding(new Insets(6));
+            VBox editLayout = new VBox(10);
+            editLayout.setPadding(new Insets(10));
 
             // Create fields for Display Name, Profile Photo
-            TextField displayNameField = new TextField(user.getDisplayName().toString()); 
-            TextField profilePhotoField = new TextField(user.getImage().toString()); 
+            TextField displayNameField = new TextField(user.getDisplayName()); 
+            ImageView profilePhotoView = new ImageView();
+            Button ppImportBtn = new Button();
+            
+            ppImportBtn.setMinHeight(10);
+            ppImportBtn.setMinWidth(70);
+            ppImportBtn.setMaxWidth(70);
+            ppImportBtn.setText("Import"); 
+            
+            imagePath = user.getImage();
+            String path = "File:" + user.getImage();
+            id = user.getId();
+            image = new Image(path, 146, 146, false, true);
+            profilePhotoView.setImage(image);
             
             // Set preferred width and height for the TextFields
             displayNameField.setMinHeight(30);
             displayNameField.setStyle("-fx-font-size: 14px;"); 
             
-            profilePhotoField.setMinHeight(30);
-            profilePhotoField.setMinWidth(240);
-
             // Add fields to the layout
             editLayout.getChildren().addAll( 
                 new Label("Display Name:"), displayNameField,
-                new Label("Profile Photo:"), profilePhotoField
+                new Label("Profile Photo:"), profilePhotoView,
+                ppImportBtn
             );
+            
+            ppImportBtn.setOnAction(updateEvent -> {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+                );
+
+                File file = fileChooser.showOpenDialog(main_Form.getScene().getWindow());
+
+                if (file != null) {
+
+                    //path = file.getAbsolutePath();
+                    image = new Image(file.toURI().toString(), 146, 146, false, true);
+                    profilePhotoView.setImage(image);
+
+                    try {
+                        // Get the original file name
+                        String originalFileName = file.getName();
+                        String newImageName = "pp_" + originalFileName;
+
+                        // Copy the selected file to the MyFolder directory with the new image name
+                        File destination = new File(IMAGE_DIR + File.separator + newImageName);
+                        Files.copy(file.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+                        // Save the image path to the SQLite database
+                        imagePath = destination.getAbsolutePath();
+
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
 
             // Create an Update button to confirm edits
             Button updateButton = new Button("Update");
@@ -2287,11 +2324,9 @@ public class MainFormController implements Initializable {
 
                 // Get the values from the input fields
                 String displayNameText = displayNameField.getText();
-                String profilePhotoText = profilePhotoField.getText();
 
                 // Check if any fields are empty
-                if (displayNameText.isEmpty()
-                        ||profilePhotoText.isEmpty() ) {
+                if (displayNameText.isEmpty() ) {
                     System.out.println("-> User Data Empty!");
 
                     // Show alert if any field is empty
@@ -2303,11 +2338,10 @@ public class MainFormController implements Initializable {
 
                 } else {
                     // Proceed with the update query since all validations passed
-                    updateProfile(displayNameText, profilePhotoText);
-                    displayNameField.setText("");
-                    profilePhotoField.setText("");
-                    imagePath = "";
+                    updateProfile(displayNameText, imagePath);
                     
+                    displayNameField.setText("");
+                    imagePath = "";
                     //System.out.println("-> User Data Updated!");
                     editStage.close();
                 }
@@ -2379,12 +2413,12 @@ public class MainFormController implements Initializable {
         }
     }
     
+    
     public void changePassword() {
-        db.getConnection();
-        UserDataModel user = db.getAdminUserData(1);
-        
         // Set up edit button action
         changeUserPassBtn.setOnAction(event -> {
+            db.getConnection();
+            UserDataModel user = db.getAdminUserData(1);
 
             // Create a new Stage (window) for editing
             Stage editStage = new Stage();
@@ -2437,7 +2471,6 @@ public class MainFormController implements Initializable {
 
                 // Check if any fields are empty
                 if (passwordText.isEmpty()
-                        || questionComboBox == null
                         ||answerText.isEmpty() ) {
                     System.out.println("-> User Data Empty!");
 
@@ -2448,10 +2481,20 @@ public class MainFormController implements Initializable {
                     alert.setContentText("Please fill all blank fields");
                     alert.showAndWait();
 
+                } else if (passwordField.getText().length() < 6 || passwordField.getText().length() < 6) {
+                    alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Invalid Password, Atleast 6 characters are needed");
+                    alert.showAndWait();
                 } else {
                     // Proceed with the update query since all validations passed
                     updateAdminPass(passwordText, questionText, answerText);
-                    System.out.println("-> Your Password Updated!");
+                    
+                    questionComboBox.getSelectionModel().clearSelection();
+                    answerField.setText("");
+                    passwordField.setText("");
+                    
                     editStage.close();
                 }
             });
@@ -2479,7 +2522,7 @@ public class MainFormController implements Initializable {
         });
     }
     public void updateAdminPass(String password, String question, String answer) {
-        db.getConnection();
+        //db.getConnection();
         int user_id = 1;
         
         String updateData = "UPDATE admin SET password = '"
@@ -2505,20 +2548,17 @@ public class MainFormController implements Initializable {
                 alert.setHeaderText(null);
                 alert.setContentText("Successfully Updated!");
                 alert.showAndWait();
-
-                UserDataModel user = db.getAdminUserData(1);
+                
+                System.out.println("-> Your Password Updated!");
+                db.getAdminUserData(1);
                 
 //                // TO HIDE MAIN FORM 
-//                signoutBtn.getScene().getWindow().hide();
-//                
+//                changeUserPassBtn.getScene().getWindow().hide();
 //                // LINK YOUR LOGIN FORM AND SHOW IT 
 //                Parent root = FXMLLoader.load(getClass().getResource("/view/authPage.fxml"));
-//
 //                Stage stage = new Stage();
 //                Scene scene = new Scene(root);
-//
 //                stage.setTitle("GoPpo Management System");
-//
 //                stage.setScene(scene);
 //                stage.show();
 

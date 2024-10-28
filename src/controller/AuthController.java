@@ -313,7 +313,7 @@ public class AuthController implements Initializable {
                     alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Error Message");
                     alert.setHeaderText(null);
-                    alert.setContentText("Invalid Password, atleast 6 characters are needed");
+                    alert.setContentText("Invalid Password, Atleast 6 characters are needed");
                     alert.showAndWait();
                 } else {
                     prepare = db.connection.prepareStatement(regData);

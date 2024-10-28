@@ -1165,7 +1165,7 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <Label layoutX="12.0" layoutY="11.0" prefHeight="25.0" prefWidth="148.0" text="Users Employee List" AnchorPane.leftAnchor="12.0" AnchorPane.topAnchor="13.0">
+                                    <Label layoutX="12.0" layoutY="11.0" prefHeight="25.0" prefWidth="148.0" text="Employee User List" AnchorPane.leftAnchor="12.0" AnchorPane.topAnchor="13.0">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
@@ -1221,7 +1221,7 @@
                                           <Font size="18.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="userDisplayName" layoutX="59.0" layoutY="23.0" text="Farhan Morshed" AnchorPane.bottomAnchor="198.0" AnchorPane.leftAnchor="59.0">
+                                    <Label fx:id="userDisplayName" layoutX="56.0" layoutY="23.0" text="Farhan Morshed" AnchorPane.bottomAnchor="198.0" AnchorPane.leftAnchor="56.0">
                                        <font>
                                           <Font size="18.0" />
                                        </font>
@@ -1301,7 +1301,7 @@
                                     <Button fx:id="changeUserPassBtn" layoutX="944.0" layoutY="23.0" mnemonicParsing="false" onAction="#changePassword" styleClass="btn-clear" stylesheets="@../css/mainFormDesign.css" text="Change Password" AnchorPane.bottomAnchor="200.0" AnchorPane.rightAnchor="23.0" />
                                  </children>
                               </AnchorPane>
-                              <Label layoutX="20.0" layoutY="498.0" prefHeight="30.0" prefWidth="112.0" text="Users Admin" AnchorPane.bottomAnchor="272.0" AnchorPane.leftAnchor="20.0">
+                              <Label layoutX="20.0" layoutY="498.0" prefHeight="30.0" prefWidth="142.0" text="System Admin" AnchorPane.bottomAnchor="272.0" AnchorPane.leftAnchor="20.0">
                                  <font>
                                     <Font size="20.0" />
                                  </font>
