@@ -23,14 +23,9 @@
                         <Image url="@../img/burger.png" />
                      </image>
                   </ImageView>
-                  <Label fx:id="card_itemPrice" alignment="TOP_RIGHT" layoutX="98.0" layoutY="4.0" prefHeight="21.0" prefWidth="75.0" text="\$100.00">
+                  <Label fx:id="card_itemPrice" alignment="TOP_RIGHT" layoutX="43.0" layoutY="4.0" prefHeight="21.0" prefWidth="130.0" text="\$100.00">
                      <font>
                         <Font name="System Bold" size="15.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="card_itemCode" layoutX="3.0" layoutY="4.0" prefHeight="21.0" prefWidth="83.0" text="P-101">
-                     <font>
-                        <Font size="15.0" />
                      </font>
                   </Label>
                   <Label fx:id="card_itemSize" alignment="CENTER_RIGHT" layoutX="91.0" layoutY="114.0" prefHeight="21.0" prefWidth="83.0" text="100ml" />

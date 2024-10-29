@@ -64,11 +64,9 @@ public class DB {
         
         String queryC = "CREATE TABLE IF NOT EXISTS items ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "items_code TEXT NOT NULL, "
                 + "items_name TEXT NOT NULL, "
                 + "category TEXT NOT NULL, "
                 + "size TEXT, "
-                + "stock INTEGER NOT NULL, "
                 + "unit_price REAL NOT NULL, "
                 + "status TEXT NOT NULL, "
                 + "image TEXT NOT NULL, "

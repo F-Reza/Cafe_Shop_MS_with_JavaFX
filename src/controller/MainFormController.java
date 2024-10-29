@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -60,14 +59,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
-import javafx.util.Duration;
 import models.EmployeeDataModel;
 import models.UserDataModel;
 
@@ -150,13 +147,9 @@ public class MainFormController implements Initializable {
     @FXML
     private Button items_ClearBtn;
     @FXML
-    private TextField items_Code;
-    @FXML
     private TextField items_Name;
     @FXML
     private ComboBox<String> items_Category;
-    @FXML
-    private TextField items_Stock;
     @FXML
     private TextField items_UnitPrice;
     @FXML
@@ -170,8 +163,6 @@ public class MainFormController implements Initializable {
     @FXML
     private TableView<ItemsDataModel> items_TableView;
     @FXML
-    private TableColumn<ItemsDataModel, String> items_Col_ItemsCode;
-    @FXML
     private TableColumn<ItemsDataModel, String> items_Col_ItemsSn;
     @FXML
     private TableColumn<ItemsDataModel, String> items_Col_ItemsName;
@@ -179,8 +170,6 @@ public class MainFormController implements Initializable {
     private TableColumn<ItemsDataModel, String> items_Col_Category;
     @FXML
     private TableColumn<ItemsDataModel, String> items_Col_Size;
-    @FXML
-    private TableColumn<ItemsDataModel, String> items_Col_Stock;
     @FXML
     private TableColumn<ItemsDataModel, String> items_Col_UnitPrice;
     @FXML
@@ -612,49 +601,32 @@ public class MainFormController implements Initializable {
 
     }
     private void itemInsertQry() {
-        String checkItemsCode = "SELECT items_Code FROM items WHERE items_Code = '"
-                    + items_Code.getText() + "'";
-
         try {
-            prepare = db.connection.prepareStatement(checkItemsCode);
-            result = prepare.executeQuery();
+            String insertData = "INSERT INTO items "
+                    + "(items_name, category, size, unit_price, status, image, date) "
+                    + "VALUES(?,?,?,?,?,?,?)";
 
-            if (result.next()) {
-                alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Error Message");
-                alert.setHeaderText(null);
-                alert.setContentText("'"+items_Code.getText()+"'" + " is already taken, change and try again.");
-                alert.showAndWait();
-            } else {
-                String insertData = "INSERT INTO items "
-                        + "(items_code, items_name, category, size, "
-                        + "stock, unit_price, status, image, date) "
-                        + "VALUES(?,?,?,?,?,?,?,?,?)";
+            prepare = db.connection.prepareStatement(insertData);
 
-                prepare = db.connection.prepareStatement(insertData);
+            prepare.setString(1, items_Name.getText());
+            prepare.setString(2, (String) items_Category.getSelectionModel().getSelectedItem());
+            prepare.setString(3, items_Size.getText());
+            prepare.setString(4, items_UnitPrice.getText());
+            prepare.setString(5, (String) items_Status.getSelectionModel().getSelectedItem());
+            prepare.setString(6, imagePath);
+            prepare.setLong(7, System.currentTimeMillis());
 
-                prepare.setString(1, items_Code.getText());
-                prepare.setString(2, items_Name.getText());
-                prepare.setString(3, (String) items_Category.getSelectionModel().getSelectedItem());
-                prepare.setString(4, items_Size.getText());
-                prepare.setString(5, items_Stock.getText());
-                prepare.setString(6, items_UnitPrice.getText());
-                prepare.setString(7, (String) items_Status.getSelectionModel().getSelectedItem());
-                prepare.setString(8, imagePath);
-                prepare.setLong(9, System.currentTimeMillis());
+            prepare.executeUpdate();
 
-                prepare.executeUpdate();
+            alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Successfully Added!");
+            alert.showAndWait();
 
-                alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Error Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Successfully Added!");
-                alert.showAndWait();
-
-                System.out.println("-> Item Data Inserted!.");
-                itemsShowData();
-                itemsClearBtn();
-            }
+            System.out.println("-> Item Data Inserted!.");
+            itemsShowData();
+            itemsClearBtn();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -663,14 +635,12 @@ public class MainFormController implements Initializable {
     }
     public void itemsAddBtn() {
         db.getConnection();
-
-        String stock = items_Stock.getText();
-        int stockValue;
         
-        if (items_Code.getText().isEmpty()
-                || items_Name.getText().isEmpty()
+        String unitPriceText = items_UnitPrice.getText();
+        double itemsUnitPrice = 0.0;
+        
+        if (items_Name.getText().isEmpty()
                 || items_Category.getSelectionModel().getSelectedItem() == null
-                || items_Stock.getText().isEmpty()
                 || items_UnitPrice.getText().isEmpty()
                 || items_Status.getSelectionModel().getSelectedItem() == null
                 || imagePath.isEmpty() || imagePath == null ) {
@@ -681,27 +651,29 @@ public class MainFormController implements Initializable {
             alert.setContentText("Please fill all blank fields");
             alert.showAndWait();
 
-        } else if (items_Stock.getText() != null) {
+        } else if (unitPriceText != null) {
+            
             try {
-                stockValue = Integer.parseInt(stock);
-                if (stockValue > 0) {
+                itemsUnitPrice = Double.parseDouble(unitPriceText);
+                if (itemsUnitPrice > 0) {
                     itemInsertQry();
                 } else {
                     // Action to handle 0 or negative values
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error Message");
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Warning Message");
                     alert.setHeaderText(null);
-                    alert.setContentText("Stock value must be greater than 0");
+                    alert.setContentText("Unit Price should be greater than 0.");
                     alert.showAndWait();
                 }
             } catch (NumberFormatException e) {
-                // Handle the case where the input is not a valid integer
-                Alert alert = new Alert(Alert.AlertType.ERROR);
+                // Handle the case where the input is not a valid number
+                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error Message");
                 alert.setHeaderText(null);
-                alert.setContentText("Invalid 'Stock' number format: "+ stock);
+                alert.setContentText("Invalid 'Unit Price' number format: "+ unitPriceText);
                 alert.showAndWait();
             }
+            
         } else {
             itemInsertQry();
         }
@@ -709,11 +681,9 @@ public class MainFormController implements Initializable {
     }
     private void itemUpdateQry() {
         String updateData = "UPDATE items SET "
-                    + "items_code = '" + items_Code.getText() + "', "
                     + "items_name = '" + items_Name.getText() + "', "
                     + "category = '" + items_Category.getSelectionModel().getSelectedItem() + "', "
                     + "size = '" + items_Size.getText() + "', "
-                    + "stock = '" + items_Stock.getText() + "', "
                     + "unit_price = '" + items_UnitPrice.getText() + "', "
                     + "status = '" + items_Status.getSelectionModel().getSelectedItem() + "', "
                     + "image = '" + imagePath + "', "
@@ -721,11 +691,10 @@ public class MainFormController implements Initializable {
                     items_TableView.getSelectionModel().getSelectedItem().getId();
         
         try {
-
             alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Error Message");
             alert.setHeaderText(null);
-            alert.setContentText("Are you sure you want to UPDATE Item Code: " + items_Code.getText() + "?");
+            alert.setContentText("Are you sure you want to UPDATE Item: " + items_Name.getText() + "?");
             Optional<ButtonType> option = alert.showAndWait();
 
             if (option.get().equals(ButtonType.OK)) {
@@ -758,10 +727,11 @@ public class MainFormController implements Initializable {
     public void itemsUpdateBtn() {
         db.getConnection();
 
-        if (items_Code.getText().isEmpty()
-                || items_Name.getText().isEmpty()
+        String unitPriceText = items_UnitPrice.getText();
+        double itemsUnitPrice = 0.0;
+        
+        if (items_Name.getText().isEmpty()
                 || items_Category.getSelectionModel().getSelectedItem() == null
-                || items_Stock.getText().isEmpty()
                 || items_UnitPrice.getText().isEmpty()
                 || items_Status.getSelectionModel().getSelectedItem() == null
                 || imagePath.isEmpty() || imagePath == null 
@@ -773,38 +743,38 @@ public class MainFormController implements Initializable {
             alert.setContentText("Please fill all blank fields");
             alert.showAndWait();
 
-        } else if(items_Code.getText() == null ? 
+        } else if (unitPriceText != null) {
+            
+            try {
+                itemsUnitPrice = Double.parseDouble(unitPriceText);
+                if (itemsUnitPrice > 0) {
+                    itemUpdateQry();
+                } else {
+                    // Action to handle 0 or negative values
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Warning Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Unit Price should be greater than 0.");
+                    alert.showAndWait();
+                }
+            } catch (NumberFormatException e) {
+                // Handle the case where the input is not a valid number
+                 Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Invalid 'Unit Price' number format: "+ unitPriceText);
+                alert.showAndWait();
+            }
+            
+        } else if(items_Name.getText() == null ? 
                 items_TableView.getSelectionModel()
-                        .getSelectedItem().getItemsCode() == null : 
-                items_Code.getText().equals(items_TableView.getSelectionModel()
-                        .getSelectedItem().getItemsCode())) {
+                        .getSelectedItem().getItemsName() == null : 
+                items_Name.getText().equals(items_TableView.getSelectionModel()
+                        .getSelectedItem().getItemsName())) {
             itemUpdateQry();
             
         } else {
-
-            // CHECK ITEMS CODE
-            String checkItemsCode = "SELECT items_Code FROM items WHERE items_Code = '"
-            + items_Code.getText() + "'";
-
-            try {
-                prepare = db.connection.prepareStatement(checkItemsCode);
-                result = prepare.executeQuery();
-
-                if (result.next()) {
-                    alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Error Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText(items_Code.getText() + " is already taken, change and try again.");
-                    alert.showAndWait();
-                } else {
-                    itemUpdateQry();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                //System.out.println("-> "+e);
-            }
-
+            itemUpdateQry();
         }
     }
     public void itemsDeleteBtn() {
@@ -820,7 +790,7 @@ public class MainFormController implements Initializable {
             alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Error Message");
             alert.setHeaderText(null);
-            alert.setContentText("Are you sure you want to DELETE Item Code: " + items_Code.getText() + "?");
+            alert.setContentText("Are you sure you want to DELETE Item: " + items_Name.getText() + "?");
             Optional<ButtonType> option = alert.showAndWait();
 
             if (option.get().equals(ButtonType.OK)) {
@@ -854,12 +824,9 @@ public class MainFormController implements Initializable {
         }
     }
     public void itemsClearBtn() {
-
-        items_Code.setText("");
         items_Name.setText("");
         items_Category.getSelectionModel().clearSelection();
         items_Size.setText("");
-        items_Stock.setText("");
         items_UnitPrice.setText("");
         items_Status.getSelectionModel().clearSelection();
         imagePath = "";
@@ -886,11 +853,9 @@ public class MainFormController implements Initializable {
 
                 itemData = new ItemsDataModel(
                         result.getInt("id"),
-                        result.getString("items_code"),
                         result.getString("items_name"),
                         result.getString("category"),
                         result.getString("size"),
-                        result.getInt("stock"),
                         result.getDouble("unit_price"),
                         result.getString("status"),
                         result.getString("image"),
@@ -916,11 +881,9 @@ public class MainFormController implements Initializable {
             return new SimpleStringProperty(String.valueOf(index));
         });
         
-        items_Col_ItemsCode.setCellValueFactory(new PropertyValueFactory<>("itemsCode"));
         items_Col_ItemsName.setCellValueFactory(new PropertyValueFactory<>("itemsName"));
         items_Col_Category.setCellValueFactory(new PropertyValueFactory<>("category"));
         items_Col_Size.setCellValueFactory(new PropertyValueFactory<>("size"));
-        items_Col_Stock.setCellValueFactory(new PropertyValueFactory<>("stock"));
         items_Col_UnitPrice.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
         items_Col_Status.setCellValueFactory(new PropertyValueFactory<>("status"));
         items_Col_Date.setCellValueFactory(new PropertyValueFactory<>("date"));
@@ -930,11 +893,9 @@ public class MainFormController implements Initializable {
     }
     private void setDynamicColumnWidthForItem() {
         items_Col_ItemsSn.maxWidthProperty().bind(items_TableView.widthProperty().multiply(0.5));
-        items_Col_ItemsCode.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
         items_Col_ItemsName.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.8));
         items_Col_Category.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.2));
         items_Col_Size.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
-        items_Col_Stock.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
         items_Col_UnitPrice.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
         items_Col_Status.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
         items_Col_Date.maxWidthProperty().bind(items_TableView.widthProperty().multiply(1.0833333333));
@@ -948,17 +909,14 @@ public class MainFormController implements Initializable {
         return;
     }
 
-    items_Code.setText(itemData.getItemsCode());
     items_Name.setText(itemData.getItemsName());
     items_Size.setText(itemData.getSize());
-    items_Stock.setText(String.valueOf(itemData.getStock()));
     items_UnitPrice.setText(String.valueOf(itemData.getUnitPrice()));
-
     items_Category.setValue(itemData.getCategory());
     items_Status.setValue(itemData.getStatus()); 
-
+    
     xValue.date = String.valueOf(itemData.getDate());
-
+    
     imagePath = itemData.getImage();
     String path = "File:" + itemData.getImage();
     id = itemData.getId();
@@ -985,11 +943,9 @@ public class MainFormController implements Initializable {
 
             while (result.next()) {
                 item = new ItemsDataModel(result.getInt("id"),
-                        result.getString("items_code"),
                         result.getString("items_name"),
                         result.getString("category"),
                         result.getString("size"),
-                        result.getInt("stock"),
                         result.getDouble("unit_price"),
                         result.getString("status"),
                         result.getString("image"),
