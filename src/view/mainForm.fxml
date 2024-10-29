@@ -413,7 +413,7 @@
                                         </AnchorPane>
                                     </children>
                                 </AnchorPane>
-                        <AnchorPane fx:id="posMenuForm" layoutX="290.0" layoutY="219.0" prefHeight="720.0" prefWidth="851.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="posMenuForm" layoutX="290.0" layoutY="219.0" prefHeight="720.0" prefWidth="851.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="13.0" layoutY="14.0" prefHeight="695.0" prefWidth="553.0" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="285.0" AnchorPane.topAnchor="14.0">
                                  <styleClass>
@@ -1156,7 +1156,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="usersForm" prefHeight="800.0" prefWidth="1117.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="usersForm" prefHeight="800.0" prefWidth="1117.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="20.0" layoutY="20.0" prefHeight="458.0" prefWidth="1077.0" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="322.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
                                  <styleClass>

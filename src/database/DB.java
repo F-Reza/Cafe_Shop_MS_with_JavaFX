@@ -73,8 +73,23 @@ public class DB {
                 + "status TEXT NOT NULL, "
                 + "image TEXT NOT NULL, "
                 + "date NUMERIC)";
+        
+        String queryD = "CREATE TABLE IF NOT EXISTS invoices ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "inv_id INTEGER NOT NULL, "
+                + "items TEXT NOT NULL, "
+                + "subtotal REAL NOT NULL, "
+                + "discount REAL, "
+                + "others_charge REAL, "
+                + "note TEXT, "
+                + "total_bill REAL NOT NULL, "
+                + "order_type TEXT, "
+                + "served_by TEXT, "
+                + "bill_by TEXT, "
+                + "payment_status TEXT, "
+                + "date NUMERIC)";
 
-        String queryD = "CREATE TABLE IF NOT EXISTS expenses ("
+        String queryE = "CREATE TABLE IF NOT EXISTS expenses ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "ex_amount REAL NOT NULL, "
                 + "ex_category TEXT NOT NULL, "
@@ -133,6 +148,12 @@ public class DB {
         }
         try (PreparedStatement statementD = connection.prepareStatement(queryD)) {
             statementD.executeUpdate();
+        } catch (Exception e) {
+            logger.info(e.toString());
+            //e.printStackTrace();
+        }        
+        try (PreparedStatement statementE = connection.prepareStatement(queryE)) {
+            statementE.executeUpdate();
         } catch (Exception e) {
             logger.info(e.toString());
             //e.printStackTrace();
