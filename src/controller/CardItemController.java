@@ -68,10 +68,11 @@ public class CardItemController implements Initializable {
     private double totalP;
 
     public void addBtn() {
-        MainFormController mForm = new MainFormController();
-        //mForm.customerID();
         db.getConnection();
-
+        System.out.println("Click Add Btn");
+        MainFormController mForm = new MainFormController();
+        //mForm.addToCart(itemData);
+        //mForm.customerID();
     }
 
     @Override

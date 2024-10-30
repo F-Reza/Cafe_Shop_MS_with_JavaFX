@@ -165,7 +165,6 @@ public class MainFormController implements Initializable {
     @FXML private Label totalQty; 
     @FXML private ComboBox<String> menu_OrderType;
     @FXML private TextField menu_ServedBy;
-    @FXML private Button menu_RemoveBtn;
     @FXML private Button menu_ClearBtn;
     @FXML private Button menu_InvoiceBtn;
     //End
@@ -298,6 +297,8 @@ public class MainFormController implements Initializable {
             settingsForm.setVisible(false);
 
             menuDisplayCard();
+            setupCartTable();
+            setDynamicColumnWidthForCartTable();
             itemsClearBtn();
             expenseClearBtn();
 
@@ -818,15 +819,21 @@ public class MainFormController implements Initializable {
     //// END ITEM SECTION
     
     //// START POS MENU SECTION
-    public void initialize() {
-        setupCartTable();
-        //getBillButton.setOnAction(e -> processBill());
-    }
     private final ObservableList<ItemsDataModel> cardListData = FXCollections.observableArrayList();
-    
     private ObservableList<CartItem> cartData = FXCollections.observableArrayList();
     private ObservableList<String> itemData = FXCollections.observableArrayList();
-    
+    private final String[] menuOrderTypeList = {"Table", "Parcel"};
+    public void menuOrderTypeList() {
+
+        List<String> xVal = new ArrayList<>();
+
+        for (String data : menuOrderTypeList) {
+            xVal.add(data);
+        }
+
+        ObservableList listData = FXCollections.observableArrayList(xVal);
+        menu_OrderType.setItems(listData);
+    }
     public ObservableList<ItemsDataModel> menuGetData() {
 
         String sql = "SELECT * FROM items";
@@ -870,31 +877,31 @@ public class MainFormController implements Initializable {
         menuGridPane.getChildren().clear();
         menuGridPane.getRowConstraints().clear();
         menuGridPane.getColumnConstraints().clear();
-
+        
         for (int q = 0; q < cardListData.size(); q++) {
-
             try {
-                FXMLLoader load = new FXMLLoader();
-                load.setLocation(getClass().getResource("/view/cardItem.fxml"));
-                AnchorPane pane = load.load();
-                CardItemController cardC = load.getController();
-                cardC.setData(cardListData.get(q));
+                    FXMLLoader load = new FXMLLoader();
+                    load.setLocation(getClass().getResource("/view/cardItem.fxml"));
+                    AnchorPane pane = load.load();
+                    CardItemController cardC = load.getController();
+                    cardC.setData(cardListData.get(q));
+                    
+                    // Event handler for individual pane clicks
+                    final int index = q; // This captures the index for the lambda
+                    pane.setOnMouseClicked(event -> addToCart(cardListData.get(index)));
 
-                if (column == 7) {
-                    column = 0;
-                    row += 1;
-                }
-                menuGridPane.add(pane, column++, row);
-
-                menuGridPane.setOnMouseClicked(event -> addToCart(cardListData.get(id)));  
-
-                GridPane.setMargin(pane, new Insets(8));
+                    // Grid setup
+                    if (column == 7) {
+                            column = 0;
+                            row += 1;
+                    }
+                    menuGridPane.add(pane, column++, row);
+                    GridPane.setMargin(pane, new Insets(7.45));
 
             } catch (Exception e) {
-                e.printStackTrace();
+                    e.printStackTrace();
             }
         }
-        
     }
     private void setupCartTable() {
         
@@ -912,15 +919,24 @@ public class MainFormController implements Initializable {
 
         menuTableView.setItems(cartData);
     }
-    private void addToCart(ItemsDataModel cardData) {
+    private void setDynamicColumnWidthForCartTable() {
+        menu_Col_SN.maxWidthProperty().bind(menuTableView.widthProperty().multiply(0.6));
+        menu_Col_ItemName.maxWidthProperty().bind(menuTableView.widthProperty().multiply(4.4));
+        menu_Col_Qty.maxWidthProperty().bind(menuTableView.widthProperty().multiply(1));
+        menu_Col_ItemRate.maxWidthProperty().bind(menuTableView.widthProperty().multiply(1.5));
+        menu_Col_Price.maxWidthProperty().bind(menuTableView.widthProperty().multiply(1.8));
+        menu_Col_Action.maxWidthProperty().bind(menuTableView.widthProperty().multiply(.7));
+    }
+    public void addToCart(ItemsDataModel cardData) {
         setupCartTable();
         System.out.println("Clicked addToCart! -> id: "+ cardData.getId());
         for (CartItem item : cartData) {
             if (item.getItems().getId() == cardData.getId()) {
                 item.setQuantity(item.getQuantity() + 1);
                 menuTableView.refresh();
-                updateTotal();
+                updateSubTotal();
                 updateTotalQty();
+                getTotalDynamically();
                 return;
             }
         }
@@ -935,44 +951,91 @@ public class MainFormController implements Initializable {
         removeButton.setOnAction(e -> removeFromCart(newItem));
         newItem.setRemoveButton(removeButton);
         cartData.add(newItem);
-        updateTotal();
+        updateSubTotal();
         updateTotalQty();
+        getTotalDynamically();
     }
     private void removeFromCart(CartItem item) {
         cartData.remove(item);
         itemData.remove(item);
-        updateTotal();
+        updateSubTotal();
         updateTotalQty();
+        getTotalDynamically();
     }
     double t_Price = 0;
-    private void updateTotal() {
-        double total = cartData.stream().mapToDouble(CartItem::getTotalPrice).sum();
-        t_Price = total;
-        menu_SubTotal.setText("$" + total);
+    private void updateSubTotal() {
+        double subTotal = cartData.stream().mapToDouble(CartItem::getTotalPrice).sum();
+        t_Price = subTotal;
+        menu_SubTotal.setText("৳ "+subTotal+" TK");
     } 
     int t_Qty = 0;
     private void updateTotalQty() {
         int total_Qty = cartData.stream().mapToInt(CartItem::getQuantity).sum();
         t_Qty = total_Qty;
-        totalQty.setText(Integer.toString(total_Qty));
+        totalQty.setText("Total Qty: "+total_Qty);
     }
-    
-    
-    
-    
-    private final String[] menuOrderTypeList = {"Table", "Parcel"};
-    public void menuOrderTypeList() {
+    public void cartMenuClearBtn() {
+        if(cartData.isEmpty()) {
+            alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Cart Empty!");
+            alert.showAndWait();
+        } else {
+            alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Clear Cart Confirmation");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to CLEAR all cart?");
+            Optional<ButtonType> option = alert.showAndWait();
 
-        List<String> xVal = new ArrayList<>();
-
-        for (String data : menuOrderTypeList) {
-            xVal.add(data);
+            if (option.get().equals(ButtonType.OK)) {
+                itemData.clear();
+                cartData.clear();
+                updateSubTotal();
+                updateTotalQty();
+                getTotalDynamically();
+            }
         }
-
-        ObservableList listData = FXCollections.observableArrayList(xVal);
-        menu_OrderType.setItems(listData);
+        
+        //expense_Amount.setText("");
+        //expense_Category.getSelectionModel().clearSelection();
+        //expense_Date.setValue(null);
+        //expense_Date.getEditor().clear();
+    } 
+    private double totalAmount = t_Price;
+    public void getTotalDynamically() {
+        System.out.println("->: "+t_Price);
+        setupCartTable();
+        // Set initial total amount display
+        menu_Total.setText(String.format("৳ %.2f", t_Price));
+        //System.out.println("->: "+t_Price);
+        
+        // Add listener to menu_Discount to update total amount dynamically
+        menu_Discount.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                // Parse the discount from menu_Discount, defaulting to 0 if empty
+                double discount = newValue.isEmpty() ? 0 : Double.parseDouble(newValue);
+                // Calculate the new total amount
+                if(t_Price == 0){
+                    double discountedAmount = t_Price;
+                    // Update the label with the new total
+                    menu_Total.setText(String.format("৳ %.2f", discountedAmount));
+                } else {
+                    double discountedAmount = t_Price - discount;
+                    // Update the label with the new total
+                    menu_Total.setText(String.format("৳ %.2f", discountedAmount));
+                }             
+                //System.out.println("->: "+discountedAmount);
+            } catch (NumberFormatException e) {
+                // Handle invalid input gracefully
+                menu_Total.setText("Invalid discount");
+            }
+        });
     }
+
     //// END POS MENU SECTION
+    
+    
     
     //// START EXPENSE SECTION
     private final String[] expenseCategoryList = {"Eutility Bill", "Living Cost", "Emplyee Salery", "Buy Goods"};
@@ -1600,7 +1663,6 @@ public class MainFormController implements Initializable {
         //System.out.println("-------> : "+ user.getImage());
         }
     }
-    
     private final String[] empUserRoleList = {"Manager","Cashier"};
     public void empUserRoleList() {
 
@@ -2160,7 +2222,6 @@ public class MainFormController implements Initializable {
             editStage.show();
         });
     }
-    
     public void editProfile() {
         // Set up edit button action
         editProfileBtn.setOnAction(event -> {
@@ -2333,8 +2394,6 @@ public class MainFormController implements Initializable {
             System.out.println("-> "+e);
         }
     }
-    
-    
     public void changePassword() {
         // Set up edit button action
         changeUserPassBtn.setOnAction(event -> {
@@ -2495,10 +2554,6 @@ public class MainFormController implements Initializable {
             System.out.println("-> "+e);
         }
     }
-    
-    
-
-    
     /// END USERS SECTION/
     
     
@@ -2526,6 +2581,9 @@ public class MainFormController implements Initializable {
         
         menuOrderTypeList();
         menuDisplayCard();
+        setupCartTable();
+        setDynamicColumnWidthForCartTable();
+        getTotalDynamically();
         //menuGetOrder();
         //menuDisplayTotal();
         //menuShowOrderData();
