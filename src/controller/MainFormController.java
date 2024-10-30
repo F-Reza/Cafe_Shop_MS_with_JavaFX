@@ -928,8 +928,9 @@ public class MainFormController implements Initializable {
         menu_Col_Action.maxWidthProperty().bind(menuTableView.widthProperty().multiply(.7));
     }
     public void addToCart(ItemsDataModel cardData) {
+        //System.out.println("Clicked addToCart! -> id: "+ cardData.getId());
         setupCartTable();
-        System.out.println("Clicked addToCart! -> id: "+ cardData.getId());
+        
         for (CartItem item : cartData) {
             if (item.getItems().getId() == cardData.getId()) {
                 item.setQuantity(item.getQuantity() + 1);
@@ -966,7 +967,12 @@ public class MainFormController implements Initializable {
     private void updateSubTotal() {
         double subTotal = cartData.stream().mapToDouble(CartItem::getTotalPrice).sum();
         t_Price = subTotal;
-        menu_SubTotal.setText("৳ "+subTotal+" TK");
+        //menu_SubTotal.setText("৳ "+subTotal+" TK");
+        if(t_Price == 0) {
+            menu_SubTotal.setText("৳ "+subTotal);
+        } else {
+            menu_SubTotal.setText("৳ "+subTotal+" TK");
+        }
     } 
     int t_Qty = 0;
     private void updateTotalQty() {
@@ -994,6 +1000,12 @@ public class MainFormController implements Initializable {
                 updateSubTotal();
                 updateTotalQty();
                 getTotalDynamically();
+                t_Price = 0;
+                menu_Discount.setText("");
+                menu_OthersCharge.setText("");
+                menu_ServedBy.setText("");
+                menu_Note.setText("");
+                menu_OrderType.getSelectionModel().clearSelection();    
             }
         }
         
@@ -1002,36 +1014,143 @@ public class MainFormController implements Initializable {
         //expense_Date.setValue(null);
         //expense_Date.getEditor().clear();
     } 
-    private double totalAmount = t_Price;
-    public void getTotalDynamically() {
-        System.out.println("->: "+t_Price);
-        setupCartTable();
-        // Set initial total amount display
-        menu_Total.setText(String.format("৳ %.2f", t_Price));
-        //System.out.println("->: "+t_Price);
+
+    private void getTotalDynamically() {
+        // Display the initial total amount
+        //menu_Total.setText(String.format("৳ %.2f", t_Price));
+        if(t_Price == 0) {
+            menu_Total.setText(String.format("৳ %.2f", t_Price));
+        } else {
+            menu_Total.setText(String.format("৳ %.2f Tk", t_Price));
+        }
         
-        // Add listener to menu_Discount to update total amount dynamically
-        menu_Discount.textProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-                // Parse the discount from menu_Discount, defaulting to 0 if empty
-                double discount = newValue.isEmpty() ? 0 : Double.parseDouble(newValue);
-                // Calculate the new total amount
-                if(t_Price == 0){
-                    double discountedAmount = t_Price;
-                    // Update the label with the new total
-                    menu_Total.setText(String.format("৳ %.2f", discountedAmount));
-                } else {
-                    double discountedAmount = t_Price - discount;
-                    // Update the label with the new total
-                    menu_Total.setText(String.format("৳ %.2f", discountedAmount));
-                }             
-                //System.out.println("->: "+discountedAmount);
-            } catch (NumberFormatException e) {
-                // Handle invalid input gracefully
-                menu_Total.setText("Invalid discount");
-            }
-        });
+        // Define a method to update the total amount dynamically
+        menu_Discount.textProperty().addListener((observable, oldValue, newValue) -> updateTotalAmount());
+        menu_OthersCharge.textProperty().addListener((observable, oldValue, newValue) -> updateTotalAmount());
     }
+    private void updateTotalAmount() {
+        try {
+            // Parse discount and other charge values, defaulting to 0 if fields are empty
+            double discount = menu_Discount.getText().isEmpty() ? 0 : Double.parseDouble(menu_Discount.getText());
+            double otherCharge = menu_OthersCharge.getText().isEmpty() ? 0 : Double.parseDouble(menu_OthersCharge.getText());
+
+            // Calculate discounted amount based on discount percentage
+            if(t_Price == 0){
+                double discountedAmount = t_Price;
+                menu_Total.setText(String.format("৳ %.2f TK", discountedAmount));
+                
+            } else {
+                double discountedAmount = t_Price - discount;
+                // Update the label with the new total
+                //menu_Total.setText(String.format("৳ %.2f", discountedAmount));
+                
+                if(otherCharge == 0) {
+                    double finalAmount = discountedAmount;
+                    menu_Total.setText(String.format("৳ %.2f TK", finalAmount));
+                } else {
+                    // Add any additional charges
+                    double finalAmount = discountedAmount + otherCharge;
+                    
+                    // Update the label with the new total
+                    menu_Total.setText(String.format("৳ %.2f TK", finalAmount));
+                }
+            } 
+
+        } catch (NumberFormatException e) {
+            // Handle invalid input by displaying an error message
+            menu_Total.setText("Invalid input");
+        }
+    }
+    
+    
+    public void getAndSetInvoice() {
+        for (CartItem item : cartData) {
+            String itemList = String.format("%s, %d, %.2f, %.2f", item.getItemName(), item.getQuantity(), item.getUnitPrice(), item.getTotalPrice());
+            itemData.add(itemList);
+        }
+        System.out.println(itemData);
+
+        // Remove brackets and split by comma and space
+//        String[] itemArray = itemData.toString().replaceAll("[\\[\\]]", "").split(", ");
+//        StringBuilder formattedOutput = new StringBuilder();
+//        for (int i = 0; i < itemArray.length; i += 4) {
+//            if (i + 4 <= itemArray.length) {
+//                String product = String.join(", ", itemArray[i], itemArray[i + 1], itemArray[i + 2], itemArray[i + 3]);
+//                formattedOutput.append(product).append("\n");
+//            }
+//        }
+//        System.out.println("Output:\n" + formattedOutput.toString());
+
+        //System.out.println("Data Inserted!");
+    }
+    
+    private void processBill() {
+        StringBuilder billContent = new StringBuilder();
+        for (CartItem item : cartData) {
+            billContent.append(item.getItems().getItemsName())
+                       .append(" - Qty: ").append(item.getQuantity())
+                       .append(" - Total: $").append(item.getTotalPrice()).append("\n");
+        }
+        billContent.append("\nGrand ").append(menu_Total.getText()); 
+        
+        saveBill();  
+        
+        Alert billAlert = new Alert(Alert.AlertType.INFORMATION);
+        billAlert.setTitle("Bill Summary");
+        billAlert.setHeaderText("Your Order Summary");
+        billAlert.setContentText(billContent.toString());
+        billAlert.showAndWait();
+        
+        itemData.clear();
+        cartData.clear();
+        updateSubTotal();
+        updateTotalQty();
+        getTotalDynamically();
+    }
+    
+    public void saveBill() {
+        
+        String insertData = "INSERT INTO bill (items, total_qty, total_price, bill_date) VALUES (?, ?, ?, ?)";
+
+        try {
+             prepare = db.connection.prepareStatement(insertData);
+
+            for (CartItem item : cartData) {
+                String itemList = String.format("%s, %d, %.2f, %.2f", item.getItemName(), item.getQuantity(), item.getUnitPrice(), item.getTotalPrice());
+                itemData.add(itemList);
+            }
+            
+            
+            // Remove brackets and split by comma and space
+            String[] itemArray = itemData.toString().replaceAll("[\\[\\]]", "").split(", ");
+            StringBuilder formattedOutput = new StringBuilder();
+            for (int i = 0; i < itemArray.length; i += 4) {
+                if (i + 4 <= itemArray.length) {
+                    String product = String.join(", ", itemArray[i], itemArray[i + 1], itemArray[i + 2], itemArray[i + 3]);
+                    formattedOutput.append(product).append("\n");
+                }
+            }
+            
+            System.out.println("Data Inserted!");
+            
+            System.out.println(itemData);
+            System.out.println("Output:\n" + formattedOutput.toString());
+            
+            prepare.setString(1, itemData.toString());
+            prepare.setInt(2, t_Qty);
+            prepare.setDouble(3, t_Price);
+            prepare.setLong(4, System.currentTimeMillis());
+            
+            prepare.addBatch();
+            prepare.executeBatch();
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
+    
 
     //// END POS MENU SECTION
     
