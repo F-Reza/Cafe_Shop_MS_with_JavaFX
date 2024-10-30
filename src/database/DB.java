@@ -10,9 +10,15 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
+import models.ItemsDataModel;
 import models.UserDataModel;
 
 /**
@@ -23,6 +29,8 @@ import models.UserDataModel;
 public class DB {
     public Connection connection;
     private PreparedStatement prepare;
+    private Statement statement;
+    private ResultSet result;
     private Logger logger = Logger.getLogger(this.getClass().getName());
     private final Image placeholderImage = new Image("file:../imgusers.jpg"); 
 
@@ -206,8 +214,74 @@ public class DB {
         return user;
     }
     
+    public ObservableList<ItemsDataModel> itemsDataList() {
+        
+        ObservableList<ItemsDataModel> listData = FXCollections.observableArrayList();
+        String sql = "SELECT * FROM items";
+        
+        getConnection();
+
+        try {
+
+            prepare = connection.prepareStatement(sql);
+            result = prepare.executeQuery();
+
+            ItemsDataModel itemData;
+
+            while (result.next()) {
+
+                itemData = new ItemsDataModel(
+                        result.getInt("id"),
+                        result.getString("items_name"),
+                        result.getString("category"),
+                        result.getString("size"),
+                        result.getDouble("unit_price"),
+                        result.getString("status"),
+                        result.getString("image"),
+                        result.getDate("date"));
+
+                listData.add(itemData);
+
+            } 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listData;
+    }
     
-    
+    public List<ItemsDataModel> getItems() {
+        List<ItemsDataModel> listData = new ArrayList<>();
+        String sql = "SELECT * FROM items";
+
+        try {
+
+            prepare = connection.prepareStatement(sql);
+            result = prepare.executeQuery();
+
+            ItemsDataModel itemData;
+
+            while (result.next()) {
+
+                itemData = new ItemsDataModel(
+                        result.getInt("id"),
+                        result.getString("items_name"),
+                        result.getString("category"),
+                        result.getString("size"),
+                        result.getDouble("unit_price"),
+                        result.getString("status"),
+                        result.getString("image"),
+                        result.getDate("date"));
+
+                listData.add(itemData);
+
+            } 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listData;
+    }
     
     // Get Expenses Data Query Section
     

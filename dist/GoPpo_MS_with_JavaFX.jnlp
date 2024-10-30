@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="GoPpo_MS_with_JavaFX.jar" size="780513" download="eager" />
+    <jar href="GoPpo_MS_with_JavaFX.jar" size="782702" download="eager" />
     <jar href="lib\fontawesomefx-8.2-javadoc.jar" size="165759" download="eager" />
     <jar href="lib\fontawesomefx-8.2.jar" size="180341" download="eager" />
     <jar href="lib\fontawesomefx-glyphsbrowser-all-1.0.jar" size="1662483" download="eager" />

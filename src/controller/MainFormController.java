@@ -65,6 +65,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
+import models.CartItem;
 import models.EmployeeDataModel;
 import models.UserDataModel;
 
@@ -89,48 +90,29 @@ public class MainFormController implements Initializable {
     private static String getEmpDate;
     
     //All Form Section Start
-    @FXML
-    private AnchorPane main_Form;
-    @FXML
-    private AnchorPane dashboadrForm;
-    @FXML
-    private AnchorPane itemsForm;
-    @FXML
-    private AnchorPane posMenuForm;
-    @FXML
-    private AnchorPane invoicesForm;
-    @FXML
-    private AnchorPane expensesForm;
-    @FXML
-    private AnchorPane reportForm;
-    @FXML
-    private AnchorPane usersForm;
-    @FXML
-    private AnchorPane settingsForm;
+    @FXML private AnchorPane main_Form;
+    @FXML private AnchorPane dashboadrForm;
+    @FXML private AnchorPane itemsForm;
+    @FXML private AnchorPane posMenuForm;
+    @FXML private AnchorPane invoicesForm;
+    @FXML private AnchorPane expensesForm;
+    @FXML private AnchorPane reportForm;
+    @FXML private AnchorPane usersForm;
+    @FXML private AnchorPane settingsForm;
     //End
 
     //All Nav Section Start
-    @FXML
-    private Button dashboardBtn;
-    @FXML
-    private Button itemsBtn;
-    @FXML
-    private Button posMenuBtn;
-    @FXML
-    private Button invoicesBtn;
-    @FXML
-    private Button expensesBtn;
-    @FXML
-    private Button reportBtn;
-    @FXML
-    private Button usersBtn;
-    @FXML
-    private Button settingsBtn;
+    @FXML private Button dashboardBtn;
+    @FXML private Button itemsBtn;
+    @FXML private Button posMenuBtn;
+    @FXML private Button invoicesBtn;
+    @FXML private Button expensesBtn;
+    @FXML private Button reportBtn;
+    @FXML private Button usersBtn;
+    @FXML private Button settingsBtn;
 
-    @FXML
-    private Button signoutBtn;
-    @FXML
-    private Label userName;
+    @FXML private Button signoutBtn;
+    @FXML private Label userName;
     //End
 
     //Dashboard Section Start
@@ -138,159 +120,93 @@ public class MainFormController implements Initializable {
 
 
     // Item Section Start
-    @FXML
-    private Button items_AddBtn;
-    @FXML
-    private Button items_UpdateBtn;
-    @FXML
-    private Button items_DeleteBtn;
-    @FXML
-    private Button items_ClearBtn;
-    @FXML
-    private TextField items_Name;
-    @FXML
-    private ComboBox<String> items_Category;
-    @FXML
-    private TextField items_UnitPrice;
-    @FXML
-    private TextField items_Size;
-    @FXML
-    private ComboBox<String> items_Status;
-    @FXML
-    private ImageView items_ImageView;
-    @FXML
-    private Button items_ImportBtn;
-    @FXML
-    private TableView<ItemsDataModel> items_TableView;
-    @FXML
-    private TableColumn<ItemsDataModel, String> items_Col_ItemsSn;
-    @FXML
-    private TableColumn<ItemsDataModel, String> items_Col_ItemsName;
-    @FXML
-    private TableColumn<ItemsDataModel, String> items_Col_Category;
-    @FXML
-    private TableColumn<ItemsDataModel, String> items_Col_Size;
-    @FXML
-    private TableColumn<ItemsDataModel, String> items_Col_UnitPrice;
-    @FXML
-    private TableColumn<ItemsDataModel, String> items_Col_Status;
-    @FXML
-    private TableColumn<ItemsDataModel, String> items_Col_Date;
+    @FXML private Button items_AddBtn;
+    @FXML private Button items_UpdateBtn;
+    @FXML private Button items_DeleteBtn;
+    @FXML private Button items_ClearBtn;
+    @FXML private TextField items_Name;
+    @FXML private ComboBox<String> items_Category;
+    @FXML private TextField items_UnitPrice;
+    @FXML private TextField items_Size;
+    @FXML private ComboBox<String> items_Status;
+    @FXML private ImageView items_ImageView;
+    @FXML private Button items_ImportBtn;
+    @FXML private TableView<ItemsDataModel> items_TableView;
+    @FXML private TableColumn<ItemsDataModel, String> items_Col_ItemsSn;
+    @FXML private TableColumn<ItemsDataModel, String> items_Col_ItemsName;
+    @FXML private TableColumn<ItemsDataModel, String> items_Col_Category;
+    @FXML private TableColumn<ItemsDataModel, String> items_Col_Size;
+    @FXML private TableColumn<ItemsDataModel, String> items_Col_UnitPrice;
+    @FXML private TableColumn<ItemsDataModel, String> items_Col_Status;
+    @FXML private TableColumn<ItemsDataModel, String> items_Col_Date;
     //End
 
 
     //POS Menu Section Start
-    @FXML
-    private GridPane menuGridPane;
-    @FXML
-    private ScrollPane menuScrollPane;
-    @FXML
-    private TextField menu_searchItem;
-    @FXML
-    private Button mealsBtn;
-    @FXML
-    private Button drinksBtn;
-    @FXML
-    private Button packagesBtn;
-    @FXML
-    private Button othersBtn;
-    @FXML
-    private TableView<?> menuTableView;
-    @FXML
-    private TableColumn<?, ?> menu_Col_ItemName;
-    @FXML
-    private TableColumn<?, ?> menu_Col_Qty;
-    @FXML
-    private TableColumn<?, ?> menu_Col_Price;
-    @FXML
-    private Label menu_SubTotal;
-    @FXML
-    private TextField menu_Discount;
-    @FXML
-    private TextField menu_OthersCharge;
-    @FXML
-    private TextField menu_Note;
-    @FXML
-    private Label menu_Total;
-    @FXML
-    private ComboBox<String> menu_OrderType;
-    @FXML
-    private TextField menu_ServedBy;
-    @FXML
-    private Button menu_RemoveBtn;
-    @FXML
-    private Button menu_ClearBtn;
-    @FXML
-    private Button menu_InvoiceBtn;
+    @FXML private GridPane menuGridPane;
+    @FXML private ScrollPane menuScrollPane;
+    @FXML private TextField menu_searchItem;
+    @FXML private Button mealsBtn;
+    @FXML private Button drinksBtn;
+    @FXML private Button packagesBtn;
+    @FXML private Button othersBtn;
+    @FXML private TableView<CartItem> menuTableView;
+    @FXML private TableColumn<CartItem, String> menu_Col_SN;
+    @FXML private TableColumn<CartItem, String> menu_Col_ItemName;
+    @FXML private TableColumn<CartItem, Integer> menu_Col_Qty;
+    @FXML private TableColumn<CartItem, Double> menu_Col_ItemRate;
+    @FXML private TableColumn<CartItem, Double> menu_Col_Price;
+    @FXML private TableColumn<CartItem, Button> menu_Col_Action;
+    @FXML private Label menu_SubTotal;
+    @FXML private TextField menu_Discount;
+    @FXML private TextField menu_OthersCharge;
+    @FXML private TextField menu_Note;
+    @FXML private Label menu_Total;
+    @FXML private Label totalQty; 
+    @FXML private ComboBox<String> menu_OrderType;
+    @FXML private TextField menu_ServedBy;
+    @FXML private Button menu_RemoveBtn;
+    @FXML private Button menu_ClearBtn;
+    @FXML private Button menu_InvoiceBtn;
     //End
 	
-
+  
     //Invoices Section Start
     //End
 	
     //Expense Section Start
-    @FXML
-    private Button expense_AddBtn;
-    @FXML
-    private Button expense_UpdateBtn;
-    @FXML
-    private Button expense_DeleteBtn;
-    @FXML
-    private Button expense_ClearBtn;
-    @FXML
-    private TextField expense_Amount;
-    @FXML
-    private ComboBox<String> expense_Category;
-    @FXML
-    private TextArea expense_Discription;	
-    @FXML
-    private TextField expense_By;
-    @FXML
-    private DatePicker expense_Date;	
-    @FXML
-    private TableView<ExpenseDataModel> expense_TableView;
-    @FXML
-    private TableColumn<ExpenseDataModel, String> expense_Col_Sn;
-    @FXML
-    private TableColumn<ExpenseDataModel, String> expense_Col_Amount;
-    @FXML
-    private TableColumn<ExpenseDataModel, String> expense_Col_Category;
-    @FXML
-    private TableColumn<ExpenseDataModel, String> expense_Col_Description;
-    @FXML
-    private TableColumn<ExpenseDataModel, String> expense_Col_ExpensedBy;
-    @FXML
-    private TableColumn<ExpenseDataModel, String> expense_Col_Date;  
+    @FXML private Button expense_AddBtn;
+    @FXML private Button expense_UpdateBtn;
+    @FXML private Button expense_DeleteBtn;
+    @FXML private Button expense_ClearBtn;
+    @FXML private TextField expense_Amount;
+    @FXML private ComboBox<String> expense_Category;
+    @FXML private TextArea expense_Discription;	
+    @FXML private TextField expense_By;
+    @FXML private DatePicker expense_Date;	
+    @FXML private TableView<ExpenseDataModel> expense_TableView;
+    @FXML private TableColumn<ExpenseDataModel, String> expense_Col_Sn;
+    @FXML private TableColumn<ExpenseDataModel, String> expense_Col_Amount;
+    @FXML private TableColumn<ExpenseDataModel, String> expense_Col_Category;
+    @FXML private TableColumn<ExpenseDataModel, String> expense_Col_Description;
+    @FXML private TableColumn<ExpenseDataModel, String> expense_Col_ExpensedBy;
+    @FXML private TableColumn<ExpenseDataModel, String> expense_Col_Date;  
     
-    @FXML
-    private DatePicker expenseDatePicker;
-    @FXML
-    private Label selectedDateExpense;
-    @FXML
-    private Button getExpSpecificBtn;
-    @FXML
-    private DatePicker startExpDatePicker;
-    @FXML
-    private DatePicker endExpDatePicker;
-    @FXML
-    private Label dateRangeExpense;
-    @FXML
-    private Button getExpDateRangeBtn;
-    @FXML
-    private Button getExp_ClearBtn;
+    @FXML private DatePicker expenseDatePicker;
+    @FXML private Label selectedDateExpense;
+    @FXML private Button getExpSpecificBtn;
+    @FXML private DatePicker startExpDatePicker;
+    @FXML private DatePicker endExpDatePicker;
+    @FXML private Label dateRangeExpense;
+    @FXML private Button getExpDateRangeBtn;
+    @FXML private Button getExp_ClearBtn;
 
-    @FXML
-    private Label todayExpense;
-    @FXML
-    private Label yesterdayExpense;
-    @FXML
-    private Label thisweekExpense;
-    @FXML
-    private Label thismonthExpense;
-    @FXML
-    private Label thisyearExpense;
-    @FXML
-    private Label totalExpense;
+    @FXML private Label todayExpense;
+    @FXML private Label yesterdayExpense;
+    @FXML private Label thisweekExpense;
+    @FXML private Label thismonthExpense;
+    @FXML private Label thisyearExpense;
+    @FXML private Label totalExpense;
     //End
 	
     //Reports Section Start
@@ -299,66 +215,41 @@ public class MainFormController implements Initializable {
     
     //Users Section Start
     
-    @FXML
-    private Label userDisplayName; 
-    @FXML
-    private ImageView userImage;    
-    @FXML
-    private Label adminUserName;
-    @FXML
-    private Label userRole;
-    @FXML
-    private Label userStatus;
-    @FXML
-    private Label activeQuestion;
-    @FXML
-    private Label userDate;
-    @FXML
-    private Button editProfileBtn;
-    @FXML
-    private Button changeUserPassBtn;
+    @FXML private Label userDisplayName; 
+    @FXML private ImageView userImage;    
+    @FXML private Label adminUserName;
+    @FXML private Label userRole;
+    @FXML private Label userStatus;
+    @FXML private Label activeQuestion;
+    @FXML private Label userDate;
+    @FXML private Button editProfileBtn;
+    @FXML private Button changeUserPassBtn;
 
 
-    @FXML
-    private Button empAddBtn;
-    @FXML
-    private Button empUpdateBtn;
-    @FXML
-    private Button empDeleteBtn;
+    @FXML private Button empAddBtn;
+    @FXML private Button empUpdateBtn;
+    @FXML private Button empDeleteBtn;
 
     private static int emp_id;
     private static boolean check_pass;
     private static String emp_pass;
     private static Date emp_date;
     
-    @FXML
-    private TextField emp_username;
-    @FXML
-    private PasswordField emp_password;
-    @FXML
-    private ComboBox<String> emp_user_role;
-    @FXML
-    private ComboBox<String> emp_user_status;
+    @FXML private TextField emp_username;
+    @FXML private PasswordField emp_password;
+    @FXML private ComboBox<String> emp_user_role;
+    @FXML private ComboBox<String> emp_user_status;
     
-    @FXML
-    private TextField emp_passPlainText;
-    @FXML
-    private CheckBox showPassCheckBox;
+    @FXML private TextField emp_passPlainText;
+    @FXML private CheckBox showPassCheckBox;
     
-    @FXML
-    private TableView<EmployeeDataModel> empUser_TableView;
-    @FXML
-    private TableColumn<EmployeeDataModel, String> emp_Col_Sn;
-    @FXML
-    private TableColumn<EmployeeDataModel, String> emp_Col_UserName;
-    @FXML
-    private TableColumn<EmployeeDataModel, String> emp_Col_Password;
-    @FXML
-    private TableColumn<EmployeeDataModel, String> emp_Col_UserRole;
-    @FXML
-    private TableColumn<EmployeeDataModel, String> emp_Col_Status;
-    @FXML
-    private TableColumn<EmployeeDataModel, String> emp_Col_Date;
+    @FXML private TableView<EmployeeDataModel> empUser_TableView;
+    @FXML private TableColumn<EmployeeDataModel, String> emp_Col_Sn;
+    @FXML private TableColumn<EmployeeDataModel, String> emp_Col_UserName;
+    @FXML private TableColumn<EmployeeDataModel, String> emp_Col_Password;
+    @FXML private TableColumn<EmployeeDataModel, String> emp_Col_UserRole;
+    @FXML private TableColumn<EmployeeDataModel, String> emp_Col_Status;
+    @FXML private TableColumn<EmployeeDataModel, String> emp_Col_Date;
     //End
 
     //Settings Section Start
@@ -927,7 +818,15 @@ public class MainFormController implements Initializable {
     //// END ITEM SECTION
     
     //// START POS MENU SECTION
+    public void initialize() {
+        setupCartTable();
+        //getBillButton.setOnAction(e -> processBill());
+    }
     private final ObservableList<ItemsDataModel> cardListData = FXCollections.observableArrayList();
+    
+    private ObservableList<CartItem> cartData = FXCollections.observableArrayList();
+    private ObservableList<String> itemData = FXCollections.observableArrayList();
+    
     public ObservableList<ItemsDataModel> menuGetData() {
 
         String sql = "SELECT * FROM items";
@@ -961,7 +860,7 @@ public class MainFormController implements Initializable {
         return listData;
     }
     public void menuDisplayCard() {
-
+        List<ItemsDataModel> itemsData = db.getItems();     
         cardListData.clear();
         cardListData.addAll(menuGetData());
 
@@ -985,8 +884,9 @@ public class MainFormController implements Initializable {
                     column = 0;
                     row += 1;
                 }
-
                 menuGridPane.add(pane, column++, row);
+
+                menuGridPane.setOnMouseClicked(event -> addToCart(cardListData.get(id)));  
 
                 GridPane.setMargin(pane, new Insets(8));
 
@@ -994,7 +894,72 @@ public class MainFormController implements Initializable {
                 e.printStackTrace();
             }
         }
+        
     }
+    private void setupCartTable() {
+        
+        menu_Col_SN.setCellValueFactory(new PropertyValueFactory<>("serialNumber"));
+        menu_Col_SN.setCellValueFactory(cellData -> {
+            int index = menuTableView.getItems().indexOf(cellData.getValue()) + 1;
+            return new SimpleStringProperty(String.valueOf(index));
+        });
+
+        menu_Col_ItemName.setCellValueFactory(new PropertyValueFactory<>("itemName"));
+        menu_Col_Qty.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        menu_Col_ItemRate.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
+        menu_Col_Price.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
+        menu_Col_Action.setCellValueFactory(new PropertyValueFactory<>("removeButton"));
+
+        menuTableView.setItems(cartData);
+    }
+    private void addToCart(ItemsDataModel cardData) {
+        setupCartTable();
+        System.out.println("Clicked addToCart! -> id: "+ cardData.getId());
+        for (CartItem item : cartData) {
+            if (item.getItems().getId() == cardData.getId()) {
+                item.setQuantity(item.getQuantity() + 1);
+                menuTableView.refresh();
+                updateTotal();
+                updateTotalQty();
+                return;
+            }
+        }
+        CartItem newItem = new CartItem(cardData, 1);
+        Button removeButton = new Button("X");
+        removeButton.setMinHeight(14);
+        removeButton.setMaxHeight(14);
+        removeButton.setMinWidth(20);
+        removeButton.setMaxWidth(20);
+        removeButton.setStyle("-fx-font-size: 11px; -fx-padding: 0.0; -fx-text-fill: #fff; -fx-background-color: #eb396b;");
+        
+        removeButton.setOnAction(e -> removeFromCart(newItem));
+        newItem.setRemoveButton(removeButton);
+        cartData.add(newItem);
+        updateTotal();
+        updateTotalQty();
+    }
+    private void removeFromCart(CartItem item) {
+        cartData.remove(item);
+        itemData.remove(item);
+        updateTotal();
+        updateTotalQty();
+    }
+    double t_Price = 0;
+    private void updateTotal() {
+        double total = cartData.stream().mapToDouble(CartItem::getTotalPrice).sum();
+        t_Price = total;
+        menu_SubTotal.setText("$" + total);
+    } 
+    int t_Qty = 0;
+    private void updateTotalQty() {
+        int total_Qty = cartData.stream().mapToInt(CartItem::getQuantity).sum();
+        t_Qty = total_Qty;
+        totalQty.setText(Integer.toString(total_Qty));
+    }
+    
+    
+    
+    
     private final String[] menuOrderTypeList = {"Table", "Parcel"};
     public void menuOrderTypeList() {
 
