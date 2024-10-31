@@ -12,8 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -82,13 +80,13 @@ public class DB {
         
         String queryD = "CREATE TABLE IF NOT EXISTS invoices ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "inv_id INTEGER NOT NULL, "
+                + "inv_id TEXT NOT NULL, "
                 + "items TEXT NOT NULL, "
                 + "subtotal REAL NOT NULL, "
                 + "discount REAL, "
                 + "others_charge REAL, "
+                + "grand_total REAL NOT NULL, "
                 + "note TEXT, "
-                + "total_bill REAL NOT NULL, "
                 + "order_type TEXT, "
                 + "served_by TEXT, "
                 + "bill_by TEXT, "

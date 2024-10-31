@@ -512,7 +512,7 @@ public class MainFormController implements Initializable {
             prepare.executeUpdate();
 
             alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Error Message");
+            alert.setTitle("Confirmation Message");
             alert.setHeaderText(null);
             alert.setContentText("Successfully Added!");
             alert.showAndWait();
@@ -820,16 +820,18 @@ public class MainFormController implements Initializable {
     //// END ITEM SECTION
     
     //// START POS MENU SECTION
-    int xInvID = 0;
+    int xMaxID = 0;
     int t_Qty = 0;
     double t_Price = 0;
     double xGrandTotal = 0;
-    String xDate = "";
-    String xDiscount = "";
-    String xOthersCharge = "";
+    double xDiscount = 0;
+    double xOthersCharge = 0;
+    String xInvID = "";
     String xNote = "";
+    String xOrderType = "";
     String xServedBy = "";
     String xBillBy = "";
+    String xDate = "";
     private final ObservableList<ItemsDataModel> cardListData = FXCollections.observableArrayList();
     private ObservableList<CartItem> cartData = FXCollections.observableArrayList();
     private ObservableList<String> itemData = FXCollections.observableArrayList();
@@ -1045,7 +1047,6 @@ public class MainFormController implements Initializable {
             if(t_Price == 0){
                 double discountedAmount = t_Price;
                 menu_Total.setText(String.format("৳ %.2f TK", discountedAmount));
-                xGrandTotal = t_Price;
                 
             } else {
                 double discountedAmount = t_Price - discount;
@@ -1055,14 +1056,12 @@ public class MainFormController implements Initializable {
                 if(otherCharge == 0) {
                     double finalAmount = discountedAmount;
                     menu_Total.setText(String.format("৳ %.2f TK", finalAmount));
-                    xGrandTotal = finalAmount;
                 } else {
                     // Add any additional charges
                     double finalAmount = discountedAmount + otherCharge;
                     
                     // Update the label with the new total
                     menu_Total.setText(String.format("৳ %.2f TK", finalAmount));
-                    xGrandTotal = finalAmount;
                 }
             } 
 
@@ -1078,10 +1077,10 @@ public class MainFormController implements Initializable {
             prepare = db.connection.prepareStatement(sql);
             result = prepare.executeQuery();
             if (result.next()) {
-                xInvID = result.getInt("MAX(id)");
+                xMaxID = result.getInt("MAX(id)");
             }
-            if (xInvID == 0) {
-                xInvID += 1;
+            if (xMaxID == 0) {
+                xMaxID += 1;
             }
             //System.out.println("Inv ID->: "+xInvID);
         } catch (Exception e) {
@@ -1090,10 +1089,11 @@ public class MainFormController implements Initializable {
     }
     private void getXDateTime() {
         long currentTimeInMillis = System.currentTimeMillis();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd,MM,yy");    
+        SimpleDateFormat sdf = new SimpleDateFormat("ddMMyy");    
         java.sql.Date resultdate = new java.sql.Date(currentTimeInMillis);
         xDate = sdf.format(resultdate.getTime());
         //System.out.println("Time->: "+sdf.format(resultdate.getTime())); 
+        xInvID = (xMaxID+"00"+xDate);
     }
     private void getItemList() {
         for (CartItem item : cartData) {
@@ -1103,95 +1103,108 @@ public class MainFormController implements Initializable {
         //System.out.println("Items->: "+itemData);
     }
     private void getAllTextVal() {
-        xDiscount = menu_Discount.getText();
-        xOthersCharge = menu_OthersCharge.getText();
+        xDiscount = menu_Discount.getText().isEmpty() ? 0 : Double.parseDouble(menu_Discount.getText());
+        xOthersCharge = menu_OthersCharge.getText().isEmpty() ? 0 : Double.parseDouble(menu_OthersCharge.getText());
         xNote = menu_Note.getText();
+        xOrderType = menu_OrderType.getSelectionModel().getSelectedItem();
         xServedBy = menu_ServedBy.getText();
         xBillBy = xValue.username;
+        
+        if(xDiscount == 0 && xOthersCharge == 0) {
+            xGrandTotal = t_Price;
+        } else {
+            xGrandTotal = (t_Price - xDiscount) + xOthersCharge;
+        }
     }
-    public void getAndSetInvoice() {
+    public void printAllTextVal() {
+        System.out.println("Inv ID->: "+xInvID+"\nItems->: "+itemData+"\nSub Total->: "
+                + ""+t_Price+"\nDiscount->: "+xDiscount+"\nOthers Charge->: "+xOthersCharge+"\nGrand Total->: "
+                        + ""+xGrandTotal+"\nNote->: "+xNote+"\nOrder Type->: "+xOrderType+"\nServed By->: "
+                                + ""+xServedBy+"\nBill By->: "+xBillBy+"\nDate->: "+System.currentTimeMillis()+
+                "\n------------------------------------------------");
+    }
+    public void processInvoice() {
         getMaxId();
         getXDateTime();
         getItemList();
         getAllTextVal();
-        
-        System.out.println("Inv ID->: "+xInvID);
-        System.out.println("Time->: "+xDate); 
-        System.out.println("Items->: "+itemData);
-        System.out.println("Sub Total->: "+t_Price);
-        System.out.println("Grand Total->: "+xGrandTotal);
-        System.out.println("Discount->: "+xDiscount+"\nOthers Charge->: "+xOthersCharge+"\nNote->: "+xNote+"\nServed By->: "+xServedBy+"\nBillBy->: "+xBillBy);
-        
-        //System.out.println("Data Inserted!");
+        printAllTextVal();
+        orderSummary();
+        //saveInvoiceData();
     }
-    
-    private void processBill() {
+    private void saveInvoiceData() {
+        try {
+            String insertData = "INSERT INTO invoices "
+                    + "(inv_id, items, subtotal, discount, others_charge, grand_total, "
+                    + "note, order_type, served_by, bill_by, payment_status, date) "
+                    + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            prepare = db.connection.prepareStatement(insertData);
+
+            prepare.setString(1, xInvID);
+            prepare.setString(2, itemData.toString());
+            prepare.setDouble(3, t_Price);
+            prepare.setDouble(4, xDiscount);
+            prepare.setDouble(5, xOthersCharge);
+            prepare.setDouble(6, xGrandTotal);
+            prepare.setString(7, xNote);
+            prepare.setString(8, xOrderType);
+            prepare.setString(9, xServedBy);
+            prepare.setString(10, xBillBy);
+            prepare.setString(11, "Pending");
+            prepare.setLong(12, System.currentTimeMillis());
+
+            prepare.executeUpdate();
+
+//            alert = new Alert(AlertType.INFORMATION);
+//            alert.setTitle("Confirmation Message");
+//            alert.setHeaderText(null);
+//            alert.setContentText("Successfully Added!");
+//            alert.showAndWait();
+
+            System.out.println("-> Invoice Data Inserted!.");
+            
+            clearInvData();
+
+        } catch (Exception e) {
+            //e.printStackTrace();
+            System.out.println("-> "+e);
+        }
+    }
+    private void orderSummary() {
         StringBuilder billContent = new StringBuilder();
         for (CartItem item : cartData) {
             billContent.append(item.getItems().getItemsName())
-                       .append(" - Qty: ").append(item.getQuantity())
-                       .append(" - Total: $").append(item.getTotalPrice()).append("\n");
+                       .append(" [ Qty: ").append(item.getQuantity())
+                       .append(" * Rate: ").append(item.getUnitPrice())
+                       .append(" ] = Total: $").append(item.getTotalPrice()).append("\n")
+                       .append(" ] = Discount: $").append(item.getTotalPrice()).append("\n");
         }
-        billContent.append("\nGrand ").append(menu_Total.getText()); 
+        billContent.append("\nGrand Total ").append(menu_Total.getText()); 
         
-        saveBill();  
+        saveInvoiceData();  
         
         Alert billAlert = new Alert(Alert.AlertType.INFORMATION);
-        billAlert.setTitle("Bill Summary");
-        billAlert.setHeaderText("Your Order Summary");
+        billAlert.setTitle("Information Message");
+        billAlert.setHeaderText("Order Summary");
         billAlert.setContentText(billContent.toString());
         billAlert.showAndWait();
         
+        clearInvData();
+    }
+    public void clearInvData() {
         itemData.clear();
         cartData.clear();
         updateSubTotal();
         updateTotalQty();
         getTotalDynamically();
+        t_Price = 0;
+        menu_Discount.setText("");
+        menu_OthersCharge.setText("");
+        menu_ServedBy.setText("");
+        menu_Note.setText("");
+        menu_OrderType.getSelectionModel().clearSelection();  
     }
-    
-    public void saveBill() {
-        
-        String insertData = "INSERT INTO bill (items, total_qty, total_price, bill_date) VALUES (?, ?, ?, ?)";
-
-        try {
-             prepare = db.connection.prepareStatement(insertData);
-
-            for (CartItem item : cartData) {
-                String itemList = String.format("%s, %d, %.2f, %.2f", item.getItemName(), item.getQuantity(), item.getUnitPrice(), item.getTotalPrice());
-                itemData.add(itemList);
-            }
-            
-            
-            // Remove brackets and split by comma and space
-            String[] itemArray = itemData.toString().replaceAll("[\\[\\]]", "").split(", ");
-            StringBuilder formattedOutput = new StringBuilder();
-            for (int i = 0; i < itemArray.length; i += 4) {
-                if (i + 4 <= itemArray.length) {
-                    String product = String.join(", ", itemArray[i], itemArray[i + 1], itemArray[i + 2], itemArray[i + 3]);
-                    formattedOutput.append(product).append("\n");
-                }
-            }
-            
-            System.out.println("Data Inserted!");
-            
-            System.out.println(itemData);
-            System.out.println("Output:\n" + formattedOutput.toString());
-            
-            prepare.setString(1, itemData.toString());
-            prepare.setInt(2, t_Qty);
-            prepare.setDouble(3, t_Price);
-            prepare.setLong(4, System.currentTimeMillis());
-            
-            prepare.addBatch();
-            prepare.executeBatch();
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    
-    
 
     //// END POS MENU SECTION
     
