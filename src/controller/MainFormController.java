@@ -18,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -819,6 +820,16 @@ public class MainFormController implements Initializable {
     //// END ITEM SECTION
     
     //// START POS MENU SECTION
+    int xInvID = 0;
+    int t_Qty = 0;
+    double t_Price = 0;
+    double xGrandTotal = 0;
+    String xDate = "";
+    String xDiscount = "";
+    String xOthersCharge = "";
+    String xNote = "";
+    String xServedBy = "";
+    String xBillBy = "";
     private final ObservableList<ItemsDataModel> cardListData = FXCollections.observableArrayList();
     private ObservableList<CartItem> cartData = FXCollections.observableArrayList();
     private ObservableList<String> itemData = FXCollections.observableArrayList();
@@ -866,8 +877,7 @@ public class MainFormController implements Initializable {
 
         return listData;
     }
-    public void menuDisplayCard() {
-        List<ItemsDataModel> itemsData = db.getItems();     
+    public void menuDisplayCard() { 
         cardListData.clear();
         cardListData.addAll(menuGetData());
 
@@ -963,7 +973,6 @@ public class MainFormController implements Initializable {
         updateTotalQty();
         getTotalDynamically();
     }
-    double t_Price = 0;
     private void updateSubTotal() {
         double subTotal = cartData.stream().mapToDouble(CartItem::getTotalPrice).sum();
         t_Price = subTotal;
@@ -974,7 +983,6 @@ public class MainFormController implements Initializable {
             menu_SubTotal.setText("৳ "+subTotal+" TK");
         }
     } 
-    int t_Qty = 0;
     private void updateTotalQty() {
         int total_Qty = cartData.stream().mapToInt(CartItem::getQuantity).sum();
         t_Qty = total_Qty;
@@ -1014,7 +1022,6 @@ public class MainFormController implements Initializable {
         //expense_Date.setValue(null);
         //expense_Date.getEditor().clear();
     } 
-
     private void getTotalDynamically() {
         // Display the initial total amount
         //menu_Total.setText(String.format("৳ %.2f", t_Price));
@@ -1038,6 +1045,7 @@ public class MainFormController implements Initializable {
             if(t_Price == 0){
                 double discountedAmount = t_Price;
                 menu_Total.setText(String.format("৳ %.2f TK", discountedAmount));
+                xGrandTotal = t_Price;
                 
             } else {
                 double discountedAmount = t_Price - discount;
@@ -1047,12 +1055,14 @@ public class MainFormController implements Initializable {
                 if(otherCharge == 0) {
                     double finalAmount = discountedAmount;
                     menu_Total.setText(String.format("৳ %.2f TK", finalAmount));
+                    xGrandTotal = finalAmount;
                 } else {
                     // Add any additional charges
                     double finalAmount = discountedAmount + otherCharge;
                     
                     // Update the label with the new total
                     menu_Total.setText(String.format("৳ %.2f TK", finalAmount));
+                    xGrandTotal = finalAmount;
                 }
             } 
 
@@ -1061,26 +1071,57 @@ public class MainFormController implements Initializable {
             menu_Total.setText("Invalid input");
         }
     }
-    
-    
-    public void getAndSetInvoice() {
+    private void getMaxId() {
+        db.getConnection();
+        String sql = "SELECT MAX(id) FROM invoices";
+        try {
+            prepare = db.connection.prepareStatement(sql);
+            result = prepare.executeQuery();
+            if (result.next()) {
+                xInvID = result.getInt("MAX(id)");
+            }
+            if (xInvID == 0) {
+                xInvID += 1;
+            }
+            //System.out.println("Inv ID->: "+xInvID);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void getXDateTime() {
+        long currentTimeInMillis = System.currentTimeMillis();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd,MM,yy");    
+        java.sql.Date resultdate = new java.sql.Date(currentTimeInMillis);
+        xDate = sdf.format(resultdate.getTime());
+        //System.out.println("Time->: "+sdf.format(resultdate.getTime())); 
+    }
+    private void getItemList() {
         for (CartItem item : cartData) {
             String itemList = String.format("%s, %d, %.2f, %.2f", item.getItemName(), item.getQuantity(), item.getUnitPrice(), item.getTotalPrice());
             itemData.add(itemList);
         }
-        System.out.println(itemData);
-
-        // Remove brackets and split by comma and space
-//        String[] itemArray = itemData.toString().replaceAll("[\\[\\]]", "").split(", ");
-//        StringBuilder formattedOutput = new StringBuilder();
-//        for (int i = 0; i < itemArray.length; i += 4) {
-//            if (i + 4 <= itemArray.length) {
-//                String product = String.join(", ", itemArray[i], itemArray[i + 1], itemArray[i + 2], itemArray[i + 3]);
-//                formattedOutput.append(product).append("\n");
-//            }
-//        }
-//        System.out.println("Output:\n" + formattedOutput.toString());
-
+        //System.out.println("Items->: "+itemData);
+    }
+    private void getAllTextVal() {
+        xDiscount = menu_Discount.getText();
+        xOthersCharge = menu_OthersCharge.getText();
+        xNote = menu_Note.getText();
+        xServedBy = menu_ServedBy.getText();
+        xBillBy = xValue.username;
+    }
+    public void getAndSetInvoice() {
+        getMaxId();
+        getXDateTime();
+        getItemList();
+        getAllTextVal();
+        
+        System.out.println("Inv ID->: "+xInvID);
+        System.out.println("Time->: "+xDate); 
+        System.out.println("Items->: "+itemData);
+        System.out.println("Sub Total->: "+t_Price);
+        System.out.println("Grand Total->: "+xGrandTotal);
+        System.out.println("Discount->: "+xDiscount+"\nOthers Charge->: "+xOthersCharge+"\nNote->: "+xNote+"\nServed By->: "+xServedBy+"\nBillBy->: "+xBillBy);
+        
         //System.out.println("Data Inserted!");
     }
     

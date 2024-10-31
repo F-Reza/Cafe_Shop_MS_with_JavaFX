@@ -250,38 +250,7 @@ public class DB {
         return listData;
     }
     
-    public List<ItemsDataModel> getItems() {
-        List<ItemsDataModel> listData = new ArrayList<>();
-        String sql = "SELECT * FROM items";
-
-        try {
-
-            prepare = connection.prepareStatement(sql);
-            result = prepare.executeQuery();
-
-            ItemsDataModel itemData;
-
-            while (result.next()) {
-
-                itemData = new ItemsDataModel(
-                        result.getInt("id"),
-                        result.getString("items_name"),
-                        result.getString("category"),
-                        result.getString("size"),
-                        result.getDouble("unit_price"),
-                        result.getString("status"),
-                        result.getString("image"),
-                        result.getDate("date"));
-
-                listData.add(itemData);
-
-            } 
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return listData;
-    }
+    
     
     // Get Expenses Data Query Section
     
