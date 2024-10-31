@@ -68,6 +68,7 @@ import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import models.CartItem;
 import models.EmployeeDataModel;
+import models.InvoiceDataModel;
 import models.UserDataModel;
 
 /**
@@ -172,6 +173,20 @@ public class MainFormController implements Initializable {
 	
   
     //Invoices Section Start
+    @FXML private TextField srcByInvId;
+    @FXML private Label totalInvoice;
+    @FXML private Label pendingInvoices;
+    @FXML private Label completeInvoices;
+    @FXML private TableView<InvoiceDataModel> invoice_TableView;
+    @FXML private TableColumn<InvoiceDataModel, String> invoice_Col_SN;
+    @FXML private TableColumn<InvoiceDataModel, String> invoice_Col_InvID;
+    @FXML private TableColumn<InvoiceDataModel, Double> invoice_Col_GTotal;
+    @FXML private TableColumn<InvoiceDataModel, String> invoice_Col_OrderType;
+    @FXML private TableColumn<InvoiceDataModel, String> invoice_Col_ServedBy;
+    @FXML private TableColumn<InvoiceDataModel, String> invoice_Col_BillBy;
+    @FXML private TableColumn<InvoiceDataModel, String> invoice_Col_PaymentStatus;
+    @FXML private TableColumn<InvoiceDataModel, String> invoice_Col_Date;
+    @FXML private TableColumn<InvoiceDataModel, String> invoice_Col_Action;
     //End
 	
     //Expense Section Start
@@ -214,7 +229,6 @@ public class MainFormController implements Initializable {
     
     
     //Users Section Start
-    
     @FXML private Label userDisplayName; 
     @FXML private ImageView userImage;    
     @FXML private Label adminUserName;
@@ -313,6 +327,8 @@ public class MainFormController implements Initializable {
             usersForm.setVisible(false);
             settingsForm.setVisible(false);
             
+            invoiceShowData();
+            setDynamicColumnWidthForInvoiceTable();
             itemsClearBtn();
             expenseClearBtn();
 
@@ -1129,8 +1145,7 @@ public class MainFormController implements Initializable {
         getItemList();
         getAllTextVal();
         printAllTextVal();
-        orderSummary();
-        //saveInvoiceData();
+        saveInvoiceData();
     }
     private void saveInvoiceData() {
         try {
@@ -1164,6 +1179,7 @@ public class MainFormController implements Initializable {
 
             System.out.println("-> Invoice Data Inserted!.");
             
+            orderSummary();
             clearInvData();
 
         } catch (Exception e) {
@@ -1181,8 +1197,6 @@ public class MainFormController implements Initializable {
                        .append(" ] = Discount: $").append(item.getTotalPrice()).append("\n");
         }
         billContent.append("\nGrand Total ").append(menu_Total.getText()); 
-        
-        saveInvoiceData();  
         
         Alert billAlert = new Alert(Alert.AlertType.INFORMATION);
         billAlert.setTitle("Information Message");
@@ -1205,9 +1219,89 @@ public class MainFormController implements Initializable {
         menu_Note.setText("");
         menu_OrderType.getSelectionModel().clearSelection();  
     }
-
     //// END POS MENU SECTION
     
+    
+    //// START INVOICE SECTION
+    
+    // MERGE ALL DATAS
+    public ObservableList<InvoiceDataModel> invoiceDataList() {
+        ObservableList<InvoiceDataModel> listData = FXCollections.observableArrayList();
+        
+        String sql = "SELECT * FROM invoices ORDER BY id DESC";
+        db.getConnection();
+
+        try {
+
+            prepare = db.connection.prepareStatement(sql);
+            result = prepare.executeQuery();
+
+            InvoiceDataModel invData;
+            
+            while (result.next()) {
+
+                invData = new InvoiceDataModel(
+                        result.getInt("id"),
+			result.getString("inv_id"),
+                        result.getString("items"),
+                        result.getDouble("subtotal"),
+                        result.getDouble("discount"),
+                        result.getDouble("others_charge"),
+                        result.getDouble("grand_total"),
+                        result.getString("note"),
+                        result.getString("order_type"),
+                        result.getString("served_by"),
+                        result.getString("bill_by"),
+                        result.getString("payment_status"),
+                        result.getDate("date"));
+
+                listData.add(invData);
+
+            } 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listData;
+    }
+    // TO SHOW DATA ON OUR TABLE
+    private ObservableList<InvoiceDataModel> invoiceListData;
+    public void invoiceShowData() {
+        invoiceListData = invoiceDataList();
+        
+        invoice_Col_SN.setCellValueFactory(new PropertyValueFactory<>("id"));
+        invoice_Col_SN.setCellValueFactory(cellData -> {
+            int index = invoice_TableView.getItems().indexOf(cellData.getValue()) + 1;
+            return new SimpleStringProperty(String.valueOf(index));
+        });
+
+        // Setting up the columns for the TableView
+        invoice_Col_InvID.setCellValueFactory(new PropertyValueFactory<>("invID"));
+        invoice_Col_GTotal.setCellValueFactory(new PropertyValueFactory<>("grandTotal"));
+        invoice_Col_OrderType.setCellValueFactory(new PropertyValueFactory<>("orderType"));
+        invoice_Col_ServedBy.setCellValueFactory(new PropertyValueFactory<>("servedBy"));
+        invoice_Col_BillBy.setCellValueFactory(new PropertyValueFactory<>("billBy"));
+        invoice_Col_PaymentStatus.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
+        invoice_Col_Date.setCellValueFactory(new PropertyValueFactory<>("date"));
+        invoice_Col_Action.setCellValueFactory(new PropertyValueFactory<>("date"));
+        
+
+        // Set the data for the TableView
+        invoice_TableView.setItems(invoiceListData);
+    }
+    private void setDynamicColumnWidthForInvoiceTable() {
+        invoice_Col_SN.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(0.6));
+        invoice_Col_InvID.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(1.35));
+        invoice_Col_GTotal.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(1.2));
+        invoice_Col_OrderType.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(0.65));
+        invoice_Col_ServedBy.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(1.3));
+        invoice_Col_BillBy.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(1.3));
+        invoice_Col_PaymentStatus.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(1));
+        invoice_Col_Date.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(0.8));
+        invoice_Col_Action.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(1.8));
+    }
+    
+    //// END INVOICE SECTION
     
     
     //// START EXPENSE SECTION
@@ -1303,9 +1397,6 @@ public class MainFormController implements Initializable {
         } else {
             expenseInsertQry();
         }
-        
-    }
-    private void expenseUpdateQry() {
         
     }
     public void updateExpense(int exp_id, double exp_amount, String exp_category, String exp_discription, String exp_by, Date exp_date) {
@@ -2761,6 +2852,8 @@ public class MainFormController implements Initializable {
         //menuDisplayTotal();
         //menuShowOrderData();
         //customersShowData();
+        invoiceShowData();
+        setDynamicColumnWidthForInvoiceTable();
         
         getExpDateValidation();
         getExpDateRangeValidation();

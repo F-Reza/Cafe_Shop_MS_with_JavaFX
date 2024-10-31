@@ -11,7 +11,7 @@ import java.sql.Date;
  *
  * @author F_Reza
  */
-public class InvoiceModel {
+public class InvoiceDataModel {
     
     private final Integer id;
     private final String invID;
@@ -27,7 +27,7 @@ public class InvoiceModel {
     private final String paymentStatus;
     private final Date date;
 
-    public InvoiceModel(Integer id, String invID, String items, 
+    public InvoiceDataModel(Integer id, String invID, String items, 
             Double subTotal, Double discount, Double othersCharge,Double grandTotal, 
             String note, String orderType, String servedBy, String billBy, 
             String paymentStatus, Date date) {
