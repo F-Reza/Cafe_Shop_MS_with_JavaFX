@@ -943,8 +943,8 @@ public class MainFormController implements Initializable {
         });
 
         menu_Col_ItemName.setCellValueFactory(new PropertyValueFactory<>("itemName"));
-        menu_Col_Qty.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         menu_Col_ItemRate.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
+        menu_Col_Qty.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         menu_Col_Price.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
         menu_Col_Action.setCellValueFactory(new PropertyValueFactory<>("removeButton"));
 
@@ -953,8 +953,8 @@ public class MainFormController implements Initializable {
     private void setDynamicColumnWidthForCartTable() {
         menu_Col_SN.maxWidthProperty().bind(menuTableView.widthProperty().multiply(0.6));
         menu_Col_ItemName.maxWidthProperty().bind(menuTableView.widthProperty().multiply(4.4));
-        menu_Col_Qty.maxWidthProperty().bind(menuTableView.widthProperty().multiply(1));
         menu_Col_ItemRate.maxWidthProperty().bind(menuTableView.widthProperty().multiply(1.5));
+        menu_Col_Qty.maxWidthProperty().bind(menuTableView.widthProperty().multiply(1));
         menu_Col_Price.maxWidthProperty().bind(menuTableView.widthProperty().multiply(1.8));
         menu_Col_Action.maxWidthProperty().bind(menuTableView.widthProperty().multiply(.7));
     }
@@ -1116,7 +1116,7 @@ public class MainFormController implements Initializable {
     }
     private void getItemList() {
         for (CartItem item : cartData) {
-            String itemList = String.format("%s, %d, %.2f, %.2f", item.getItemName(), item.getQuantity(), item.getUnitPrice(), item.getTotalPrice());
+            String itemList = String.format("%s, %.2f, %d, %.2f", item.getItemName(), item.getUnitPrice(), item.getQuantity(), item.getTotalPrice());
             itemData.add(itemList);
         }
         //System.out.println("Items->: "+itemData);
@@ -1138,7 +1138,7 @@ public class MainFormController implements Initializable {
     public void printAllTextVal() {
         System.out.println("Inv ID->: "+xInvID+"\nItems->: "+itemData+"\nSub Total->: "
                 + ""+t_Price+"\nDiscount->: "+xDiscount+"\nOthers Charge->: "+xOthersCharge+"\nGrand Total->: "
-                        + ""+xGrandTotal+"\nNote->: "+xNote+"\nOrder Type->: "+xOrderType+"\nServed By->: "
+                        + ""+xGrandTotal+"\nTotal Qty->: "+t_Qty+"\nNote->: "+xNote+"\nOrder Type->: "+xOrderType+"\nServed By->: "
                                 + ""+xServedBy+"\nBill By->: "+xBillBy+"\nDate->: "+System.currentTimeMillis()+
                 "\n------------------------------------------------");
     }
@@ -1147,15 +1147,15 @@ public class MainFormController implements Initializable {
         getXDateTime();
         getItemList();
         getAllTextVal();
-        printAllTextVal();
+        //printAllTextVal();
         saveInvoiceData();
     }
     private void saveInvoiceData() {
         try {
             String insertData = "INSERT INTO invoices "
-                    + "(inv_id, items, subtotal, discount, others_charge, grand_total, "
+                    + "(inv_id, items, subtotal, discount, others_charge, grand_total, total_qty, "
                     + "note, order_type, served_by, bill_by, payment_status, date) "
-                    + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             prepare = db.connection.prepareStatement(insertData);
 
@@ -1165,12 +1165,13 @@ public class MainFormController implements Initializable {
             prepare.setDouble(4, xDiscount);
             prepare.setDouble(5, xOthersCharge);
             prepare.setDouble(6, xGrandTotal);
-            prepare.setString(7, xNote);
-            prepare.setString(8, xOrderType);
-            prepare.setString(9, xServedBy);
-            prepare.setString(10, xBillBy);
-            prepare.setString(11, "Pending");
-            prepare.setLong(12, System.currentTimeMillis());
+            prepare.setDouble(7, t_Qty);
+            prepare.setString(8, xNote);
+            prepare.setString(9, xOrderType);
+            prepare.setString(10, xServedBy);
+            prepare.setString(11, xBillBy);
+            prepare.setString(12, "Pending");
+            prepare.setLong(13, System.currentTimeMillis());
 
             prepare.executeUpdate();
 
@@ -1194,8 +1195,8 @@ public class MainFormController implements Initializable {
         StringBuilder billContent = new StringBuilder();
         for (CartItem item : cartData) {
             billContent.append(item.getItems().getItemsName())
-                       .append(" [ Qty: ").append(item.getQuantity())
                        .append(" * Rate: ").append(item.getUnitPrice())
+                       .append(" [ Qty: ").append(item.getQuantity())
                        .append(" ] = Total: $").append(item.getTotalPrice()).append("\n")
                        .append(" ] = Discount: $").append(item.getTotalPrice()).append("\n");
         }
@@ -1216,6 +1217,7 @@ public class MainFormController implements Initializable {
         updateTotalQty();
         getTotalDynamically();
         t_Price = 0;
+        t_Qty = 0;
         menu_Discount.setText("");
         menu_OthersCharge.setText("");
         menu_ServedBy.setText("");
@@ -1226,7 +1228,16 @@ public class MainFormController implements Initializable {
     
     
     //// START INVOICE SECTION
-    
+    private void loadInvoiceData() {
+        // Check if any label is null before proceeding
+        if (totalInvoice != null) {
+            totalInvoice.setText(""+db.getTotalInvoice());
+            pendingInvoices.setText(""+db.getTotalPendingInvoice());
+            completeInvoices.setText(""+db.getTotalCompleteInvoice());
+        } else {
+            System.err.println("One or more labels are not initialized!");
+        }
+    }
     // MERGE ALL DATAS
     public ObservableList<InvoiceDataModel> invoiceDataList() {
         ObservableList<InvoiceDataModel> listData = FXCollections.observableArrayList();
@@ -1251,6 +1262,7 @@ public class MainFormController implements Initializable {
                         result.getDouble("discount"),
                         result.getDouble("others_charge"),
                         result.getDouble("grand_total"),
+                        result.getInt("total_qty"),
                         result.getString("note"),
                         result.getString("order_type"),
                         result.getString("served_by"),
@@ -1270,6 +1282,7 @@ public class MainFormController implements Initializable {
     // TO SHOW DATA ON OUR TABLE
     private ObservableList<InvoiceDataModel> invoiceListData;
     public void invoiceShowData() {
+        loadInvoiceData();
         invoiceListData = invoiceDataList();
         
         invoice_Col_SN.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -1321,7 +1334,7 @@ public class MainFormController implements Initializable {
                     // Set up view button action
                     viewButton.setOnAction(event -> {
                         try{
-                            getView();
+                            getViewInvoice();
                         } catch (IOException ex) {
                             Logger.getLogger(MainFormController.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -1379,7 +1392,6 @@ public class MainFormController implements Initializable {
         invoice_Col_Date.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(0.8));
         //invoice_Col_Action.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(1.8));
     }
-    
     public void deleteInvoice(int id, String invID) {
     // Confirmation alert before deletion
     alert = new Alert(AlertType.CONFIRMATION);
@@ -1403,7 +1415,7 @@ public class MainFormController implements Initializable {
                 alert.setContentText("Invoice successfully deleted!");
                 alert.showAndWait();
 
-                System.out.println("-> Expense Data Deleted!");
+                System.out.println("-> Invoice Data Deleted!");
 
                 // Refresh the table and clear fields
                 invoiceShowData();
@@ -1420,9 +1432,7 @@ public class MainFormController implements Initializable {
 //            alert.showAndWait();
         }
     }
-    
-    
-    public void getView() throws IOException {
+    public void getViewInvoice() throws IOException {
         // TO HIDE MAIN FORM 
         //signoutBtn.getScene().getWindow().hide();
         Parent root = FXMLLoader.load(getClass().getResource("/view/invoice.fxml"));
@@ -1433,10 +1443,10 @@ public class MainFormController implements Initializable {
         stage.initStyle(StageStyle.UTILITY);
         
 
-        stage.setMinWidth(430);
-        stage.setMaxWidth(430);
-        stage.setMinHeight(815);
-        stage.setMaxHeight(815);
+        stage.setMinWidth(405);
+        stage.setMaxWidth(405);
+        stage.setMinHeight(818);
+        stage.setMaxHeight(818);
         stage.setScene(scene);
         stage.show();
     }

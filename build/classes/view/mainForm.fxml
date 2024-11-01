@@ -437,9 +437,9 @@
                                       <columns>
                                           <TableColumn fx:id="menu_Col_SN" prefWidth="33.0" text="SN" />
                                         <TableColumn fx:id="menu_Col_ItemName" prefWidth="93.0" text="Items" />
-                                        <TableColumn fx:id="menu_Col_Qty" prefWidth="34.0" text="Qty" />
-                                          <TableColumn fx:id="menu_Col_ItemRate" prefWidth="49.0" text="Rate" />
-                                          <TableColumn fx:id="menu_Col_Price" prefWidth="58.0" text="Price" />
+                                          <TableColumn fx:id="menu_Col_ItemRate" prefWidth="51.0" text="Rate" />
+                                        <TableColumn fx:id="menu_Col_Qty" prefWidth="30.0" text="Qty" />
+                                          <TableColumn fx:id="menu_Col_Price" prefWidth="58.0" text="Amount" />
                                           <TableColumn fx:id="menu_Col_Action" prefWidth="32.0" />
                                       </columns>
                                        <columnResizePolicy>
@@ -506,7 +506,7 @@
                                        <columns>
                                           <TableColumn fx:id="invoice_Col_SN" prefWidth="68.0" text="SN" />
                                           <TableColumn fx:id="invoice_Col_InvID" prefWidth="134.0" text="Invoice ID" />
-                                          <TableColumn fx:id="invoice_Col_GTotal" prefWidth="124.0" text="Amount" />
+                                          <TableColumn fx:id="invoice_Col_GTotal" prefWidth="124.0" text="Bill Amount" />
                                           <TableColumn fx:id="invoice_Col_OrderType" text="Order Type" />
                                           <TableColumn fx:id="invoice_Col_ServedBy" prefWidth="162.0" text="Served By" />
                                           <TableColumn fx:id="invoice_Col_BillBy" prefWidth="180.0" text="Bill By" />

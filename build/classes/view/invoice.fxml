@@ -40,10 +40,10 @@
             <Label alignment="CENTER_RIGHT" layoutX="274.0" layoutY="-1.0" prefHeight="17.0" prefWidth="91.0" text="31/10/2024" />
             <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="274.0" layoutY="18.0" prefHeight="17.0" prefWidth="91.0" text="12:30pm" />
             <Label alignment="CENTER_RIGHT" layoutX="217.0" layoutY="38.0" prefHeight="17.0" prefWidth="148.0" text="Bill By: Arko" />
-            <Label layoutX="22.0" layoutY="57.0" text="---------------------------------------------------------------------------" />
+            <Label alignment="CENTER" layoutY="51.0" prefHeight="18.0" prefWidth="386.0" text="------------------------------------------------------------------------------" />
          </children>
       </AnchorPane>
-      <VBox layoutX="13.0" layoutY="246.0" prefHeight="432.0" prefWidth="360.0">
+      <VBox layoutX="13.0" layoutY="240.0" prefHeight="432.0" prefWidth="360.0">
          <children>
             <TableView prefHeight="189.0" prefWidth="360.0" stylesheets="@../css/invoiceDesign.css">
               <columns>
@@ -51,7 +51,7 @@
                 <TableColumn prefWidth="152.0" text="Item Name" />
                   <TableColumn prefWidth="58.0" text="Rate" />
                   <TableColumn prefWidth="43.0" text="Qty" />
-                  <TableColumn prefWidth="70.0" text="Amount" />
+                  <TableColumn prefWidth="72.0" text="Amount" />
               </columns>
             </TableView>
             <AnchorPane prefHeight="105.0" prefWidth="200.0">
@@ -61,9 +61,9 @@
                   <Label layoutX="2.0" layoutY="35.0" text="Note:" />
                   <Label alignment="CENTER_RIGHT" layoutX="184.0" layoutY="6.0" prefHeight="17.0" prefWidth="173.0" text="Subtotal: 520.00 TK" />
                   <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="218.0" layoutY="24.0" prefHeight="18.0" prefWidth="139.0" text="Discount: 00.00" />
-                  <Label layoutX="3.0" layoutY="63.0" text="---------------------------------------------------------------------------" />
+                  <Label alignment="CENTER" layoutY="55.0" prefHeight="18.0" prefWidth="360.0" text="-------------------------------------------------------------------------" />
                   <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="201.0" layoutY="42.0" prefHeight="17.0" prefWidth="156.0" text="Others Charge: 00.00" />
-                  <Label alignment="CENTER_RIGHT" layoutX="98.0" layoutY="74.0" prefHeight="18.0" prefWidth="259.0" text="Grand Total: 520.00 TK">
+                  <Label alignment="CENTER_RIGHT" layoutX="98.0" layoutY="66.0" prefHeight="18.0" prefWidth="259.0" text="Grand Total: 520.00 TK">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>

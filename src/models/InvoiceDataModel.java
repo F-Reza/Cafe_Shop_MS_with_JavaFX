@@ -20,6 +20,7 @@ public class InvoiceDataModel {
     private final Double discount;
     private final Double othersCharge;
     private final Double grandTotal;
+    private final Integer totalQty;
     private final String note;
     private final String orderType;
     private final String servedBy;
@@ -29,7 +30,7 @@ public class InvoiceDataModel {
 
     public InvoiceDataModel(Integer id, String invID, String items, 
             Double subTotal, Double discount, Double othersCharge,Double grandTotal, 
-            String note, String orderType, String servedBy, String billBy, 
+            Integer totalQty, String note, String orderType, String servedBy, String billBy, 
             String paymentStatus, Date date) {
         
         this.id = id;
@@ -39,6 +40,7 @@ public class InvoiceDataModel {
         this.discount = discount;
         this.othersCharge = othersCharge;
         this.grandTotal = grandTotal;
+        this.totalQty = totalQty;
         this.note = note;
         this.orderType = orderType;
         this.servedBy = servedBy;
@@ -67,6 +69,9 @@ public class InvoiceDataModel {
     }
     public Double getGrandTotal() {
         return grandTotal;
+    }
+    public Integer getTotalQty() {
+        return totalQty;
     }
     public String getNote() {
         return note;

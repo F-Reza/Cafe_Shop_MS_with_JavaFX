@@ -86,6 +86,7 @@ public class DB {
                 + "discount REAL, "
                 + "others_charge REAL, "
                 + "grand_total REAL NOT NULL, "
+                + "total_qty INTEGER NOT NULL, "
                 + "note TEXT, "
                 + "order_type TEXT, "
                 + "served_by TEXT, "
@@ -249,6 +250,29 @@ public class DB {
     }
     
     
+    // Method to get the total count of invoices
+    public int getTotalInvoice() {
+        return getInvoiceSum("SELECT COUNT(*) FROM invoices");
+    }
+    public int getTotalPendingInvoice() {
+        return getInvoiceSum("SELECT COUNT(*) FROM invoices WHERE payment_status = 'Pending'");
+    } 
+    public int getTotalCompleteInvoice() {
+        return getInvoiceSum("SELECT COUNT(*) FROM invoices WHERE payment_status = 'Complete'");
+    } 
+    private int getInvoiceSum(String query) {
+        int total = 0;
+        try (PreparedStatement pstmt = connection.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            logger.info(e.toString());
+        }
+        return total;
+    }
+    // End Method to get the total count of invoices
     
     // Get Expenses Data Query Section
     
@@ -332,7 +356,6 @@ public class DB {
     }
  
     //End Expenses Data Query Section
-    
-    
+
 
 }
