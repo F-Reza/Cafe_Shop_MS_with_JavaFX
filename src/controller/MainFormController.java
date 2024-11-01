@@ -11,6 +11,7 @@ import models.ExpenseDataModel;
 import models.ItemsDataModel;
 import utils.xValue;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -26,6 +27,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -1283,9 +1286,85 @@ public class MainFormController implements Initializable {
         invoice_Col_BillBy.setCellValueFactory(new PropertyValueFactory<>("billBy"));
         invoice_Col_PaymentStatus.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
         invoice_Col_Date.setCellValueFactory(new PropertyValueFactory<>("date"));
-        invoice_Col_Action.setCellValueFactory(new PropertyValueFactory<>("date"));
+        //invoice_Col_Action.setCellValueFactory(new PropertyValueFactory<>("date"));
         
 
+        // Check if the action column is already added, to avoid duplicates
+        boolean actionColumnExists = false;
+        for (TableColumn<InvoiceDataModel, ?> column : invoice_TableView.getColumns()) {
+            if (column.getText().equals("Actions")) {
+                actionColumnExists = true;
+                break;
+            }
+        }
+
+        if (!actionColumnExists) {
+            // Creating an action column for Edit and Delete buttons
+            TableColumn<InvoiceDataModel, InvoiceDataModel> invoiceActionCol = new TableColumn<>("Actions");
+
+            // Explicitly specify the generic types instead of using <>
+            invoiceActionCol.setCellFactory((final TableColumn<InvoiceDataModel, InvoiceDataModel> param) -> new TableCell<InvoiceDataModel, InvoiceDataModel>() {
+                
+                private final Button viewButton = new Button("View");
+                private final Button printButton = new Button("Print");
+                private final Button deleteButton = new Button("Delete");
+                private final HBox actionButtons = new HBox(viewButton, printButton, deleteButton);
+                
+                {
+                    // Style the buttons
+                    viewButton.setStyle("-fx-background-color: #00a2ed; -fx-text-fill: white;");
+                    printButton.setStyle("-fx-background-color: #5b5b5b; -fx-text-fill: white;");
+                    deleteButton.setStyle("-fx-background-color: #ed0000; -fx-text-fill: white;");
+                    actionButtons.setSpacing(10); // Add spacing between the buttons
+                    actionButtons.setAlignment(Pos.CENTER); // Center-align the buttons in the cell
+                    
+                    // Set up view button action
+                    viewButton.setOnAction(event -> {
+                        try{
+                            getView();
+                        } catch (IOException ex) {
+                            Logger.getLogger(MainFormController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    });
+                    
+                    // Set up print button action
+                    printButton.setOnAction(event -> {
+                        
+                        // Show cancellation alert
+                        alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("Information Message");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Print Your Invoice Here..");
+                        alert.showAndWait();
+                        
+                    });
+
+                    // Set up delete button action
+                    deleteButton.setOnAction(event -> {
+                        InvoiceDataModel invoice = getTableView().getItems().get(getIndex());
+                        int id = invoice.getId();
+                        String invID = invoice.getInvID();
+                        deleteInvoice(id, invID);
+                    });
+                    
+                }
+                
+                @Override
+                protected void updateItem(InvoiceDataModel item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null); // If the row is empty, remove the buttons
+                    } else {
+                        setGraphic(actionButtons); // Otherwise, show the buttons
+                    }
+                }
+            });
+
+            // Add the action column to the table only once
+            invoice_TableView.getColumns().add(invoiceActionCol);
+            invoiceActionCol.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(1.8));
+        }
+        
         // Set the data for the TableView
         invoice_TableView.setItems(invoiceListData);
     }
@@ -1298,9 +1377,69 @@ public class MainFormController implements Initializable {
         invoice_Col_BillBy.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(1.3));
         invoice_Col_PaymentStatus.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(1));
         invoice_Col_Date.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(0.8));
-        invoice_Col_Action.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(1.8));
+        //invoice_Col_Action.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(1.8));
     }
     
+    public void deleteInvoice(int id, String invID) {
+    // Confirmation alert before deletion
+    alert = new Alert(AlertType.CONFIRMATION);
+    alert.setTitle("Confirmation Message");
+    alert.setHeaderText(null);
+    alert.setContentText("Are you sure you want to DELETE this Invoice '"+invID+"' ?");
+    Optional<ButtonType> option = alert.showAndWait();
+
+        // If the user confirms the deletion
+        if (option.isPresent() && option.get().equals(ButtonType.OK)) {
+            String deleteData = "DELETE FROM invoices WHERE id = " + id;
+            try {
+                // Execute the delete query
+                prepare = db.connection.prepareStatement(deleteData);
+                prepare.executeUpdate();
+
+                // Show success alert
+                alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Success Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Invoice successfully deleted!");
+                alert.showAndWait();
+
+                System.out.println("-> Expense Data Deleted!");
+
+                // Refresh the table and clear fields
+                invoiceShowData();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Show cancellation alert
+//            alert = new Alert(AlertType.ERROR);
+//            alert.setTitle("Cancellation Message");
+//            alert.setHeaderText(null);
+//            alert.setContentText("Deletion cancelled.");
+//            alert.showAndWait();
+        }
+    }
+    
+    
+    public void getView() throws IOException {
+        // TO HIDE MAIN FORM 
+        //signoutBtn.getScene().getWindow().hide();
+        Parent root = FXMLLoader.load(getClass().getResource("/view/invoice.fxml"));
+        Stage stage = new Stage();
+        Scene scene = new Scene(root);
+        stage.setTitle("View Invoice");
+        stage.initModality(Modality.APPLICATION_MODAL); // Make the stage modal
+        stage.initStyle(StageStyle.UTILITY);
+        
+
+        stage.setMinWidth(430);
+        stage.setMaxWidth(430);
+        stage.setMinHeight(815);
+        stage.setMaxHeight(815);
+        stage.setScene(scene);
+        stage.show();
+    }
     //// END INVOICE SECTION
     
     

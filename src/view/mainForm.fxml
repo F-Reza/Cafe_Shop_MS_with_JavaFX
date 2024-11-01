@@ -512,7 +512,6 @@
                                           <TableColumn fx:id="invoice_Col_BillBy" prefWidth="180.0" text="Bill By" />
                                           <TableColumn fx:id="invoice_Col_PaymentStatus" prefWidth="100.0" text="Payment Status" />
                                           <TableColumn fx:id="invoice_Col_Date" prefWidth="85.0" text="Date" />
-                                          <TableColumn fx:id="invoice_Col_Action" prefWidth="173.0" text="Action" />
                                        </columns>
                                        <columnResizePolicy>
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
