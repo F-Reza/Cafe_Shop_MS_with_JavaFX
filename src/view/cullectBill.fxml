@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" fx:id="orderBillCard" prefHeight="212.0" prefWidth="172.0" stylesheets="@../css/cardItemDesign.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CullectBillController">
+   <children>
+      <AnchorPane layoutX="6.0" layoutY="6.0" prefHeight="187.0" prefWidth="160.0" stylesheets="@../css/cardItemDesign.css">
+         <styleClass>
+            <String fx:value="card" />
+            <String fx:value="shadow" />
+            <String fx:value="radius-card" />
+         </styleClass>
+      </AnchorPane>
+      <Label fx:id="card_dateTime" alignment="CENTER" layoutX="6.0" layoutY="11.0" prefHeight="17.0" prefWidth="160.0" text="01/11/2024 || 12:50am">
+         <font>
+            <Font size="11.0" />
+         </font>
+      </Label>
+      <Label layoutX="43.0" layoutY="96.0" text="Payble Amount">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="card_paybleAmount" alignment="CENTER" layoutX="6.0" layoutY="116.0" prefHeight="25.0" prefWidth="160.0" text="0.00 TK">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Label>
+      <Button fx:id="card_completeBtn" layoutX="47.0" layoutY="180.0" mnemonicParsing="false" onAction="#completeBtn" prefHeight="25.0" prefWidth="78.0" styleClass="btn" stylesheets="@../css/cardItemDesign.css" text="Complete" />
+      <Label fx:id="card_invoiceID" alignment="CENTER" layoutX="6.0" layoutY="51.0" prefHeight="20.0" prefWidth="160.0" text="10001112024">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="6.0" layoutY="141.0" prefHeight="17.0" prefWidth="160.0" text="-------------------------------" />
+      <Label alignment="CENTER" layoutX="6.0" layoutY="77.0" prefHeight="17.0" prefWidth="160.0" text="-------------------------------" />
+      <Label layoutX="15.0" layoutY="34.0" prefHeight="17.0" prefWidth="140.0" text="Invoice ID:----------------">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+   </children>
+   <styleClass>
+      <String fx:value="transparent" />
+      <String fx:value="radius-card" />
+   </styleClass>
+</AnchorPane>

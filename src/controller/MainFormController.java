@@ -99,6 +99,7 @@ public class MainFormController implements Initializable {
     @FXML private AnchorPane dashboadrForm;
     @FXML private AnchorPane itemsForm;
     @FXML private AnchorPane posMenuForm;
+    @FXML private AnchorPane cullectBillForm;
     @FXML private AnchorPane invoicesForm;
     @FXML private AnchorPane expensesForm;
     @FXML private AnchorPane reportForm;
@@ -110,6 +111,7 @@ public class MainFormController implements Initializable {
     @FXML private Button dashboardBtn;
     @FXML private Button itemsBtn;
     @FXML private Button posMenuBtn;
+    @FXML private Button cullectBillBtn;
     @FXML private Button invoicesBtn;
     @FXML private Button expensesBtn;
     @FXML private Button reportBtn;
@@ -175,6 +177,34 @@ public class MainFormController implements Initializable {
     //End
 	
   
+    //Cullect Bill Section Start
+    @FXML private GridPane cullectBillGridPane;
+    @FXML private ScrollPane cullectBillScrollPane;
+    @FXML private Label totalPendingAmount;
+    //End
+    @FXML private Button billBtn;
+    public void updateBtn() {
+        updatePaymentStatus(1);
+    }
+    public void updatePaymentStatus(int id) {
+        db.getConnection();
+        String sql = "UPDATE invoices SET payment_status = ? WHERE id = ?";
+        try {
+            prepare = db.connection.prepareStatement(sql);
+            
+            prepare.setString(1, "Complete");
+            prepare.setInt(2, id);
+
+            //prepare.executeUpdate();
+            //billDisplayCard();
+            System.out.println("Payment status updated successfully");
+
+        } catch (SQLException e) {
+            //e.printStackTrace();
+            System.out.println("Error: " +e);
+        }
+    }
+    
     //Invoices Section Start
     @FXML private TextField srcByInvId;
     @FXML private Label totalInvoice;
@@ -279,6 +309,7 @@ public class MainFormController implements Initializable {
             dashboadrForm.setVisible(true);
             itemsForm.setVisible(false);
             posMenuForm.setVisible(false);
+            cullectBillForm.setVisible(false);
             invoicesForm.setVisible(false);
             expensesForm.setVisible(false);
             reportForm.setVisible(false);
@@ -286,11 +317,15 @@ public class MainFormController implements Initializable {
             settingsForm.setVisible(false);
             
             loadAdminData(1);
+            empClearBtn();
+            itemsClearBtn();
+            expenseClearBtn();
 
         } else if (event.getSource() == itemsBtn) {
             dashboadrForm.setVisible(false);
             itemsForm.setVisible(true);
             posMenuForm.setVisible(false);
+            cullectBillForm.setVisible(false);
             invoicesForm.setVisible(false);
             expensesForm.setVisible(false);
             reportForm.setVisible(false);
@@ -301,6 +336,7 @@ public class MainFormController implements Initializable {
             itemsStatusList();
             itemsShowData();
             setDynamicColumnWidthForItem();
+            empClearBtn();
             itemsClearBtn();
             expenseClearBtn();
 
@@ -308,6 +344,7 @@ public class MainFormController implements Initializable {
             dashboadrForm.setVisible(false);
             itemsForm.setVisible(false);
             posMenuForm.setVisible(true);
+            cullectBillForm.setVisible(false);
             invoicesForm.setVisible(false);
             expensesForm.setVisible(false);
             reportForm.setVisible(false);
@@ -317,6 +354,23 @@ public class MainFormController implements Initializable {
             menuDisplayCard();
             setupCartTable();
             setDynamicColumnWidthForCartTable();
+            empClearBtn();
+            itemsClearBtn();
+            expenseClearBtn();
+
+        } else if (event.getSource() == cullectBillBtn) {
+            dashboadrForm.setVisible(false);
+            itemsForm.setVisible(false);
+            posMenuForm.setVisible(false);
+            cullectBillForm.setVisible(true);
+            invoicesForm.setVisible(false);
+            expensesForm.setVisible(false);
+            reportForm.setVisible(false);
+            usersForm.setVisible(false);
+            settingsForm.setVisible(false);
+            
+            billDisplayCard();
+            empClearBtn();
             itemsClearBtn();
             expenseClearBtn();
 
@@ -324,6 +378,7 @@ public class MainFormController implements Initializable {
             dashboadrForm.setVisible(false);
             itemsForm.setVisible(false);
             posMenuForm.setVisible(false);
+            cullectBillForm.setVisible(false);
             invoicesForm.setVisible(true);
             expensesForm.setVisible(false);
             reportForm.setVisible(false);
@@ -332,6 +387,7 @@ public class MainFormController implements Initializable {
             
             invoiceShowData();
             setDynamicColumnWidthForInvoiceTable();
+            empClearBtn();
             itemsClearBtn();
             expenseClearBtn();
 
@@ -339,6 +395,7 @@ public class MainFormController implements Initializable {
             dashboadrForm.setVisible(false);
             itemsForm.setVisible(false);
             posMenuForm.setVisible(false);
+            cullectBillForm.setVisible(false);
             invoicesForm.setVisible(false);
             expensesForm.setVisible(true);
             reportForm.setVisible(false);
@@ -348,6 +405,7 @@ public class MainFormController implements Initializable {
             expenseCategoryList();
             expenseShowData();
             setDynamicColumnWidthForExp();
+            empClearBtn();
             itemsClearBtn();
             expenseClearBtn();
             loadExpenseData();
@@ -360,12 +418,14 @@ public class MainFormController implements Initializable {
             dashboadrForm.setVisible(false);
             itemsForm.setVisible(false);
             posMenuForm.setVisible(false);
+            cullectBillForm.setVisible(false);
             invoicesForm.setVisible(false);
             expensesForm.setVisible(false);
             reportForm.setVisible(true);
             usersForm.setVisible(false);
             settingsForm.setVisible(false);
             
+            empClearBtn();
             itemsClearBtn();
             expenseClearBtn();
 
@@ -373,6 +433,7 @@ public class MainFormController implements Initializable {
             dashboadrForm.setVisible(false);
             itemsForm.setVisible(false);
             posMenuForm.setVisible(false);
+            cullectBillForm.setVisible(false);
             invoicesForm.setVisible(false);
             expensesForm.setVisible(false);
             reportForm.setVisible(false);
@@ -392,12 +453,14 @@ public class MainFormController implements Initializable {
             dashboadrForm.setVisible(false);
             itemsForm.setVisible(false);
             posMenuForm.setVisible(false);
+            cullectBillForm.setVisible(false);
             invoicesForm.setVisible(false);
             expensesForm.setVisible(false);
             reportForm.setVisible(false);
             usersForm.setVisible(false);
             settingsForm.setVisible(true);
             
+            empClearBtn();
             itemsClearBtn();
             expenseClearBtn();
         }
@@ -450,7 +513,6 @@ public class MainFormController implements Initializable {
     } 
     //// END DASHBOARD SECTION
     
-
     
     //// START ITEM SECTION
     private final String[] itemsCategoryList = {"Meals", "Drinks", "Packages", "Others"};
@@ -1100,6 +1162,8 @@ public class MainFormController implements Initializable {
             }
             if (xMaxID == 0) {
                 xMaxID += 1;
+            }else {
+                xMaxID += 1;
             }
             //System.out.println("Inv ID->: "+xInvID);
         } catch (Exception e) {
@@ -1108,11 +1172,12 @@ public class MainFormController implements Initializable {
     }
     private void getXDateTime() {
         long currentTimeInMillis = System.currentTimeMillis();
-        SimpleDateFormat sdf = new SimpleDateFormat("ddMMyy");    
+        SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd");    
         java.sql.Date resultdate = new java.sql.Date(currentTimeInMillis);
         xDate = sdf.format(resultdate.getTime());
         //System.out.println("Time->: "+sdf.format(resultdate.getTime())); 
-        xInvID = (xMaxID+"00"+xDate);
+        //xInvID = (xMaxID+"00"+xDate);
+        xInvID = (xDate+"00"+xMaxID);
     }
     private void getItemList() {
         for (CartItem item : cartData) {
@@ -1226,11 +1291,102 @@ public class MainFormController implements Initializable {
     }
     //// END POS MENU SECTION
     
+    //// START CULLECT BILL SECTION
+    private final ObservableList<InvoiceDataModel> cullectBillListData = FXCollections.observableArrayList();
+    public ObservableList<InvoiceDataModel> getCullectBillData() {
+
+        String sql = "SELECT * FROM invoices WHERE payment_status = 'Pending'";
+
+        ObservableList<InvoiceDataModel> listData = FXCollections.observableArrayList();
+        db.getConnection();
+
+        try {
+
+            prepare = db.connection.prepareStatement(sql);
+            result = prepare.executeQuery();
+
+            InvoiceDataModel invData;
+            
+            while (result.next()) {
+
+                invData = new InvoiceDataModel(
+                        result.getInt("id"),
+			result.getString("inv_id"),
+                        result.getString("items"),
+                        result.getDouble("subtotal"),
+                        result.getDouble("discount"),
+                        result.getDouble("others_charge"),
+                        result.getDouble("grand_total"),
+                        result.getInt("total_qty"),
+                        result.getString("note"),
+                        result.getString("order_type"),
+                        result.getString("served_by"),
+                        result.getString("bill_by"),
+                        result.getString("payment_status"),
+                        result.getDate("date"));
+
+                listData.add(invData);
+
+            } 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return listData;
+    }
+    public void billDisplayCard() { 
+        loadTotalPendingAmount();
+        cullectBillListData.clear();
+        cullectBillListData.addAll(getCullectBillData());
+
+        int row = 0;
+        int column = 0;
+
+        cullectBillGridPane.getChildren().clear();
+        cullectBillGridPane.getRowConstraints().clear();
+        cullectBillGridPane.getColumnConstraints().clear();
+        
+        for (int q = 0; q < cullectBillListData.size(); q++) {
+            try {
+                    FXMLLoader load = new FXMLLoader();
+                    load.setLocation(getClass().getResource("/view/cullectBill.fxml")); //cullectBill cardBill
+                    AnchorPane pane = load.load();
+                    CullectBillController cardBill = load.getController();
+                    cardBill.setData(cullectBillListData.get(q));
+                    
+                    // Event handler for individual pane clicks
+                    final int index = q; // This captures the index for the lambda
+                    //pane.setOnMouseClicked(event -> addToCart(cullectBillListData.get(index)));
+
+                    // Grid setup
+                    if (column == 6) {
+                            column = 0;
+                            row += 1;
+                    }
+                    cullectBillGridPane.add(pane, column++, row);
+                    GridPane.setMargin(pane, new Insets(6));
+
+            } catch (Exception e) {
+                    e.printStackTrace();
+            }
+        }
+    }
+    private void loadTotalPendingAmount() {
+        // Check if any label is null before proceeding
+        if (totalPendingAmount != null ) {
+            totalPendingAmount.setText(String.format("Total Pending Amount: %.2f TK", db.getTotalInvoicePendingAmount()));
+        } else {
+            System.err.println("One or more labels are not initialized!");
+        }
+    }
+    //// END CULLECT BILL SECTION
+   
     
     //// START INVOICE SECTION
     private void loadInvoiceData() {
         // Check if any label is null before proceeding
-        if (totalInvoice != null) {
+        if (totalInvoice != null && pendingInvoices != null && completeInvoices != null) {
             totalInvoice.setText(""+db.getTotalInvoice());
             pendingInvoices.setText(""+db.getTotalPendingInvoice());
             completeInvoices.setText(""+db.getTotalCompleteInvoice());
@@ -3001,6 +3157,9 @@ public class MainFormController implements Initializable {
         //menuDisplayTotal();
         //menuShowOrderData();
         //customersShowData();
+        billDisplayCard();
+
+        
         invoiceShowData();
         setDynamicColumnWidthForInvoiceTable();
         

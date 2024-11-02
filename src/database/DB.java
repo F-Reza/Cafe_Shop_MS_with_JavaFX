@@ -221,7 +221,6 @@ public class DB {
         getConnection();
 
         try {
-
             prepare = connection.prepareStatement(sql);
             result = prepare.executeQuery();
 
@@ -260,6 +259,9 @@ public class DB {
     public int getTotalCompleteInvoice() {
         return getInvoiceSum("SELECT COUNT(*) FROM invoices WHERE payment_status = 'Complete'");
     } 
+    public double getTotalInvoicePendingAmount() {
+        return getInvoiceSum("SELECT SUM(grand_total) FROM invoices WHERE payment_status = 'Pending'");
+    }
     private int getInvoiceSum(String query) {
         int total = 0;
         try (PreparedStatement pstmt = connection.prepareStatement(query);

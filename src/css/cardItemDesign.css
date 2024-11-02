@@ -8,6 +8,22 @@ and open the template in the editor.
     Author     : F_Reza
 */
 
+.shadow{
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5,0,0,0);
+}
+.white-bg{
+    -fx-background-color: #fff;
+}
+.radius{
+    -fx-background-radius: 8px;
+}
+.transparent{
+    -fx-background-color: transparent;
+}
+
+.radius-card  {
+    -fx-background-radius: 8px;
+}
 .card{
     -fx-background-color: #fff;
     -fx-background-radius: 5px;
@@ -21,13 +37,13 @@ and open the template in the editor.
 }
 
 .btn1{
-    -fx-background-color: linear-gradient(to bottom right, #098c53, #246861); 
+    -fx-background-color: linear-gradient(to bottom right, #000, #000); 
     -fx-cursor: hand;
     -fx-text-fill: #fff;
-    -fx-font-size: 12px;
+    -fx-font-size: 14px;
 }
 .btn1:hover{
-    -fx-background-color: linear-gradient(to bottom right, #0fb565, #399a8f); 
+    -fx-background-color: linear-gradient(to bottom right, #726f6f, #0a0303); 
 }
 
 .btn{
