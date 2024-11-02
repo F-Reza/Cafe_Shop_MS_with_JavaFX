@@ -8,10 +8,10 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane id="AnchorPane" prefHeight="786.0" prefWidth="384.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="AnchorPane" fx:id="invoice_DataForm" prefHeight="786.0" prefWidth="384.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.InvoiceController">
    <children>
       <AnchorPane prefHeight="164.0" prefWidth="386.0">
          <children>
@@ -31,47 +31,42 @@
       </AnchorPane>
       <AnchorPane layoutX="1.0" layoutY="164.0" prefHeight="86.0" prefWidth="384.0">
          <children>
-            <Label layoutX="19.0" layoutY="-1.0" text="Invoice ID:" />
-            <Label layoutX="76.0" layoutY="-1.0" prefHeight="17.0" prefWidth="130.0" text="100121224" />
-            <Label layoutX="19.0" layoutY="18.0" text="Order Type:" />
-            <Label layoutX="84.0" layoutY="18.0" prefHeight="17.0" prefWidth="55.0" text="Table" />
-            <Label layoutX="19.0" layoutY="38.0" text="Served By:" />
-            <Label layoutX="77.0" layoutY="38.0" prefHeight="17.0" prefWidth="130.0" text="Mr. X" />
-            <Label alignment="CENTER_RIGHT" layoutX="274.0" layoutY="-1.0" prefHeight="17.0" prefWidth="91.0" text="31/10/2024" />
-            <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="274.0" layoutY="18.0" prefHeight="17.0" prefWidth="91.0" text="12:30pm" />
-            <Label alignment="CENTER_RIGHT" layoutX="217.0" layoutY="38.0" prefHeight="17.0" prefWidth="148.0" text="Bill By: Arko" />
-            <Label alignment="CENTER" layoutY="51.0" prefHeight="18.0" prefWidth="386.0" text="------------------------------------------------------------------------------" />
+            <Label fx:id="invoice_ID" layoutX="19.0" layoutY="6.0" prefHeight="18.0" prefWidth="207.0" text="Invoice ID: 100121224" />
+            <Label fx:id="invoice_OrderType" layoutX="19.0" layoutY="26.0" prefHeight="18.0" prefWidth="155.0" text="Order Type:" />
+            <Label fx:id="invoice_ServedBy" layoutX="19.0" layoutY="45.0" prefHeight="18.0" prefWidth="185.0" text="Served By: Mr. X" />
+            <Label fx:id="invoice_Date" alignment="CENTER_RIGHT" layoutX="274.0" layoutY="6.0" prefHeight="17.0" prefWidth="91.0" text="31/10/2024" />
+            <Label fx:id="invoice_Time" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="274.0" layoutY="25.0" prefHeight="17.0" prefWidth="91.0" text="12:30pm" />
+            <Label fx:id="invoice_BillBy" alignment="CENTER_RIGHT" layoutX="210.0" layoutY="45.0" prefHeight="18.0" prefWidth="155.0" text="Bill By: Arko" />
+            <Label alignment="CENTER" layoutY="58.0" prefHeight="18.0" prefWidth="386.0" text="------------------------------------------------------------------------------" />
          </children>
       </AnchorPane>
-      <VBox layoutX="13.0" layoutY="240.0" prefHeight="432.0" prefWidth="360.0">
+      <TableView fx:id="invoice_ItemTableView" layoutX="13.0" layoutY="253.0" prefHeight="348.0" prefWidth="362.0" stylesheets="@../css/invoiceDesign.css">
+        <columns>
+          <TableColumn fx:id="invoice_SN" prefWidth="33.0" text="SN" />
+          <TableColumn fx:id="invoice_ItemName" prefWidth="152.0" text="Item Name" />
+            <TableColumn fx:id="invoice_ItemRate" prefWidth="58.0" text="Rate" />
+            <TableColumn fx:id="invoice_ItemQty" prefWidth="43.0" text="Qty" />
+            <TableColumn fx:id="invoice_ItemAmount" prefWidth="72.0" text="Amount" />
+        </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+      <AnchorPane layoutX="13.0" layoutY="604.0" prefHeight="105.0" prefWidth="200.0">
          <children>
-            <TableView prefHeight="189.0" prefWidth="360.0" stylesheets="@../css/invoiceDesign.css">
-              <columns>
-                <TableColumn prefWidth="33.0" text="SN" />
-                <TableColumn prefWidth="152.0" text="Item Name" />
-                  <TableColumn prefWidth="58.0" text="Rate" />
-                  <TableColumn prefWidth="43.0" text="Qty" />
-                  <TableColumn prefWidth="72.0" text="Amount" />
-              </columns>
-            </TableView>
-            <AnchorPane prefHeight="105.0" prefWidth="200.0">
-               <children>
-                  <Label layoutX="2.0" layoutY="6.0" text="Total Qty:" />
-                  <Label layoutX="62.0" layoutY="6.0" prefHeight="18.0" prefWidth="55.0" text="20" />
-                  <Label layoutX="2.0" layoutY="35.0" text="Note:" />
-                  <Label alignment="CENTER_RIGHT" layoutX="184.0" layoutY="6.0" prefHeight="17.0" prefWidth="173.0" text="Subtotal: 520.00 TK" />
-                  <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="218.0" layoutY="24.0" prefHeight="18.0" prefWidth="139.0" text="Discount: 00.00" />
-                  <Label alignment="CENTER" layoutY="55.0" prefHeight="18.0" prefWidth="360.0" text="-------------------------------------------------------------------------" />
-                  <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="201.0" layoutY="42.0" prefHeight="17.0" prefWidth="156.0" text="Others Charge: 00.00" />
-                  <Label alignment="CENTER_RIGHT" layoutX="98.0" layoutY="66.0" prefHeight="18.0" prefWidth="259.0" text="Grand Total: 520.00 TK">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                  </Label>
-               </children>
-            </AnchorPane>
+            <Label fx:id="invoice_TotalQty" layoutX="2.0" layoutY="6.0" prefHeight="18.0" prefWidth="113.0" text="Total Qty: 0" />
+            <Label fx:id="invoice_Subtotal" alignment="CENTER_RIGHT" layoutX="164.0" layoutY="6.0" prefHeight="18.0" prefWidth="193.0" text="Subtotal: 520.00 TK" />
+            <Label fx:id="invoice_Discount" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="172.0" layoutY="24.0" prefHeight="18.0" prefWidth="185.0" text="Discount: 00.00" />
+            <Label alignment="CENTER" layoutY="55.0" prefHeight="18.0" prefWidth="360.0" text="-------------------------------------------------------------------------" />
+            <Label fx:id="invoice_OtherCharge" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="172.0" layoutY="42.0" prefHeight="18.0" prefWidth="185.0" text="Others Charge: 00.00" />
+            <Label fx:id="invoice_GrandTotal" alignment="CENTER_RIGHT" layoutX="98.0" layoutY="66.0" prefHeight="18.0" prefWidth="259.0" text="Grand Total: 520.00 TK">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Text fx:id="invoice_Note" layoutX="3.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Note:" wrappingWidth="163.0" />
          </children>
-      </VBox>
+      </AnchorPane>
       <HBox layoutX="13.0" layoutY="709.0" prefHeight="63.0" prefWidth="360.0">
          <children>
             <BorderPane prefHeight="56.0" prefWidth="360.0">

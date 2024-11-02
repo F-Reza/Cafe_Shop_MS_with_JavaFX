@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
+import models.InvoiceDataModel;
 import models.ItemsDataModel;
 import models.UserDataModel;
 
@@ -248,7 +249,41 @@ public class DB {
         return listData;
     }
     
-    
+    public InvoiceDataModel getInvoiceById(int invID) {
+        InvoiceDataModel invoice = null;
+        String query = "SELECT * FROM invoices WHERE id = ?";
+
+        try {
+            getConnection();
+            prepare = connection.prepareStatement(query);
+            prepare.setInt(1, invID);
+            ResultSet resultSet = prepare.executeQuery();
+
+            if (resultSet.next()) {
+                invoice = new InvoiceDataModel(
+                    resultSet.getInt("id"),
+                    resultSet.getString("inv_id"),
+                    resultSet.getString("items"),
+                    resultSet.getDouble("subtotal"),
+                    resultSet.getDouble("discount"),
+                    resultSet.getDouble("others_charge"),
+                    resultSet.getDouble("grand_total"),
+                    resultSet.getInt("total_qty"),
+                    resultSet.getString("note"),
+                    resultSet.getString("order_type"),
+                    resultSet.getString("served_by"),
+                    resultSet.getString("bill_by"),
+                    resultSet.getString("payment_status"),
+                    resultSet.getDate("date")
+                );
+            }
+
+        } catch (SQLException e) {
+            logger.info(e.toString());
+        }
+
+        return invoice;
+    }
     // Method to get the total count of invoices
     public int getTotalInvoice() {
         return getInvoiceSum("SELECT COUNT(*) FROM invoices");

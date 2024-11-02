@@ -1289,6 +1289,29 @@ public class MainFormController implements Initializable {
         menu_Note.setText("");
         menu_OrderType.getSelectionModel().clearSelection();  
     }
+    public void printItems() {
+        String items = itemData.toString();
+
+        // Remove brackets and split by comma and space
+        String[] itemArray = items.replaceAll("[\\[\\]]", "").split(", ");
+
+        // StringBuilder to hold the formatted output
+        StringBuilder formattedOutput = new StringBuilder();
+
+        // Loop through the array in chunks of 4 (each product group)
+        for (int i = 0; i < itemArray.length; i += 4) {
+            // Check if there are exactly 4 elements remaining
+            if (i + 4 <= itemArray.length) {
+                // Join four elements into a single string for the product group
+                String product = String.join(", ", itemArray[i], itemArray[i + 1], itemArray[i + 2], itemArray[i + 3]);
+                formattedOutput.append(product).append("\n");
+            }
+        }
+
+        // Print the result
+        System.out.println("--->"+formattedOutput.toString());
+    }
+    
     //// END POS MENU SECTION
     
     //// START CULLECT BILL SECTION
@@ -1350,7 +1373,7 @@ public class MainFormController implements Initializable {
         for (int q = 0; q < cullectBillListData.size(); q++) {
             try {
                     FXMLLoader load = new FXMLLoader();
-                    load.setLocation(getClass().getResource("/view/cullectBill.fxml")); //cullectBill cardBill
+                    load.setLocation(getClass().getResource("/view/cardBill.fxml")); //cullectBill cardBill
                     AnchorPane pane = load.load();
                     CullectBillController cardBill = load.getController();
                     cardBill.setData(cullectBillListData.get(q));
@@ -1360,12 +1383,12 @@ public class MainFormController implements Initializable {
                     //pane.setOnMouseClicked(event -> addToCart(cullectBillListData.get(index)));
 
                     // Grid setup
-                    if (column == 6) {
+                    if (column == 1) {
                             column = 0;
                             row += 1;
                     }
                     cullectBillGridPane.add(pane, column++, row);
-                    GridPane.setMargin(pane, new Insets(6));
+                    GridPane.setMargin(pane, new Insets(0));
 
             } catch (Exception e) {
                     e.printStackTrace();
@@ -1392,6 +1415,15 @@ public class MainFormController implements Initializable {
             completeInvoices.setText(""+db.getTotalCompleteInvoice());
         } else {
             System.err.println("One or more labels are not initialized!");
+        }
+    }
+    public void loadInvoiceDataById(int adminId) {
+    InvoiceDataModel invoice = db.getInvoiceById(adminId);
+
+    if (invoice != null) {
+        //userDisplayName.setText(invoice.getDisplayName());
+        //adminUserName.setText(invoice.getUserName());
+        //userDate.setText(invoice.getDate().toString());
         }
     }
     // MERGE ALL DATAS
@@ -3170,7 +3202,7 @@ public class MainFormController implements Initializable {
         setDynamicColumnWidthForExp();
         loadExpenseData();
         
-        
+        printItems();
         empUserRoleList();
         empUserStatusList();
         empUserShowData();
