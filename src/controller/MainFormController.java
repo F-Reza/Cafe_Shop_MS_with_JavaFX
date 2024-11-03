@@ -60,6 +60,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -301,6 +302,18 @@ public class MainFormController implements Initializable {
     @FXML private TextField menu_ServedBy;
     @FXML private Button menu_ClearBtn;
     @FXML private Button menu_InvoiceBtn;
+    int xMaxID = 0;
+    int t_Qty = 0;
+    double t_Price = 0;
+    double xGrandTotal = 0;
+    double xDiscount = 0;
+    double xOthersCharge = 0;
+    String xInvID = "";
+    String xNote = "";
+    String xOrderType = "";
+    String xServedBy = "";
+    String xBillBy = "";
+    String xDate = "";
     //End
 	
   
@@ -428,7 +441,10 @@ public class MainFormController implements Initializable {
 
     //Settings Section Start
     //End
-
+    
+    
+    //#########################################################################################################
+    
     //// START DASHBOARD SECTION
     public void switchForm(ActionEvent event) {
 
@@ -478,7 +494,7 @@ public class MainFormController implements Initializable {
             usersForm.setVisible(false);
             settingsForm.setVisible(false);
 
-            menuDisplayCard();
+            //menuDisplayCard();
             setupCartTable();
             setDynamicColumnWidthForCartTable();
             empClearBtn();
@@ -1028,18 +1044,6 @@ public class MainFormController implements Initializable {
     //// END ITEM SECTION
     
     //// START POS MENU SECTION
-    int xMaxID = 0;
-    int t_Qty = 0;
-    double t_Price = 0;
-    double xGrandTotal = 0;
-    double xDiscount = 0;
-    double xOthersCharge = 0;
-    String xInvID = "";
-    String xNote = "";
-    String xOrderType = "";
-    String xServedBy = "";
-    String xBillBy = "";
-    String xDate = "";
     private final ObservableList<ItemsDataModel> cardListData = FXCollections.observableArrayList();
     private ObservableList<CartItem> cartData = FXCollections.observableArrayList();
     private ObservableList<String> itemData = FXCollections.observableArrayList();
@@ -1087,7 +1091,7 @@ public class MainFormController implements Initializable {
 
         return listData;
     }
-    public void menuDisplayCard() { 
+    public void menuDisplayCardX() { 
         cardListData.clear();
         cardListData.addAll(menuGetData());
 
@@ -1124,10 +1128,53 @@ public class MainFormController implements Initializable {
         }
     }
     
-    
-    private void displayFilteredCards(ObservableList<ItemsDataModel> filteredItems) {
-        menuGridPane.getChildren().clear(); // Clear existing cards
+    public void menuDisplayCard(int columnCount) { 
+        cardListData.clear();
+        cardListData.addAll(menuGetData());
 
+        int row = 0;
+        int column = 0;
+
+        menuGridPane.getChildren().clear();
+        menuGridPane.getRowConstraints().clear();
+        menuGridPane.getColumnConstraints().clear();
+
+        for (int q = 0; q < cardListData.size(); q++) {
+            try {
+                FXMLLoader load = new FXMLLoader();
+                load.setLocation(getClass().getResource("/view/cardItem.fxml"));
+                AnchorPane pane = load.load();
+                CardItemController cardC = load.getController();
+                cardC.setData(cardListData.get(q));
+
+                // Event handler for individual pane clicks
+                final int index = q; // This captures the index for the lambda
+                pane.setOnMouseClicked(event -> addToCart(cardListData.get(index)));
+
+                // Dynamic Grid setup based on column count
+                if (column == columnCount) {
+                    column = 0;
+                    row += 1;
+                }
+                menuGridPane.add(pane, column++, row);
+                GridPane.setMargin(pane, new Insets(6));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public void getDynamicDisplayCard() {
+        menuDisplayCard(4);
+        double thresholdWidth = 1000.0;
+        menuScrollPane.widthProperty().addListener((obs, oldVal, newVal) -> {
+            int columnCount = (newVal.doubleValue() > thresholdWidth) ? 7 : 4;
+            menuDisplayCard(columnCount); // Update the display with the new column count
+        });
+    }
+
+    private void displayFilteredCards(ObservableList<ItemsDataModel> filteredItems, int columnCount) {
+        menuGridPane.getChildren().clear(); // Clear existing cards
         int row = 0;
         int column = 0;
 
@@ -1143,13 +1190,13 @@ public class MainFormController implements Initializable {
                 final int index = i;
                 pane.setOnMouseClicked(event -> addToCart(filteredItems.get(index)));
 
-                if (column == 7) {
+                if (column == columnCount) {
                     column = 0;
                     row++;
                 }
 
                 menuGridPane.add(pane, column++, row);
-                GridPane.setMargin(pane, new Insets(7.45));
+                GridPane.setMargin(pane, new Insets(6));
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1171,9 +1218,25 @@ public class MainFormController implements Initializable {
             }
         }
 
-        displayFilteredCards(filteredList); 
+        // Calculate column count based on the current width
+        int columnCount = calculateColumnCount();
+        displayFilteredCards(filteredList, columnCount);
+    }
+    private int calculateColumnCount() {
+        double thresholdWidth = 800.0; // Adjust this threshold as needed
+        return menuScrollPane.getWidth() > thresholdWidth ? 7 : 4;
     }
     public void filterItemData() {
+        
+        displayFilteredCards(menuGetData(), 4);
+        double thresholdWidth = 1000.0; 
+        
+        menuScrollPane.widthProperty().addListener((obs, oldVal, newVal) -> {
+            int columnCount = (newVal.doubleValue() > thresholdWidth) ? 7 : 4;
+            filterByItemName(menu_searchItem.getText()); 
+        });
+        
+        
         menu_searchItem.textProperty().addListener((observable, oldValue, newValue) -> {
             filterByItemName(newValue);
         });
@@ -1205,6 +1268,8 @@ public class MainFormController implements Initializable {
         });
         
     } 
+    
+    
     private void setupCartTable() {
         
         menu_Col_SN.setCellValueFactory(new PropertyValueFactory<>("serialNumber"));
@@ -3394,40 +3459,36 @@ public class MainFormController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // Create the folder if not exists
         File folder = new File("Images");
-        if (!folder.exists()) {
-            folder.mkdir();
-        }
-        loadAdminData(1);
-        //displayUsername(); 
-        filterItemData();
+        if (!folder.exists()) { folder.mkdir(); }
         
+        //Dashboard
+        //displayUsername(); 
         //dashboardDisplayNC();
         //dashboardDisplayTI();
-        //dashboardTotalI();
-        //dashboardNSP();
-        //dashboardIncomeChart();
-        //dashboardCustomerChart();
         
+        //Items
         itemsCategoryList();
         itemsStatusList();
         itemsShowData();
         setDynamicColumnWidthForItem();
         
+        //POS Memu
+        getDynamicDisplayCard();
+        filterItemData();
         menuOrderTypeList();
-        menuDisplayCard();
         setupCartTable();
         setDynamicColumnWidthForCartTable();
         getTotalDynamically();
-        //menuGetOrder();
-        //menuDisplayTotal();
-        //menuShowOrderData();
-        //customersShowData();
+
+        //Cullect Bill
         billDisplayCard();
         
-        
+        //Invoice
         invoiceShowData();
         setDynamicColumnWidthForInvoiceTable();
+        printItems();
         
+        //Expense
         getExpDateValidation();
         getExpDateRangeValidation();
         expenseCategoryList();
@@ -3435,12 +3496,17 @@ public class MainFormController implements Initializable {
         setDynamicColumnWidthForExp();
         loadExpenseData();
         
-        printItems();
+        //Reports
+        
+        //User Admin
+        loadAdminData(1);
         empUserRoleList();
         empUserStatusList();
         empUserShowData();
         showPass();
         
+        
+        //Settings
     }
 
 }
