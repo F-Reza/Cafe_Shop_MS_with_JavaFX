@@ -274,6 +274,7 @@ public class MainFormController implements Initializable {
 
 
     //POS Menu Section Start
+    @FXML private AnchorPane menuAnchorPane;
     @FXML private GridPane menuGridPane;
     @FXML private ScrollPane menuScrollPane;
     @FXML private TextField menu_searchItem;
@@ -1110,18 +1111,19 @@ public class MainFormController implements Initializable {
                     pane.setOnMouseClicked(event -> addToCart(cardListData.get(index)));
 
                     // Grid setup
-                    if (column == 7) {
+                    if (column == 4) {
                             column = 0;
                             row += 1;
                     }
                     menuGridPane.add(pane, column++, row);
-                    GridPane.setMargin(pane, new Insets(7.45));
+                    GridPane.setMargin(pane, new Insets(6));
 
             } catch (Exception e) {
                     e.printStackTrace();
             }
         }
     }
+    
     
     private void displayFilteredCards(ObservableList<ItemsDataModel> filteredItems) {
         menuGridPane.getChildren().clear(); // Clear existing cards
@@ -1171,12 +1173,12 @@ public class MainFormController implements Initializable {
 
         displayFilteredCards(filteredList); 
     }
-
     public void filterItemData() {
         menu_searchItem.textProperty().addListener((observable, oldValue, newValue) -> {
             filterByItemName(newValue);
         });
         //mealsBtn.setOnAction(event -> filterByItemName("Meals"));
+
         mealsBtn.setOnAction(event -> { 
             filterByItemName("Meals");
             menu_searchItem.clear(); 
@@ -1202,8 +1204,7 @@ public class MainFormController implements Initializable {
             filterByItemName("");
         });
         
-    }
-    
+    } 
     private void setupCartTable() {
         
         menu_Col_SN.setCellValueFactory(new PropertyValueFactory<>("serialNumber"));
