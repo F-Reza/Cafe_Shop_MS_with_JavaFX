@@ -399,7 +399,7 @@
                                         </AnchorPane>
                                     </children>
                                 </AnchorPane>
-                        <AnchorPane fx:id="posMenuForm" layoutX="290.0" layoutY="219.0" prefHeight="720.0" prefWidth="851.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="posMenuForm" layoutX="290.0" layoutY="219.0" prefHeight="720.0" prefWidth="851.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="13.0" layoutY="14.0" prefHeight="775.0" prefWidth="776.0" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="328.0" AnchorPane.topAnchor="14.0">
                                  <styleClass>
@@ -421,10 +421,17 @@
                                     <Button layoutX="212.0" layoutY="7.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="81.0" styleClass="btn" stylesheets="@../css/cardItemDesign.css" text="Meals" visible="false" />
                                     <Button layoutX="326.0" layoutY="7.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" styleClass="btn" stylesheets="@../css/cardItemDesign.css" text="Drinks" visible="false" />
                                     <TextField fx:id="menu_searchItem" layoutX="5.0" layoutY="4.0" prefHeight="28.0" prefWidth="194.0" promptText="Search..." AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="4.0" />
-                                    <Button fx:id="mealsBtn" layoutX="220.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" styleClass="btn" stylesheets="@../css/cardItemDesign.css" text="Meals" AnchorPane.topAnchor="5.0" />
-                                    <Button fx:id="drinksBtn" layoutX="304.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" styleClass="btn" stylesheets="@../css/cardItemDesign.css" text="Drinks" AnchorPane.topAnchor="5.0" />
-                                    <Button fx:id="packagesBtn" layoutX="388.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" styleClass="btn" stylesheets="@../css/cardItemDesign.css" text="Packages" AnchorPane.topAnchor="5.0" />
-                                    <Button fx:id="othersBtn" layoutX="472.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" styleClass="btn" stylesheets="@../css/cardItemDesign.css" text="Others" AnchorPane.topAnchor="5.0" />
+                                    <Button fx:id="mealsBtn" layoutX="315.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" styleClass="btn" stylesheets="@../css/cardItemDesign.css" text="Meals" AnchorPane.topAnchor="5.0" />
+                                    <Button fx:id="drinksBtn" layoutX="399.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" styleClass="btn" stylesheets="@../css/cardItemDesign.css" text="Drinks" AnchorPane.topAnchor="5.0" />
+                                    <Button fx:id="packagesBtn" layoutX="483.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" styleClass="btn" stylesheets="@../css/cardItemDesign.css" text="Packages" AnchorPane.topAnchor="5.0" />
+                                    <Button fx:id="othersBtn" layoutX="567.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" styleClass="btn" stylesheets="@../css/cardItemDesign.css" text="Others" AnchorPane.topAnchor="5.0" />
+                                    <Button fx:id="menu_srcClearBtn" layoutX="166.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="31.0" stylesheets="@../css/cardItemDesign.css" text="✖">
+                                       <styleClass>
+                                          <String fx:value="white-bg" />
+                                          <String fx:value="shadow" />
+                                       </styleClass>
+                                    </Button>
+                                    <Button fx:id="allBtn" layoutX="231.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" styleClass="btn" stylesheets="@../css/cardItemDesign.css" text="All" />
                                  </children>
                               </AnchorPane>
                               <AnchorPane layoutX="577.0" layoutY="13.0" prefHeight="776.0" prefWidth="309.0" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="11.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="13.0">
@@ -522,7 +529,7 @@
                               <Button fx:id="billBtn" layoutX="473.0" layoutY="13.0" mnemonicParsing="false" onAction="#updateBtn" text="Button" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="invoicesForm" layoutX="316.0" layoutY="278.0" prefHeight="720.0" prefWidth="851.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="invoicesForm" layoutX="316.0" layoutY="278.0" prefHeight="720.0" prefWidth="851.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="17.0" layoutY="53.0" prefHeight="735.0" prefWidth="800.0" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="53.0">
                                  <styleClass>
@@ -548,7 +555,7 @@
                                     </TableView>
                                  </children>
                               </AnchorPane>
-                              <TextField fx:id="srcByInvId" layoutX="172.0" layoutY="17.0" prefHeight="27.0" prefWidth="226.0" promptText="Search By Invoice Id" styleClass="textfield" stylesheets="@../css/loginDesign.css" AnchorPane.leftAnchor="172.0" AnchorPane.topAnchor="17.0" />
+                              <TextField fx:id="srcByInvId" layoutX="172.0" layoutY="17.0" prefHeight="27.0" prefWidth="226.0" promptText="Search by Invoice ID" styleClass="textfield" stylesheets="@../css/loginDesign.css" AnchorPane.leftAnchor="172.0" AnchorPane.topAnchor="17.0" />
                               <Label layoutX="427.0" layoutY="22.0" text="Total Invoices :" AnchorPane.leftAnchor="427.0" AnchorPane.topAnchor="22.0" />
                               <Label fx:id="totalInvoice" layoutX="509.0" layoutY="22.0" prefHeight="17.0" prefWidth="110.0" text="0" AnchorPane.leftAnchor="509.0" AnchorPane.topAnchor="22.0" />
                               <Label layoutX="629.0" layoutY="22.0" prefHeight="17.0" prefWidth="52.0" text="Pending :" AnchorPane.leftAnchor="629.0" AnchorPane.topAnchor="22.0" />
