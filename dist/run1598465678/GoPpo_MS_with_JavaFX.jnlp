@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="GoPpo_MS_with_JavaFX.jnlp">
+  <information>
+    <title>GoPpo_MS_with_JavaFX</title>
+    <vendor>F_Reza</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="GoPpo_MS_with_JavaFX.jar" size="24694916" download="eager" />
+    <jar href="lib\fontawesomefx-8.2.jar" size="180341" download="eager" />
+    <jar href="lib\slf4j-api-1.7.36.jar" size="41125" download="eager" />
+    <jar href="lib\sqlite-jdbc-3.46.1.0.jar" size="14123618" download="eager" />
+  </resources>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="GoPpo_MS_with_JavaFX" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="800" height="600" main-class="app_main_goppo_ms.Main_App"  name="GoPpo_MS_with_JavaFX" />
+  <update check="always"/>
+</jnlp>

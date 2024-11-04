@@ -11,9 +11,11 @@ import models.ExpenseDataModel;
 import models.ItemsDataModel;
 import utils.xValue;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,6 +31,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -71,6 +75,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import models.CartItem;
 import models.EmployeeDataModel;
 import models.InvoiceDataModel;
@@ -248,6 +253,12 @@ public class MainFormController implements Initializable {
     //End
 
     //Dashboard Section Start
+    @FXML private Button slideshowAddBtn;
+    @FXML private Button slideshowRemoveBtn;
+    @FXML private Button slideshowNextBtn;
+    @FXML private Button slideshowPreviousBtn;
+    @FXML private AnchorPane slideshowAnchorPane;
+    @FXML private ImageView slideshowImageView;    
     //End
 
 
@@ -460,6 +471,7 @@ public class MainFormController implements Initializable {
             settingsForm.setVisible(false);
             
             loadAdminData(1);
+            getSlideshow();
             empClearBtn();
             itemsClearBtn();
             expenseClearBtn();
@@ -654,6 +666,132 @@ public class MainFormController implements Initializable {
         //userName.setText(user);
 
     } 
+    
+    private List<File> imageFiles = new ArrayList<>();
+    private int currentIndex = 0;
+    private Timeline slideshowTimeline;
+
+    private static final String IMAGE_FOLDER = "src/slider_img"; // Folder to store images
+    private void loadImagesFromFolder() {
+        File folder = new File(IMAGE_FOLDER);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+
+        File[] files = folder.listFiles(file -> file.isFile() && isImageFile(file));
+        if (files != null) {
+            for (File file : files) {
+                imageFiles.add(file);
+            }
+        }
+    }
+    private boolean isImageFile(File file) {
+        String lowerName = file.getName().toLowerCase();
+        return lowerName.endsWith(".png") || lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg") ||
+               lowerName.endsWith(".gif") || lowerName.endsWith(".bmp");
+    }
+    private void updateImageView() {
+        if (!imageFiles.isEmpty()) {
+            try (FileInputStream input = new FileInputStream(imageFiles.get(currentIndex))) {
+                Image image = new Image(input);
+                slideshowImageView.setImage(image);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            slideshowImageView.setImage(null); // Clear if no images are available
+        }
+    }
+    private void showPreviousImage() {
+        if (!imageFiles.isEmpty()) {
+            currentIndex = (currentIndex - 1 + imageFiles.size()) % imageFiles.size();
+            updateImageView();
+        }
+    }
+    private void showNextImage() {
+        if (!imageFiles.isEmpty()) {
+            currentIndex = (currentIndex + 1) % imageFiles.size();
+            updateImageView();
+        }
+    }
+    private void importImage() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp")
+        );
+        File selectedFile = fileChooser.showOpenDialog(slideshowAnchorPane.getScene().getWindow());
+
+        if (selectedFile != null) {
+            try {
+                Path targetPath = new File(IMAGE_FOLDER, selectedFile.getName()).toPath();
+                Files.copy(selectedFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+                imageFiles.add(targetPath.toFile());
+                currentIndex = imageFiles.size() - 1; // Show the newly imported image
+                updateImageView();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    } 
+    private void removeCurrentImage() {
+        if (!imageFiles.isEmpty()) {
+            File currentImageFile = imageFiles.get(currentIndex);
+            imageFiles.remove(currentIndex);
+
+            // Delete file from folder
+            try {
+                Files.delete(currentImageFile.toPath());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // Update current index and image view
+            if (currentIndex >= imageFiles.size()) {
+                currentIndex = 0; // Reset to start if we go out of bounds
+            }
+            updateImageView();
+        }
+    }
+    private void startAutoPlay() {
+        if (slideshowTimeline != null && slideshowTimeline.getStatus() == Timeline.Status.RUNNING) {
+            return; // Already running
+        }
+
+        slideshowTimeline = new Timeline(new KeyFrame(Duration.seconds(3), e -> showNextImage()));
+        slideshowTimeline.setCycleCount(Timeline.INDEFINITE);
+        slideshowTimeline.play();
+    }
+    public void dynamicView() {
+        // Bind ImageView size to AnchorPane size
+        slideshowImageView.fitWidthProperty().bind(slideshowAnchorPane.widthProperty());
+        slideshowImageView.fitHeightProperty().bind(slideshowAnchorPane.heightProperty());
+        slideshowImageView.setPreserveRatio(false);
+        
+        // Optional: Set a default image if needed
+        //slideshowImageView.setImage(new Image("file:src/images/defaultImage.jpg"));
+        slideshowImageView.setImage(image);
+    }
+    private void getSlideshow(){
+        // Bind the ImageView size to AnchorPane size for dynamic resizing
+        slideshowImageView.fitWidthProperty().bind(slideshowAnchorPane.widthProperty());
+        slideshowImageView.fitHeightProperty().bind(slideshowAnchorPane.heightProperty());
+        slideshowImageView.setPreserveRatio(true);
+
+        // Load images from the designated folder
+        loadImagesFromFolder();
+        startAutoPlay();
+        updateImageView();
+        dynamicView();
+
+        // Set up button actions
+        slideshowAddBtn.setOnAction(e -> importImage());
+        slideshowRemoveBtn.setOnAction(e -> removeCurrentImage());
+        slideshowNextBtn.setOnAction(e -> showNextImage());
+        slideshowPreviousBtn.setOnAction(e -> showPreviousImage());
+
+    }
+    
+    
     //// END DASHBOARD SECTION
     
     
@@ -3462,6 +3600,7 @@ public class MainFormController implements Initializable {
         if (!folder.exists()) { folder.mkdir(); }
         
         //Dashboard
+        getSlideshow();
         //displayUsername(); 
         //dashboardDisplayNC();
         //dashboardDisplayTI();
@@ -3486,7 +3625,7 @@ public class MainFormController implements Initializable {
         //Invoice
         invoiceShowData();
         setDynamicColumnWidthForInvoiceTable();
-        printItems();
+        //printItems();
         
         //Expense
         getExpDateValidation();
