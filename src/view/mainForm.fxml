@@ -3,6 +3,9 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 <?import java.lang.String?>
 <?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.chart.AreaChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
@@ -21,7 +24,9 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainFormController">
     <children>
@@ -37,7 +42,7 @@
                                             <children>
                                                 <ImageView fitHeight="90.0" fitWidth="90.0" layoutX="80.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../img/goppo.jpeg" />
+                                                        <Image url="@../img/GoPpo.jpeg" />
                                                     </image>
                                                 </ImageView>
                                             </children>
@@ -59,7 +64,7 @@
                                                 <Font size="13.0" />
                                             </font>
                                         </Button>
-                                        <Label layoutX="96.0" layoutY="683.0" text="GoPoo MS" AnchorPane.bottomAnchor="20.0" />
+                                        <Label layoutX="96.0" layoutY="683.0" text="GoPpo MS" AnchorPane.bottomAnchor="20.0" />
                                         <Label layoutX="86.0" layoutY="702.0" text="Powered By NextDigit" textFill="WHITE" AnchorPane.bottomAnchor="6.0">
                                             <font>
                                                 <Font size="8.0" />
@@ -84,11 +89,11 @@
                                                 <String fx:value="radius" />
                                             </styleClass>
                                             <children>
-                                                <ScrollPane layoutY="-20.0" prefHeight="180.0" prefWidth="818.0" styleClass="transparent" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <ScrollPane layoutY="-20.0" prefHeight="160.0" prefWidth="1084.0" styleClass="transparent" stylesheets="@../css/mainFormDesign.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                     <content>
-                                                        <AnchorPane prefHeight="145.0" prefWidth="1080.0">
+                                                        <AnchorPane prefHeight="145.0" prefWidth="1740.0">
                                                             <children>
-                                                                <AnchorPane layoutX="21.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                                <AnchorPane layoutX="8.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                                     <children>
                                                                         <FontAwesomeIcon fill="WHITE" glyphName="CART_PLUS" layoutX="14.0" layoutY="55.0" size="4em" />
                                                                         <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Order" textFill="WHITE">
@@ -103,7 +108,7 @@
                                                                         </Label>
                                                                     </children>
                                                                 </AnchorPane>
-                                                                <AnchorPane layoutX="239.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                                <AnchorPane layoutX="225.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                                     <children>
                                                                         <FontAwesomeIcon fill="WHITE" glyphName="DOLLAR" layoutX="14.0" layoutY="55.0" size="4em" />
                                                                         <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Income" textFill="WHITE">
@@ -118,7 +123,7 @@
                                                                         </Label>
                                                                     </children>
                                                                 </AnchorPane>
-                                                                <AnchorPane layoutX="457.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                                <AnchorPane layoutX="443.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                                     <children>
                                                                         <FontAwesomeIcon fill="WHITE" glyphName="MONEY" layoutX="14.0" layoutY="55.0" size="4em" />
                                                                         <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Expenses" textFill="WHITE">
@@ -133,7 +138,22 @@
                                                                         </Label>
                                                                     </children>
                                                                 </AnchorPane>
-                                                                <AnchorPane layoutX="675.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                <AnchorPane layoutX="661.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                   <children>
+                                                      <FontAwesomeIcon fill="WHITE" glyphName="REFRESH" layoutX="14.0" layoutY="55.0" size="4em" />
+                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Pending Amount" textFill="WHITE">
+                                                         <font>
+                                                            <Font size="16.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="৳5454" textFill="WHITE">
+                                                         <font>
+                                                            <Font size="16.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </AnchorPane>
+                                                                <AnchorPane layoutX="878.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                                     <children>
                                                                         <FontAwesomeIcon fill="WHITE" glyphName="CUTLERY" layoutX="14.0" layoutY="55.0" size="4em" />
                                                                         <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Items" textFill="WHITE">
@@ -148,7 +168,7 @@
                                                                         </Label>
                                                                     </children>
                                                                 </AnchorPane>
-                                                                <AnchorPane layoutX="893.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                                <AnchorPane layoutX="1096.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                                     <children>
                                                                         <FontAwesomeIcon fill="WHITE" glyphName="GIFT" layoutX="14.0" layoutY="55.0" size="4em" />
                                                                         <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Package" textFill="WHITE">
@@ -163,22 +183,7 @@
                                                                         </Label>
                                                                     </children>
                                                                 </AnchorPane>
-                                                                <AnchorPane layoutX="1111.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                                    <children>
-                                                                        <FontAwesomeIcon fill="WHITE" glyphName="USERS" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                                        <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Customers" textFill="WHITE">
-                                                                            <font>
-                                                                                <Font size="16.0" />
-                                                                            </font>
-                                                                        </Label>
-                                                                        <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="100" textFill="WHITE">
-                                                                            <font>
-                                                                                <Font size="16.0" />
-                                                                            </font>
-                                                                        </Label>
-                                                                    </children>
-                                                                </AnchorPane>
-                                                                <AnchorPane layoutX="1329.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                                <AnchorPane layoutX="1314.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                                     <children>
                                                                         <FontAwesomeIcon fill="WHITE" glyphName="FILE_TEXT" layoutX="14.0" layoutY="55.0" size="4em" />
                                                                         <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Invoice" textFill="WHITE">
@@ -187,6 +192,21 @@
                                                                             </font>
                                                                         </Label>
                                                                         <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="20" textFill="WHITE">
+                                                                            <font>
+                                                                                <Font size="16.0" />
+                                                                            </font>
+                                                                        </Label>
+                                                                    </children>
+                                                                </AnchorPane>
+                                                                <AnchorPane layoutX="1532.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                                    <children>
+                                                                        <FontAwesomeIcon fill="WHITE" glyphName="USERS" layoutX="14.0" layoutY="55.0" size="4em" />
+                                                                        <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Customers" textFill="WHITE">
+                                                                            <font>
+                                                                                <Font size="16.0" />
+                                                                            </font>
+                                                                        </Label>
+                                                                        <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="100" textFill="WHITE">
                                                                             <font>
                                                                                 <Font size="16.0" />
                                                                             </font>
@@ -206,9 +226,10 @@
                                                 <String fx:value="radius" />
                                             </styleClass>
                                             <children>
-                                    <AnchorPane fx:id="slideshowAnchorPane" layoutX="20.0" layoutY="21.0" prefHeight="395.0" prefWidth="731.0" stylesheets="@../css/cardItemDesign.css" AnchorPane.bottomAnchor="172.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="333.0" AnchorPane.topAnchor="21.0">
+                                    <AnchorPane fx:id="slideshowAnchorPane" layoutX="20.0" layoutY="21.0" prefHeight="433.0" prefWidth="727.0" stylesheets="@../css/cardItemDesign.css" AnchorPane.bottomAnchor="134.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="337.0" AnchorPane.topAnchor="21.0">
                                        <children>
-                                          <Label alignment="CENTER" layoutX="223.0" layoutY="190.0" prefHeight="17.0" prefWidth="185.0" text="Add Slideshow Image " textFill="#abaaaa" />
+                                          <Label alignment="CENTER" layoutX="294.0" layoutY="182.0" prefHeight="22.0" prefWidth="122.0" text="Add Slideshow Image " textFill="#a19898" AnchorPane.bottomAnchor="191.0" AnchorPane.leftAnchor="294.0" AnchorPane.rightAnchor="294.0" AnchorPane.topAnchor="182.0" />
+                                          <Label alignment="CENTER" layoutX="317.0" layoutY="200.0" prefHeight="22.0" prefWidth="76.0" text="Size: 710x400" textFill="#a19898" AnchorPane.bottomAnchor="173.0" AnchorPane.leftAnchor="317.0" AnchorPane.rightAnchor="317.0" AnchorPane.topAnchor="200.0" />
                                           <ImageView fx:id="slideshowImageView" accessibleRole="PARENT" layoutX="298.0" layoutY="184.0" mouseTransparent="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <viewport>
                                                 <Rectangle2D />
@@ -239,81 +260,66 @@
                                           <String fx:value="shadow" />
                                        </styleClass>
                                     </AnchorPane>
-                                                <AnchorPane layoutX="870.0" layoutY="240.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css" AnchorPane.rightAnchor="14.0">
-                                                    <children>
-                                                        <FontAwesomeIcon fill="WHITE" glyphName="MONEY" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                        <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Expenses" textFill="WHITE">
-                                                            <font>
-                                                                <Font size="16.0" />
-                                                            </font>
-                                                        </Label>
-                                                        <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="৳5454" textFill="WHITE">
-                                                            <font>
-                                                                <Font size="16.0" />
-                                                            </font>
-                                                        </Label>
-                                                    </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="870.0" layoutY="14.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css" AnchorPane.rightAnchor="14.0">
-                                                    <children>
-                                                        <FontAwesomeIcon fill="WHITE" glyphName="CUTLERY" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                        <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Items" textFill="WHITE">
-                                                            <font>
-                                                                <Font size="16.0" />
-                                                            </font>
-                                                        </Label>
-                                                        <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="150" textFill="WHITE">
-                                                            <font>
-                                                                <Font size="16.0" />
-                                                            </font>
-                                                        </Label>
-                                                    </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="870.0" layoutY="466.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css" AnchorPane.rightAnchor="14.0">
-                                                    <children>
-                                                        <FontAwesomeIcon fill="WHITE" glyphName="GIFT" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                        <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Package" textFill="WHITE">
-                                                            <font>
-                                                                <Font size="16.0" />
-                                                            </font>
-                                                        </Label>
-                                                        <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="50" textFill="WHITE">
-                                                            <font>
-                                                                <Font size="16.0" />
-                                                            </font>
-                                                        </Label>
-                                                    </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="870.0" layoutY="353.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css" AnchorPane.rightAnchor="14.0">
-                                                    <children>
-                                                        <FontAwesomeIcon fill="WHITE" glyphName="USERS" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                        <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Customers" textFill="WHITE">
-                                                            <font>
-                                                                <Font size="16.0" />
-                                                            </font>
-                                                        </Label>
-                                                        <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="100" textFill="WHITE">
-                                                            <font>
-                                                                <Font size="16.0" />
-                                                            </font>
-                                                        </Label>
-                                                    </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="870.0" layoutY="127.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css" AnchorPane.rightAnchor="14.0">
-                                                    <children>
-                                                        <FontAwesomeIcon fill="WHITE" glyphName="FILE_TEXT" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                        <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Invoice" textFill="WHITE">
-                                                            <font>
-                                                                <Font size="16.0" />
-                                                            </font>
-                                                        </Label>
-                                                        <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="20" textFill="WHITE">
-                                                            <font>
-                                                                <Font size="16.0" />
-                                                            </font>
-                                                        </Label>
-                                                    </children>
-                                                </AnchorPane>
+                                    <AnchorPane layoutX="20.0" layoutY="509.0" prefHeight="58.0" prefWidth="482.0" stylesheets="@../css/cardItemDesign.css" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="582.0">
+                                       <styleClass>
+                                          <String fx:value="white-bg" />
+                                          <String fx:value="shadow" />
+                                       </styleClass>
+                                       <children>
+                                          <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="58.0" stroke="BLACK" strokeType="INSIDE" width="142.0" />
+                                          <Label layoutX="45.0" layoutY="16.0" text="NEWS" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold Italic" size="18.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="newsTextLabel" layoutX="155.0" layoutY="12.0" prefHeight="35.0" prefWidth="307.0" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="155.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="12.0">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane layoutX="870.0" layoutY="21.0" prefHeight="556.0" prefWidth="286.0" stylesheets="@../css/cardItemDesign.css" AnchorPane.bottomAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
+                                       <styleClass>
+                                          <String fx:value="white-bg" />
+                                          <String fx:value="shadow" />
+                                       </styleClass>
+                                       <children>
+                                          <AreaChart layoutX="-2.0" prefHeight="183.0" prefWidth="288.0" styleClass="nav-form" stylesheets="@../css/cardItemDesign.css">
+                                            <xAxis>
+                                              <CategoryAxis side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                              <NumberAxis side="LEFT" />
+                                            </yAxis>
+                                          </AreaChart>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane layoutX="513.0" layoutY="515.0" prefHeight="93.0" prefWidth="234.0" stylesheets="@../css/cardItemDesign.css" AnchorPane.bottomAnchor="16.0" AnchorPane.rightAnchor="337.0">
+                                       <styleClass>
+                                          <String fx:value="white-bg" />
+                                          <String fx:value="shadow" />
+                                       </styleClass>
+                                       <children>
+                                          <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="45.0" strokeType="INSIDE" width="234.0" AnchorPane.bottomAnchor="56.0" AnchorPane.rightAnchor="0.0" />
+                                          <Label fx:id="dashDateLabel" alignment="CENTER" layoutX="32.0" prefHeight="45.0" prefWidth="170.0" text="31 Nov 2024" textFill="WHITE" AnchorPane.bottomAnchor="56.0" AnchorPane.rightAnchor="32.0">
+                                             <font>
+                                                <Font size="30.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="dashTimeLabel" alignment="CENTER" layoutX="6.0" layoutY="50.0" prefHeight="45.0" prefWidth="223.0" text="01:25:59 AM" AnchorPane.bottomAnchor="6.0" AnchorPane.rightAnchor="5.0">
+                                             <font>
+                                                <Font size="30.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="35.0" layoutX="20.0" layoutY="471.0" strokeType="INSIDE" strokeWidth="0.0" width="144.0" AnchorPane.bottomAnchor="82.0" AnchorPane.leftAnchor="20.0" />
+                                    <Label fx:id="todayLabel" alignment="CENTER" layoutX="22.0" layoutY="476.0" prefHeight="21.0" prefWidth="140.0" text="Friday" textFill="#f5f3f3" AnchorPane.bottomAnchor="87.0" AnchorPane.leftAnchor="22.0">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                    </Label>
                                             </children>
                                         </AnchorPane>
                                     </children>
@@ -385,6 +391,7 @@
                                                         <String fx:value="shadow" />
                                                     </styleClass>
                                                     <children>
+                                          <Text fill="#948c8c" layoutX="16.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Size: 146x146 " textAlignment="CENTER" wrappingWidth="118.87890625" />
                                                         <ImageView fx:id="items_ImageView" fitHeight="146.0" fitWidth="146.0" layoutX="2.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true" />
                                                     </children>
                                                 </AnchorPane>
@@ -682,9 +689,9 @@
                                  <children>
                                     <ScrollPane layoutY="-20.0" prefHeight="692.0" prefWidth="818.0" styleClass="transparent" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <content>
-                                          <AnchorPane prefHeight="677.0" prefWidth="1080.0">
+                                          <AnchorPane prefHeight="767.0" prefWidth="1082.0">
                                              <children>
-                                                <AnchorPane layoutX="21.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                <AnchorPane layoutX="39.0" layoutY="33.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                    <children>
                                                       <FontAwesomeIcon fill="WHITE" glyphName="CART_PLUS" layoutX="14.0" layoutY="55.0" size="4em" />
                                                       <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Order" textFill="WHITE">
@@ -699,7 +706,7 @@
                                                       </Label>
                                                    </children>
                                                 </AnchorPane>
-                                                <AnchorPane layoutX="239.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                <AnchorPane layoutX="268.0" layoutY="33.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                    <children>
                                                       <FontAwesomeIcon fill="WHITE" glyphName="DOLLAR" layoutX="14.0" layoutY="55.0" size="4em" />
                                                       <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Income" textFill="WHITE">
@@ -714,7 +721,7 @@
                                                       </Label>
                                                    </children>
                                                 </AnchorPane>
-                                                <AnchorPane layoutX="457.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                <AnchorPane layoutX="504.0" layoutY="33.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                    <children>
                                                       <FontAwesomeIcon fill="WHITE" glyphName="MONEY" layoutX="14.0" layoutY="55.0" size="4em" />
                                                       <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Expenses" textFill="WHITE">
@@ -729,101 +736,10 @@
                                                       </Label>
                                                    </children>
                                                 </AnchorPane>
-                                                <AnchorPane layoutX="675.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                <AnchorPane layoutX="737.0" layoutY="33.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                    <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="CUTLERY" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Items" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="150" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="893.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="GIFT" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Package" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="50" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="1111.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="USERS" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Customers" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="100" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="1329.0" layoutY="18.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="FILE_TEXT" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Invoice" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="20" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <Label layoutX="21.0" layoutY="136.0" text="Label-1" />
-                                                <AnchorPane layoutX="21.0" layoutY="160.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="CART_PLUS" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Order" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="15" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="239.0" layoutY="160.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="DOLLAR" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Income" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="৳50000" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="457.0" layoutY="160.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="MONEY" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Expenses" textFill="WHITE">
+                                                      <FontAwesomeIcon fill="WHITE" glyphName="REFRESH" layoutX="14.0" layoutY="55.0" size="4em" />
+                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Pending Amount" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
@@ -835,7 +751,7 @@
                                                       </Label>
                                                    </children>
                                                 </AnchorPane>
-                                                <AnchorPane layoutX="675.0" layoutY="160.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                <AnchorPane layoutX="278.0" layoutY="180.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                    <children>
                                                       <FontAwesomeIcon fill="WHITE" glyphName="CUTLERY" layoutX="14.0" layoutY="55.0" size="4em" />
                                                       <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Items" textFill="WHITE">
@@ -850,7 +766,7 @@
                                                       </Label>
                                                    </children>
                                                 </AnchorPane>
-                                                <AnchorPane layoutX="893.0" layoutY="160.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                <AnchorPane layoutX="503.0" layoutY="180.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                    <children>
                                                       <FontAwesomeIcon fill="WHITE" glyphName="GIFT" layoutX="14.0" layoutY="55.0" size="4em" />
                                                       <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Package" textFill="WHITE">
@@ -865,22 +781,7 @@
                                                       </Label>
                                                    </children>
                                                 </AnchorPane>
-                                                <AnchorPane layoutX="1111.0" layoutY="160.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="USERS" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Customers" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="100" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="1329.0" layoutY="160.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                <AnchorPane layoutX="46.0" layoutY="180.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                    <children>
                                                       <FontAwesomeIcon fill="WHITE" glyphName="FILE_TEXT" layoutX="14.0" layoutY="55.0" size="4em" />
                                                       <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Invoice" textFill="WHITE">
@@ -895,228 +796,15 @@
                                                       </Label>
                                                    </children>
                                                 </AnchorPane>
-                                                <Label layoutX="21.0" layoutY="280.0" text="Label-2" />
-                                                <AnchorPane layoutX="21.0" layoutY="302.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="CART_PLUS" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Order" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="15" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="239.0" layoutY="302.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="DOLLAR" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Income" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="৳50000" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="457.0" layoutY="302.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="MONEY" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Expenses" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="৳5454" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="675.0" layoutY="302.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="CUTLERY" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Items" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="150" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="893.0" layoutY="302.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="GIFT" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Package" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="50" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="1111.0" layoutY="302.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                                <AnchorPane layoutX="737.0" layoutY="180.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                    <children>
                                                       <FontAwesomeIcon fill="WHITE" glyphName="USERS" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Customers" textFill="WHITE">
+                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Users" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
                                                       </Label>
                                                       <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="100" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="1329.0" layoutY="302.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="FILE_TEXT" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Invoice" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="20" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <Label layoutX="21.0" layoutY="420.0" text="Label-3" />
-                                                <AnchorPane layoutX="21.0" layoutY="444.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="CART_PLUS" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Order" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="15" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="239.0" layoutY="444.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="DOLLAR" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Income" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="৳50000" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="457.0" layoutY="444.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="MONEY" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Expenses" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="৳5454" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="675.0" layoutY="444.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="CUTLERY" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Items" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="150" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="893.0" layoutY="444.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="GIFT" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Package" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="50" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="1111.0" layoutY="444.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="USERS" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Customers" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="100" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="1329.0" layoutY="444.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="FILE_TEXT" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Invoice" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="20" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <Label layoutX="21.0" layoutY="564.0" text="Label-2" />
-                                                <AnchorPane layoutX="189.0" layoutY="598.0" prefHeight="110.0" prefWidth="468.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="CART_PLUS" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Order" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="15" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>

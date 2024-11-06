@@ -33,6 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -64,7 +65,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -81,6 +81,9 @@ import models.EmployeeDataModel;
 import models.InvoiceDataModel;
 import models.InvoiceItem;
 import models.UserDataModel;
+import javafx.scene.shape.Rectangle;
+//import java.awt.Rectangle;
+
 
 /**
  *
@@ -258,7 +261,16 @@ public class MainFormController implements Initializable {
     @FXML private Button slideshowNextBtn;
     @FXML private Button slideshowPreviousBtn;
     @FXML private AnchorPane slideshowAnchorPane;
-    @FXML private ImageView slideshowImageView;    
+    @FXML private ImageView slideshowImageView;
+    @FXML private AnchorPane ScrollAnchor;
+    @FXML private Text ScrollingText;
+    @FXML private Rectangle scrollRectangle;
+    
+    @FXML private Label newsTextLabel;
+    @FXML private Label dashDateLabel;
+    @FXML private Label dashTimeLabel;
+    @FXML private Label todayLabel;
+
     //End
 
 
@@ -471,7 +483,7 @@ public class MainFormController implements Initializable {
             settingsForm.setVisible(false);
             
             loadAdminData(1);
-            getSlideshow();
+            initializeSlideshow();
             empClearBtn();
             itemsClearBtn();
             expenseClearBtn();
@@ -762,26 +774,21 @@ public class MainFormController implements Initializable {
         slideshowTimeline.play();
     }
     public void dynamicView() {
-        // Bind ImageView size to AnchorPane size
+        // Bind the ImageView's fitWidth and fitHeight to the AnchorPane's width and height
         slideshowImageView.fitWidthProperty().bind(slideshowAnchorPane.widthProperty());
         slideshowImageView.fitHeightProperty().bind(slideshowAnchorPane.heightProperty());
         slideshowImageView.setPreserveRatio(false);
-        
-        // Optional: Set a default image if needed
-        //slideshowImageView.setImage(new Image("file:src/images/defaultImage.jpg"));
+        // Load a default image if needed
+        //slideshowImageView.setImage(new Image("file:src/img/slider.jpg"));
         slideshowImageView.setImage(image);
     }
-    private void getSlideshow(){
-        // Bind the ImageView size to AnchorPane size for dynamic resizing
-        slideshowImageView.fitWidthProperty().bind(slideshowAnchorPane.widthProperty());
-        slideshowImageView.fitHeightProperty().bind(slideshowAnchorPane.heightProperty());
-        slideshowImageView.setPreserveRatio(true);
-
+    private void initializeSlideshow(){
         // Load images from the designated folder
         loadImagesFromFolder();
         startAutoPlay();
         updateImageView();
         dynamicView();
+        //getTextData();
 
         // Set up button actions
         slideshowAddBtn.setOnAction(e -> importImage());
@@ -791,6 +798,96 @@ public class MainFormController implements Initializable {
 
     }
     
+ 
+    private void startDateTimeDisplay() {
+        Timeline dateTimeTimeline = new Timeline(
+            new KeyFrame(Duration.seconds(1), event -> {
+                String dateTimed = new SimpleDateFormat("EEEE").format(new Date());
+                String dateTimeD = new SimpleDateFormat("dd MMM yyyy").format(new Date());
+                String dateTimeT = new SimpleDateFormat("HH:mm:ss aa").format(new Date());
+                dashDateLabel.setText(dateTimeD);
+                dashTimeLabel.setText(dateTimeT); 
+                todayLabel.setText(dateTimed); 
+            })
+        );
+
+        dateTimeTimeline.setCycleCount(Timeline.INDEFINITE);  // Run indefinitely
+        dateTimeTimeline.play();  // Start the date-time display timeline
+    }
+    private final String[] phrases = {" ","Hi Arko! ✋ ", "NEWS UPDATE FOR TODAY - ", 
+        "Today Order: 12 ", "Income: 2500TK ", 
+        "Expense: 00 ", "Pending Amount: 250TK "};
+    private int phraseIndex = 0; 
+
+    private void startTypingEffect() {
+        if (phraseIndex >= phrases.length) {
+            phraseIndex = 0;  // Loop back to the first phrase
+        }
+
+        String currentPhrase = phrases[phraseIndex];
+        newsTextLabel.setText("");  // Clear text before typing a new phrase
+
+        Timeline typingTimeline = new Timeline();
+        Duration characterDelay = Duration.millis(300);  // Delay between characters
+
+        // Typing effect for the current phrase
+        for (int i = 0; i < currentPhrase.length(); i++) {
+            final int index = i;
+            KeyFrame keyFrame = new KeyFrame(characterDelay.multiply(i + 1), event -> {
+                newsTextLabel.setText(currentPhrase.substring(0, index + 1));
+            });
+            typingTimeline.getKeyFrames().add(keyFrame);
+        }
+
+        // After the phrase completes, wait and start the next phrase
+        typingTimeline.setOnFinished(event -> {
+            phraseIndex++;
+            startTypingEffect();  // Move to the next phrase
+        });
+
+        typingTimeline.play();  // Start the animation
+    }
+    
+    private String scrollingTextContent = "1 This is a scrolling text from right to left. 2 This is a scrolling text from right to left.";
+    private void getTextData() {
+        // Set the scrolling text content
+        ScrollingText.setText(scrollingTextContent);
+        //ScrollText.setStyle("-fx-font-size: 24;"); 
+        // Start scrolling the text
+        
+         // Create a clip to hide overflow, matching ScrollAnchorPane's size
+        Rectangle clip = new Rectangle();
+        //scrollRectangle.widthProperty().bind(ScrollAnchor.widthProperty());
+        //scrollRectangle.heightProperty().bind(ScrollAnchor.heightProperty());
+        
+
+        //ScrollAnchor.setClip(scrollRectangle); // Set clip on ScrollAnchorPane
+        
+        startScrollingText();
+    }
+    private void startScrollingText() {
+        // Create a TranslateTransition for scrolling text
+        TranslateTransition translate = new TranslateTransition(Duration.seconds(10), ScrollingText);
+        
+        // Start from the right of the AnchorPane
+        translate.setFromX(ScrollAnchor.getWidth());
+        
+        // Move to the left, off the screen
+        translate.setToX(-ScrollingText.getLayoutBounds().getWidth());
+        
+        // Repeat indefinitely
+        translate.setCycleCount(TranslateTransition.INDEFINITE);
+        translate.setAutoReverse(false); // No auto-reverse
+
+        // Start the scrolling animation
+        translate.play();
+
+        // Adjust scrolling text based on AnchorPane resize
+        ScrollAnchor.widthProperty().addListener((observable, oldValue, newValue) -> {
+            translate.setFromX(newValue.doubleValue());
+            translate.setToX(-ScrollingText.getLayoutBounds().getWidth());
+        });
+    }
     
     //// END DASHBOARD SECTION
     
@@ -3600,7 +3697,9 @@ public class MainFormController implements Initializable {
         if (!folder.exists()) { folder.mkdir(); }
         
         //Dashboard
-        getSlideshow();
+        initializeSlideshow();
+        startTypingEffect();
+        startDateTimeDisplay();
         //displayUsername(); 
         //dashboardDisplayNC();
         //dashboardDisplayTI();
