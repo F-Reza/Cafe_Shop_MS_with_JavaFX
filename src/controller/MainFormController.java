@@ -45,6 +45,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -3689,6 +3693,45 @@ public class MainFormController implements Initializable {
     }
     /// END USERS SECTION/
     
+    @FXML private AreaChart<String, Number> expenseAreaChart;
+    @FXML private BarChart<String, Number> expenseBarChart;
+    @FXML private PieChart expensePieChart;
+    public void chartInitialize() {
+        // Sample data
+        XYChart.Series<String, Number> incomeData = new XYChart.Series<>();
+        incomeData.setName("Monthly Income");
+
+        incomeData.getData().add(new XYChart.Data<>("January", 5000));
+        incomeData.getData().add(new XYChart.Data<>("February", 7000));
+        incomeData.getData().add(new XYChart.Data<>("March", 6000));
+        incomeData.getData().add(new XYChart.Data<>("April", 8000));
+        incomeData.getData().add(new XYChart.Data<>("May", 7500));
+        incomeData.getData().add(new XYChart.Data<>("June", 8500));
+        incomeData.getData().add(new XYChart.Data<>("Julai", 1000));
+        incomeData.getData().add(new XYChart.Data<>("Agoust", 6000));
+        incomeData.getData().add(new XYChart.Data<>("Sptember", 8000));
+        incomeData.getData().add(new XYChart.Data<>("October", 7500));
+        incomeData.getData().add(new XYChart.Data<>("November", 8500));
+        incomeData.getData().add(new XYChart.Data<>("Desember", 8500));
+        
+        
+         ObservableList<PieChart.Data> incomeData1 = FXCollections.observableArrayList(
+            new PieChart.Data("Salary", 5000),
+            new PieChart.Data("Investments", 3000),
+            new PieChart.Data("Freelance", 1500),
+            new PieChart.Data("Others", 1000),
+            new PieChart.Data("Salary", 5000),
+            new PieChart.Data("Investments", 3000),
+            new PieChart.Data("Freelance", 1500),
+            new PieChart.Data("Others", 1000)
+        );
+        // Adding data to the chart
+        expenseAreaChart.getData().add(incomeData);
+        expenseBarChart.getData().add(incomeData);
+        expensePieChart.setData(incomeData1);
+    }
+    
+    
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -3700,6 +3743,7 @@ public class MainFormController implements Initializable {
         initializeSlideshow();
         startTypingEffect();
         startDateTimeDisplay();
+        chartInitialize();
         //displayUsername(); 
         //dashboardDisplayNC();
         //dashboardDisplayTI();
