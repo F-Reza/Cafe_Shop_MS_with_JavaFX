@@ -22,7 +22,7 @@ public class Main_App extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/view/mainForm.fxml")); //mainForm authPage
+        Parent root = FXMLLoader.load(getClass().getResource("/view/authPage.fxml")); //mainForm authPage
         
         Scene scene = new Scene(root);
         

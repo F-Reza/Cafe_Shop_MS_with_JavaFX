@@ -45,6 +45,21 @@ public class DB {
             logger.info(e.toString());
         }
     }
+    
+    public void closeConnection() throws SQLException {
+        if(connection != null || !connection.isClosed()) {
+            connection.close();
+        }
+    }
+    
+    public void getDateFormate() throws SQLException {
+        long currentTimeInMillis = System.currentTimeMillis();
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:aa");    
+        Date resultdate = new Date(currentTimeInMillis);
+        
+        System.out.println(sdf.format(resultdate.getTime()));      
+    }
+    
 
     private void createTable() {
         //getConnection();
@@ -168,18 +183,6 @@ public class DB {
         
     }
     
-    public void getDateFormate() throws SQLException {
-        long currentTimeInMillis = System.currentTimeMillis();
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:aa");    
-        Date resultdate = new Date(currentTimeInMillis);
-        
-        System.out.println(sdf.format(resultdate.getTime()));      
-    }
-    private void closeConnection() throws SQLException {
-        if(connection != null || !connection.isClosed()) {
-            connection.close();
-        }
-    }
     
     //ADMIN GET DATA SECTION
     public UserDataModel getAdminUserData(int adminId) {

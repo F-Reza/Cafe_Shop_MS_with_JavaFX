@@ -29,8 +29,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
@@ -94,7 +92,7 @@ import javafx.scene.shape.Rectangle;
  * @author F_Reza
  */
 public class MainFormController implements Initializable {
-    private final DB db = new DB();
+    private DB db = new DB();
     private PreparedStatement prepare;
     private Statement statement;
     private ResultSet result;
@@ -159,7 +157,8 @@ public class MainFormController implements Initializable {
         return invoice;
     }
     public void loadInvoiceDataById() {
-    InvoiceDataModel invoice = getInvoiceById(20);
+        db.getConnection();
+        InvoiceDataModel invoice = getInvoiceById(20);
         if (invoice == null) {
             
             long millis = invoice.getDate().getTime();
@@ -2056,11 +2055,8 @@ public class MainFormController implements Initializable {
                     // Set up view button action
                     viewButton.setOnAction(event -> {
                         loadInvoiceDataById(); 
-                        try{
-                            getViewInvoice();
-                        } catch (IOException ex) {
-                            Logger.getLogger(MainFormController.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        getViewInvoice();
+
                     });
                     
                     // Set up print button action
@@ -2155,25 +2151,51 @@ public class MainFormController implements Initializable {
 //            alert.showAndWait();
         }
     }
-    public void getViewInvoice() throws IOException {
-
-        // TO HIDE MAIN FORM 
-        //signoutBtn.getScene().getWindow().hide();
+    
+    public void getViewInvoice() {
+    try {
+        try {
+            db.closeConnection();
+            System.out.println("Database connection closed after loading invoice.fxml.");
+        } catch (SQLException e) {
+            System.out.println("Error closing database connection: " + e.getMessage());
+            e.printStackTrace();
+        }
+        // Load the FXML file and initialize the UI
         Parent root = FXMLLoader.load(getClass().getResource("/view/invoice.fxml"));
         Stage stage = new Stage();
         Scene scene = new Scene(root);
         stage.setTitle("View Invoice");
-        stage.initModality(Modality.APPLICATION_MODAL); // Make the stage modal
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.initStyle(StageStyle.UTILITY);
-        
 
         stage.setMinWidth(405);
         stage.setMaxWidth(405);
         stage.setMinHeight(818);
         stage.setMaxHeight(818);
         stage.setScene(scene);
+
+        // Show the stage
         stage.show();
+
+        // Add a listener to close the connection when the stage is closed
+        stage.setOnHiding(event -> {
+            try {
+                db.closeConnection();
+                System.out.println("Database connection closed on View Invoice close.");
+            } catch (SQLException e) {
+                System.out.println("Error closing database connection: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+
+    } catch (IOException e) {
+        System.out.println("Error loading invoice.fxml: " + e.getMessage());
+        e.printStackTrace();
     }
+}
+
+
     //// END INVOICE SECTION
     
     

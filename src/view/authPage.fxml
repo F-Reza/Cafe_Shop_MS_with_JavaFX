@@ -109,7 +109,7 @@
                   </Label>
                   <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="109.0" layoutY="84.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../img/goppo.jpeg" />
+                        <Image url="@../img/GoPpo.jpeg" />
                      </image>
                   </ImageView>
                   

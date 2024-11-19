@@ -40,85 +40,37 @@ import javafx.util.Duration;
  * @author F_Reza
  */
 public class AuthController implements Initializable {
-    private DB db = new DB();
+    private final DB db = new DB();
     private PreparedStatement prepare;
     private ResultSet result;
     
     private Logger logger = Logger.getLogger(this.getClass().getName());
     private Alert alert;
 
-    @FXML
-    private TextField fp_answer;
-
-    @FXML
-    private Button fp_backBtn;
-
-    @FXML
-    private TextField fp_username;
-
-    @FXML
-    private Button fp_nextBtn;
-
-    @FXML
-    private ComboBox<?> fp_question;
-
-    @FXML
-    private AnchorPane fp_questionForm;
-
-    @FXML
-    private PasswordField np_confirmPassword;
-
-    @FXML
-    private Button np_backBtn;
-
-    @FXML
-    private Button np_changePassBtn;
-
-    @FXML
-    private AnchorPane np_newPassForm;
-
-    @FXML
-    private PasswordField np_password;
-
-    @FXML
-    private Hyperlink si_forgotPass;
-
-    @FXML
-    private Button si_loginBtn;
-
-    @FXML
-    private AnchorPane si_loginForm;
-
-    @FXML
-    private PasswordField si_password;
-
-    @FXML
-    private TextField si_username;
-
-    @FXML
-    private AnchorPane side_Form;
-
-    @FXML
-    private Button side_alreadyHave;
-
-    @FXML
-    private Button side_createBtn;
-
-    @FXML
-    private PasswordField su_password;
-
-    @FXML
-    private ComboBox<?> su_user_role;
-
-    @FXML
-    private Button su_signupBtn;
-
-    @FXML
-    private AnchorPane su_signupForm;
-
-    @FXML
-    private TextField su_username;
-
+    @FXML private TextField fp_answer;
+    @FXML private Button fp_backBtn;
+    @FXML private TextField fp_username;
+    @FXML private Button fp_nextBtn;
+    @FXML private ComboBox<?> fp_question;
+    @FXML private AnchorPane fp_questionForm;
+    @FXML private PasswordField np_confirmPassword;
+    @FXML private Button np_backBtn;
+    @FXML private Button np_changePassBtn;
+    @FXML private AnchorPane np_newPassForm;
+    @FXML private PasswordField np_password;
+    @FXML private Hyperlink si_forgotPass;
+    @FXML private Button si_loginBtn;
+    @FXML private AnchorPane si_loginForm;
+    @FXML private PasswordField si_password;
+    @FXML private TextField si_username;
+    @FXML private AnchorPane side_Form;
+    @FXML private Button side_alreadyHave;
+    @FXML private Button side_createBtn;
+    @FXML private PasswordField su_password;
+    @FXML private ComboBox<?> su_user_role;
+    @FXML private Button su_signupBtn;
+    @FXML private AnchorPane su_signupForm;
+    @FXML private TextField su_username;
 
     private String[] questionList = {
         "What is your favorite Color?",
@@ -147,13 +99,10 @@ public class AuthController implements Initializable {
             String selctDataES= "SELECT username, status FROM employees WHERE username = ? and status = ?";
 
             db.getConnection();
-
 //            try (PreparedStatement statement = db.connection.prepareStatement(selctData)) {
-//                
 //                statement.setString(1, si_username.getText());
 //                statement.setString(2, si_password.getText());
-//                result = statement.executeQuery();
-                
+//                result = statement.executeQuery();  
             try {
                    prepare = db.connection.prepareStatement(selctData);
                    
@@ -191,6 +140,7 @@ public class AuthController implements Initializable {
                     stage.show();
 
                     si_loginBtn.getScene().getWindow().hide();
+                    db.closeConnection();
 
                 } else if (rstE.next()) {
                     try {
@@ -362,8 +312,6 @@ public class AuthController implements Initializable {
         
 
     }
-    
-
     public void regQuestionList() {
         List<String> listQ = new ArrayList<>();
 
@@ -374,7 +322,6 @@ public class AuthController implements Initializable {
         ObservableList listData = FXCollections.observableArrayList(listQ);
         su_user_role.setItems(listData);
     }
-
     public void forgotPassQuestionList() {
 
         List<String> listQ = new ArrayList<>();
@@ -387,14 +334,12 @@ public class AuthController implements Initializable {
         fp_question.setItems(listData);
 
     }
-
     public void switchForgotPass() {
         fp_questionForm.setVisible(true);
         si_loginForm.setVisible(false);
 
         forgotPassQuestionList();
     }
-
     public void nextBtn() {
 
         if (fp_username.getText().isEmpty() || fp_question.getSelectionModel().getSelectedItem() == null
@@ -438,7 +383,6 @@ public class AuthController implements Initializable {
         }
 
     }
-
     public void changePassBtn() {
 
         if (np_password.getText().isEmpty() || np_confirmPassword.getText().isEmpty()) {
@@ -505,7 +449,6 @@ public class AuthController implements Initializable {
             }
         }
     }
-    
     private void clearData() {
         // TO CLEAR FIELDS
         np_confirmPassword.setText("");
@@ -514,18 +457,15 @@ public class AuthController implements Initializable {
         fp_answer.setText("");
         fp_username.setText("");
     }
-
     public void backToLoginForm() {
         si_loginForm.setVisible(true);
         fp_questionForm.setVisible(false);
         clearData();
     }
-
     public void backToQuestionForm() {
         fp_questionForm.setVisible(true);
         np_newPassForm.setVisible(false);
     }
-
     public void switchForm(ActionEvent event) {
 
         TranslateTransition slider = new TranslateTransition();
