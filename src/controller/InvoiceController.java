@@ -38,6 +38,7 @@ public class InvoiceController implements Initializable{
     private ResultSet result;
     private String inv_date;
     private String inv_time;
+    private int getById;
     
     
     @FXML private AnchorPane invoice_DataForm;
@@ -61,7 +62,11 @@ public class InvoiceController implements Initializable{
     @FXML private TableColumn<InvoiceItem, Integer> invoice_ItemQty;
     @FXML private TableColumn<InvoiceItem, Double> invoice_ItemAmount;
     
-    
+   
+    public void setGetById(int id) {
+        this.getById = id;
+        loadInvoiceDataById(getById);
+    }
     public InvoiceDataModel getInvoiceById(int invID) {
         InvoiceDataModel invoice = null;
         String query = "SELECT * FROM invoices WHERE id = ?";
@@ -90,6 +95,7 @@ public class InvoiceController implements Initializable{
                     resultSet.getDate("date")
                 );
             }
+            db.closeConnection();
 
         } catch (SQLException e) {
             System.out.println(e.toString());
@@ -122,38 +128,55 @@ public class InvoiceController implements Initializable{
             invoice_TotalQty.setText("Total Qty: "+invoice.getTotalQty().toString());
             invoice_Note.setText("Note: "+invoice.getNote());
         
-            String formattedOutput = "Pasta, 1, 8.49, 8.49\nPasta, 1, 8.49, 8.49\nPasta, 1, 8.49, 8.49\nPasta, 1, 8.49, 8.49\nPasta, 1, 8.49, 8.49\nPizza, 1, 3.99, 3.99\nPasta new, 1, 4.49, 4.49\nPizza new, 1, 3.99, 3.99";
-            populateTableView(formattedOutput);
-
+            String items = invoice.getItems();
+            //System.out.println("----------> :" +items);
+            String formattedItems = convertItemsFormat(items);
+            //System.out.println("----------> :" +formattedItems);
+            populateTableView(formattedItems);
         }
     }
-    
-    
-    //String formattedOutput = "Pasta, 1, 8.49, 8.49\nPizza, 1, 3.99, 3.99\nPasta new, 1, 4.49, 4.49\nPizza new, 1, 3.99, 3.99";
-    //populateTableView(formattedOutput);
-    
-    public void populateTableView(String formattedOutput) {
-        String[] rows = formattedOutput.split("\n");
+    public static String convertItemsFormat(String items) {
+        // Remove the square brackets
+        items = items.replace("[", "").replace("]", "");
+
+        // Split the string into parts
+        String[] parts = items.split(", ");
+
+        StringBuilder formattedItems = new StringBuilder();
+        for (int i = 0; i < parts.length; i += 4) {
+            // Construct each row with newline at the end
+            formattedItems.append(parts[i]).append(", ")        // Item Name
+                          .append(parts[i + 1]).append(", ")    // Rate
+                          .append(parts[i + 2]).append(", ")    // Quantity
+                          .append(parts[i + 3]).append("\n");   // Amount
+        }
+        // Remove the last newline character
+        return formattedItems.toString().trim();
+    }
+    public void populateTableView(String items) {
+        String[] rows = items.split("\n"); // Split by newline to get each item
         ObservableList<InvoiceItem> data = FXCollections.observableArrayList();
 
         int serialNumber = 1;
         for (String row : rows) {
-            String[] fields = row.split(", ");
-            String itemName = fields[0];
-            int quantity = Integer.parseInt(fields[1]);
-            double rate = Double.parseDouble(fields[2]);
-            double amount = Double.parseDouble(fields[3]);
+            String[] fields = row.split(", "); // Split each row by comma
 
-            // Create InvoiceItem object and add to the list
-            data.add(new InvoiceItem(serialNumber++, itemName, rate, quantity, amount));
+            // Ensure there are 4 fields per item (name, rate, qty, amount)
+            if (fields.length == 4) {
+                String itemName = fields[0];
+                double rate = Double.parseDouble(fields[1]);
+                int quantity = Integer.parseInt(fields[2]);
+                double amount = Double.parseDouble(fields[3]);
+
+                // Create a new InvoiceItem object and add it to the list
+                data.add(new InvoiceItem(serialNumber++, itemName, rate, quantity, amount));
+            }
         }
 
         // Set the data to the TableView
         invoice_ItemTableView.setItems(data);
     }
-
-    @FXML
-    public void initialize() {
+    public void getInvoiceItems() {
         invoice_SN.setCellValueFactory(new PropertyValueFactory<>("serialNumber"));
         invoice_ItemName.setCellValueFactory(new PropertyValueFactory<>("itemName"));
         invoice_ItemRate.setCellValueFactory(new PropertyValueFactory<>("rate"));
@@ -161,13 +184,10 @@ public class InvoiceController implements Initializable{
         invoice_ItemAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
     }
 
-    
-    
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        loadInvoiceDataById(20); 
-        initialize();
+        //loadInvoiceDataById(20); 
+        getInvoiceItems();
     }
     
     

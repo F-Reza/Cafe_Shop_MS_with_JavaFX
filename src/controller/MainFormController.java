@@ -98,7 +98,7 @@ public class MainFormController implements Initializable {
     private ResultSet result;
     private String inv_date;
     private String inv_time;
-    
+    private Alert alert;
     
     @FXML private AnchorPane invoice_DataForm;
     @FXML private Label invoice_ID;
@@ -120,107 +120,6 @@ public class MainFormController implements Initializable {
     @FXML private TableColumn<InvoiceItem, Double> invoice_ItemRate;
     @FXML private TableColumn<InvoiceItem, Integer> invoice_ItemQty;
     @FXML private TableColumn<InvoiceItem, Double> invoice_ItemAmount;
-    
-    public InvoiceDataModel getInvoiceById(int invID) {
-        InvoiceDataModel invoice = null;
-        String query = "SELECT * FROM invoices WHERE id = ?";
-
-        try {
-            db.getConnection();
-            prepare = db.connection.prepareStatement(query);
-            prepare.setInt(1, invID);
-            ResultSet resultSet = prepare.executeQuery();
-
-            if (resultSet.next()) {
-                invoice = new InvoiceDataModel(
-                    resultSet.getInt("id"),
-                    resultSet.getString("inv_id"),
-                    resultSet.getString("items"),
-                    resultSet.getDouble("subtotal"),
-                    resultSet.getDouble("discount"),
-                    resultSet.getDouble("others_charge"),
-                    resultSet.getDouble("grand_total"),
-                    resultSet.getInt("total_qty"),
-                    resultSet.getString("note"),
-                    resultSet.getString("order_type"),
-                    resultSet.getString("served_by"),
-                    resultSet.getString("bill_by"),
-                    resultSet.getString("payment_status"),
-                    resultSet.getDate("date")
-                );
-            }
-
-        } catch (SQLException e) {
-            System.out.println(e.toString());
-        }
-
-        return invoice;
-    }
-    public void loadInvoiceDataById() {
-        db.getConnection();
-        InvoiceDataModel invoice = getInvoiceById(20);
-        if (invoice == null) {
-            
-            long millis = invoice.getDate().getTime();
-            SimpleDateFormat sdfD = new SimpleDateFormat("dd MMM yyyy");
-            SimpleDateFormat sdfT = new SimpleDateFormat("hh:mm:aa");  
-            java.sql.Date resultdate = new java.sql.Date(millis);
-            inv_date = sdfD.format(resultdate.getTime());
-            inv_time = sdfT.format(resultdate.getTime());
-        
-        
-            invoice_ID.setText("Invoice ID: "+invoice.getInvID());
-            invoice_Date.setText(inv_date);
-            invoice_Time.setText(inv_time);
-            invoice_OrderType.setText("Order Type: "+invoice.getOrderType());
-            invoice_ServedBy.setText("Served By: "+invoice.getServedBy());
-            invoice_BillBy.setText("Bill By: "+invoice.getBillBy());
-            invoice_Subtotal.setText(String.format("Subtotal: %.2f Tk", invoice.getSubTotal()));
-            invoice_Discount.setText("Discount: "+invoice.getDiscount());
-            invoice_OtherCharge.setText("Others Charge: "+invoice.getOthersCharge());
-            invoice_GrandTotal.setText(String.format("Grand Total: ৳ %.2f Tk", invoice.getGrandTotal()));
-            invoice_TotalQty.setText("Total Qty: "+invoice.getTotalQty().toString());
-            invoice_Note.setText("Note: "+invoice.getNote());
-        
-            String formattedOutput = "Pasta, 1, 8.49, 8.49\nPasta, 1, 8.49, 8.49\nPasta, 1, 8.49, 8.49\nPasta, 1, 8.49, 8.49\nPasta, 1, 8.49, 8.49\nPizza, 1, 3.99, 3.99\nPasta new, 1, 4.49, 4.49\nPizza new, 1, 3.99, 3.99";
-            populateTableView(formattedOutput);
-
-        }
-    } 
-    public void populateTableView(String formattedOutput) {
-        String[] rows = formattedOutput.split("\n");
-        ObservableList<InvoiceItem> data = FXCollections.observableArrayList();
-
-        int serialNumber = 1;
-        for (String row : rows) {
-            String[] fields = row.split(", ");
-            String itemName = fields[0];
-            int quantity = Integer.parseInt(fields[1]);
-            double rate = Double.parseDouble(fields[2]);
-            double amount = Double.parseDouble(fields[3]);
-
-            // Create InvoiceItem object and add to the list
-            data.add(new InvoiceItem(serialNumber++, itemName, rate, quantity, amount));
-        }
-
-        // Set the data to the TableView
-        invoice_ItemTableView.setItems(data);
-    }
-    @FXML
-    public void initializeZ() {
-        invoice_SN.setCellValueFactory(new PropertyValueFactory<>("serialNumber"));
-        invoice_ItemName.setCellValueFactory(new PropertyValueFactory<>("itemName"));
-        invoice_ItemRate.setCellValueFactory(new PropertyValueFactory<>("rate"));
-        invoice_ItemQty.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        invoice_ItemAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
-    }
-    
-//    private final DB db = new DB();
-//    private PreparedStatement prepare;
-//    private Statement statement;
-//    private ResultSet result;
-    
-    private Alert alert;
     
     //// SET Variable
     private static int id;
@@ -1929,16 +1828,6 @@ public class MainFormController implements Initializable {
             System.err.println("One or more labels are not initialized!");
         }
     }
-    public void loadInvoiceDataById(int adminId) {
-    InvoiceDataModel invoice = db.getInvoiceById(adminId);
-
-    if (invoice != null) {
-        //userDisplayName.setText(invoice.getDisplayName());
-        //adminUserName.setText(invoice.getUserName());
-        //userDate.setText(invoice.getDate().toString());
-        }
-    }
-    
     private void filterByInvoiceID(String invID) {
         if (invID == null || invID.isEmpty()) {
             invoice_TableView.setItems(invoiceListData); // Show all items if search is empty
@@ -2000,6 +1889,7 @@ public class MainFormController implements Initializable {
     }
     // TO SHOW DATA ON OUR TABLE
     private ObservableList<InvoiceDataModel> invoiceListData;
+    
     public void invoiceShowData() {
         loadInvoiceData();
         filterInvoiceData();
@@ -2054,9 +1944,10 @@ public class MainFormController implements Initializable {
                     
                     // Set up view button action
                     viewButton.setOnAction(event -> {
-                        loadInvoiceDataById(); 
-                        getViewInvoice();
-
+                        InvoiceDataModel invoice = getTableView().getItems().get(getIndex());
+                        int id = invoice.getId();
+                        getViewInvoice(id);
+                        
                     });
                     
                     // Set up print button action
@@ -2151,51 +2042,47 @@ public class MainFormController implements Initializable {
 //            alert.showAndWait();
         }
     }
-    
-    public void getViewInvoice() {
-    try {
+    public void getViewInvoice(int getById) {
         try {
-            db.closeConnection();
-            System.out.println("Database connection closed after loading invoice.fxml.");
-        } catch (SQLException e) {
-            System.out.println("Error closing database connection: " + e.getMessage());
+            // Create an FXMLLoader instance
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/invoice.fxml"));
+            Parent root = loader.load();
+            InvoiceController invoiceController = loader.getController();
+            invoiceController.setGetById(getById);
+            
+            Stage stage = new Stage();
+            Scene scene = new Scene(root);
+
+            stage.setTitle("View Invoice");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initStyle(StageStyle.UTILITY);
+
+            stage.setMinWidth(405);
+            stage.setMaxWidth(405);
+            stage.setMinHeight(818);
+            stage.setMaxHeight(818);
+            stage.setScene(scene);
+
+            // Show the stage
+            stage.show();
+
+            // Add a listener to close the connection when the stage is closed
+//            stage.setOnHiding(event -> {
+//                try {
+//                    db.closeConnection();
+//                    System.out.println("Database connection closed on View Invoice close.");
+//                } catch (SQLException e) {
+//                    System.out.println("Error closing database connection: " + e.getMessage());
+//                    e.printStackTrace();
+//                }
+//            });
+            
+        } catch (IOException e) {
+            System.out.println("Error loading invoice.fxml: " + e.getMessage());
             e.printStackTrace();
         }
-        // Load the FXML file and initialize the UI
-        Parent root = FXMLLoader.load(getClass().getResource("/view/invoice.fxml"));
-        Stage stage = new Stage();
-        Scene scene = new Scene(root);
-        stage.setTitle("View Invoice");
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.initStyle(StageStyle.UTILITY);
-
-        stage.setMinWidth(405);
-        stage.setMaxWidth(405);
-        stage.setMinHeight(818);
-        stage.setMaxHeight(818);
-        stage.setScene(scene);
-
-        // Show the stage
-        stage.show();
-
-        // Add a listener to close the connection when the stage is closed
-        stage.setOnHiding(event -> {
-            try {
-                db.closeConnection();
-                System.out.println("Database connection closed on View Invoice close.");
-            } catch (SQLException e) {
-                System.out.println("Error closing database connection: " + e.getMessage());
-                e.printStackTrace();
-            }
-        });
-
-    } catch (IOException e) {
-        System.out.println("Error loading invoice.fxml: " + e.getMessage());
-        e.printStackTrace();
     }
-}
-
-
+    
     //// END INVOICE SECTION
     
     
@@ -3752,15 +3639,14 @@ public class MainFormController implements Initializable {
         expenseBarChart.getData().add(incomeData);
         expensePieChart.setData(incomeData1);
     }
-    
-    
+
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Create the folder if not exists
         File folder = new File("Images");
         if (!folder.exists()) { folder.mkdir(); }
-        
+       
         //Dashboard
         initializeSlideshow();
         startTypingEffect();

@@ -82,7 +82,7 @@
                     <center>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                             <children>
-                                <AnchorPane fx:id="dashboadrForm" prefHeight="720.0" prefWidth="851.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <AnchorPane fx:id="dashboadrForm" prefHeight="720.0" prefWidth="851.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <children>
                                         <AnchorPane layoutX="17.0" layoutY="14.0" prefHeight="160.0" prefWidth="818.0" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="626.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="14.0">
                                             <styleClass>
@@ -546,7 +546,7 @@
                               <Button fx:id="billBtn" layoutX="473.0" layoutY="13.0" mnemonicParsing="false" onAction="#updateBtn" text="Button" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="invoicesForm" layoutX="316.0" layoutY="278.0" prefHeight="720.0" prefWidth="851.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="invoicesForm" layoutX="316.0" layoutY="278.0" prefHeight="720.0" prefWidth="851.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="17.0" layoutY="53.0" prefHeight="735.0" prefWidth="800.0" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="53.0">
                                  <styleClass>
