@@ -253,6 +253,7 @@ public class MainFormController implements Initializable {
     @FXML private Label totalInvoice;
     @FXML private Label pendingInvoices;
     @FXML private Label completeInvoices;
+    @FXML private Label totalPendingAmountInv;
     @FXML private TableView<InvoiceDataModel> invoice_TableView;
     @FXML private TableColumn<InvoiceDataModel, String> invoice_Col_SN;
     @FXML private TableColumn<InvoiceDataModel, String> invoice_Col_InvID;
@@ -459,6 +460,7 @@ public class MainFormController implements Initializable {
             settingsForm.setVisible(false);
             
             invoiceShowData();
+            loadTotalPendingAmount();
             setDynamicColumnWidthForInvoiceTable();
             empClearBtn();
             itemsClearBtn();
@@ -1810,6 +1812,7 @@ public class MainFormController implements Initializable {
         // Check if any label is null before proceeding
         if (totalPendingAmount != null ) {
             totalPendingAmount.setText(String.format("Total Pending Amount: %.2f TK", db.getTotalInvoicePendingAmount()));
+            totalPendingAmountInv.setText(String.format("Total Pending Amount: %.2f TK", db.getTotalInvoicePendingAmount()));
         } else {
             System.err.println("One or more labels are not initialized!");
         }
@@ -3596,6 +3599,36 @@ public class MainFormController implements Initializable {
     
     
     //// START REPORT SECTION
+    private void loadOrderDataRpt() {
+        // Check if any label is null before proceeding
+        if (todayOrderRpt != null && yesterdayOrderRpt != null && thisweekOrderRpt != null && 
+            thismonthOrderRpt != null && thisyearOrderRpt != null && totalIncomeRpt != null) {
+            
+            todayOrderRpt.setText(""+db.getTodayOrder());
+            yesterdayOrderRpt.setText(""+db.getYesterdayOrder());
+            thisweekOrderRpt.setText(""+db.getThisWeekOrder());
+            thismonthOrderRpt.setText(""+db.getThisMonthOrder());
+            thisyearOrderRpt.setText(""+db.getThisYearOrder());
+            totalOrderRpt.setText(""+db.getTotalOrder());
+        } else {
+            System.err.println("One or more labels are not initialized!");
+        }
+    }
+    private void loadIncomeDataRpt() {
+        // Check if any label is null before proceeding
+        if (todayIncomeRpt != null && yesterdayIncomeRpt != null && thisweekIncomeRpt != null && 
+            thismonthIncomeRpt != null && thisyearIncomeRpt != null && totalIncomeRpt != null) {
+            
+            todayIncomeRpt.setText(String.format("%.2f TK", db.getTodayIncome()));
+            yesterdayIncomeRpt.setText(String.format("%.2f TK", db.getYesterdayIncome()));
+            thisweekIncomeRpt.setText(String.format("%.2f TK", db.getThisWeekIncome()));
+            thismonthIncomeRpt.setText(String.format("%.2f TK", db.getThisMonthIncome()));
+            thisyearIncomeRpt.setText(String.format("%.2f TK", db.getThisYearIncome()));
+            totalIncomeRpt.setText(String.format("%.2f TK", db.getTotalIncome()));
+        } else {
+            System.err.println("One or more labels are not initialized!");
+        }
+    }
     private void loadExpenseDataRpt() {
         // Check if any label is null before proceeding
         if (todayExpenseRpt != null && yesterdayExpenseRpt != null && thisweekExpenseRpt != null && 
@@ -3617,7 +3650,7 @@ public class MainFormController implements Initializable {
     public void chartInitialize() {
         // Sample data
         XYChart.Series<String, Number> incomeData = new XYChart.Series<>();
-        incomeData.setName("Monthly Income");
+        incomeData.setName("Monthly Order");
 
         incomeData.getData().add(new XYChart.Data<>("January", 5000));
         incomeData.getData().add(new XYChart.Data<>("February", 7000));
@@ -3700,6 +3733,8 @@ public class MainFormController implements Initializable {
         loadExpenseData();
         
         //Reports
+        loadOrderDataRpt();
+        loadIncomeDataRpt();
         loadExpenseDataRpt();
         
         //User Admin

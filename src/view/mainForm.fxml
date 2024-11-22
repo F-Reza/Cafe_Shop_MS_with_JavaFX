@@ -525,7 +525,7 @@
                                     <Font name="System Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="totalPendingAmount" alignment="CENTER_RIGHT" layoutX="816.0" layoutY="12.0" prefHeight="27.0" prefWidth="356.0" text="Total Pending Amount: 0.00 TK" AnchorPane.rightAnchor="19.0" AnchorPane.topAnchor="12.0">
+                              <Label fx:id="totalPendingAmount" layoutX="287.0" layoutY="12.0" prefHeight="27.0" prefWidth="408.0" text="Total Pending Amount: 0.00 TK" AnchorPane.leftAnchor="287.0" AnchorPane.topAnchor="12.0">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font>
@@ -583,6 +583,7 @@
                                     <Font name="System Bold" size="18.0" />
                                  </font>
                               </Label>
+                              <Label fx:id="totalPendingAmountInv" layoutX="895.0" layoutY="22.0" prefHeight="17.0" prefWidth="217.0" text="Total Pending Amount : 0.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane fx:id="expensesForm" layoutX="332.0" layoutY="249.0" prefHeight="720.0" prefWidth="851.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -812,8 +813,8 @@
                                                       </Label>
                                                    </children>
                                                 </AnchorPane>
-                                                <PieChart fx:id="expensePieChart" layoutX="364.0" layoutY="396.0" prefHeight="216.0" prefWidth="265.0" title="Total Expenses" />
-                                                <AreaChart fx:id="expenseAreaChart" layoutX="46.0" layoutY="396.0" prefHeight="216.0" prefWidth="265.0" title="Total Incomes">
+                                                <PieChart fx:id="expensePieChart" layoutX="737.0" layoutY="370.0" prefHeight="216.0" prefWidth="265.0" title="Total Expenses" />
+                                                <AreaChart fx:id="expenseAreaChart" layoutX="378.0" layoutY="370.0" prefHeight="216.0" prefWidth="265.0" title="Total Income">
                                                   <xAxis>
                                                     <CategoryAxis side="BOTTOM" />
                                                   </xAxis>
@@ -821,7 +822,7 @@
                                                     <NumberAxis side="LEFT" />
                                                   </yAxis>
                                                 </AreaChart>
-                                                <BarChart fx:id="expenseBarChart" layoutX="676.0" layoutY="393.0" prefHeight="216.0" prefWidth="265.0" title="Total Orders">
+                                                <BarChart fx:id="expenseBarChart" layoutX="41.0" layoutY="370.0" prefHeight="216.0" prefWidth="265.0" title="Total Orders">
                                                   <xAxis>
                                                     <CategoryAxis side="BOTTOM" />
                                                   </xAxis>
@@ -829,42 +830,42 @@
                                                     <NumberAxis side="LEFT" />
                                                   </yAxis>
                                                 </BarChart>
-                                                <Label layoutX="389.0" layoutY="623.0" text="todayExpense" />
-                                                <Label layoutX="389.0" layoutY="641.0" text="yesterdayExpense" />
-                                                <Label layoutX="389.0" layoutY="660.0" text="thisweekExpense" />
-                                                <Label layoutX="389.0" layoutY="679.0" text="thismonthExpense" />
-                                                <Label layoutX="389.0" layoutY="697.0" text="thisyearExpense" />
-                                                <Label layoutX="389.0" layoutY="714.0" text="totalExpense" />
-                                                <Label fx:id="todayExpenseRpt" layoutX="508.0" layoutY="625.0" text="00" />
-                                                <Label fx:id="yesterdayExpenseRpt" layoutX="508.0" layoutY="643.0" text="00" />
-                                                <Label fx:id="thisweekExpenseRpt" layoutX="508.0" layoutY="662.0" text="00" />
-                                                <Label fx:id="thismonthExpenseRpt" layoutX="508.0" layoutY="681.0" text="00" />
-                                                <Label fx:id="thisyearExpenseRpt" layoutX="508.0" layoutY="699.0" text="00" />
-                                                <Label fx:id="totalExpenseRpt" layoutX="508.0" layoutY="716.0" text="00" />
-                                                <Label layoutX="703.0" layoutY="622.0" text="todayOrder" />
-                                                <Label layoutX="703.0" layoutY="640.0" text="yesterdayOrder" />
-                                                <Label layoutX="703.0" layoutY="659.0" text="thisweekOrder" />
-                                                <Label layoutX="703.0" layoutY="678.0" text="thismonthOrder" />
-                                                <Label layoutX="703.0" layoutY="696.0" text="thisyearOrder" />
-                                                <Label layoutX="703.0" layoutY="713.0" text="totalOrder" />
-                                                <Label fx:id="todayOrderRpt" layoutX="817.0" layoutY="622.0" text="00" />
-                                                <Label fx:id="yesterdayOrderRpt" layoutX="817.0" layoutY="640.0" text="00" />
-                                                <Label fx:id="thisweekOrderRpt" layoutX="817.0" layoutY="659.0" text="00" />
-                                                <Label fx:id="thismonthOrderRpt" layoutX="817.0" layoutY="678.0" text="00" />
-                                                <Label fx:id="thisyearOrderRpt" layoutX="817.0" layoutY="696.0" text="00" />
-                                                <Label fx:id="totalOrderRpt" layoutX="817.0" layoutY="713.0" text="00" />
-                                                <Label layoutX="79.0" layoutY="622.0" text="todayIncome" />
-                                                <Label layoutX="79.0" layoutY="640.0" text="yesterdayIncome" />
-                                                <Label layoutX="79.0" layoutY="659.0" text="thisweekIncome" />
-                                                <Label layoutX="79.0" layoutY="678.0" text="thismonthIncome" />
-                                                <Label layoutX="79.0" layoutY="696.0" text="thisyearIncome" />
-                                                <Label layoutX="79.0" layoutY="713.0" text="totalIncome" />
-                                                <Label fx:id="todayIncomeRpt" layoutX="193.0" layoutY="622.0" text="00" />
-                                                <Label fx:id="yesterdayIncomeRpt" layoutX="193.0" layoutY="640.0" text="00" />
-                                                <Label fx:id="thisweekIncomeRpt" layoutX="193.0" layoutY="659.0" text="00" />
-                                                <Label fx:id="thismonthIncomeRpt" layoutX="193.0" layoutY="678.0" text="00" />
-                                                <Label fx:id="thisyearIncomeRpt" layoutX="193.0" layoutY="696.0" text="00" />
-                                                <Label fx:id="totalIncomeRpt" layoutX="193.0" layoutY="713.0" text="00" />
+                                                <Label layoutX="771.0" layoutY="594.0" text="todayExpense" />
+                                                <Label layoutX="771.0" layoutY="612.0" text="yesterdayExpense" />
+                                                <Label layoutX="771.0" layoutY="631.0" text="thisweekExpense" />
+                                                <Label layoutX="771.0" layoutY="650.0" text="thismonthExpense" />
+                                                <Label layoutX="771.0" layoutY="668.0" text="thisyearExpense" />
+                                                <Label layoutX="771.0" layoutY="685.0" text="totalExpense" />
+                                                <Label fx:id="todayExpenseRpt" layoutX="890.0" layoutY="596.0" text="00" />
+                                                <Label fx:id="yesterdayExpenseRpt" layoutX="890.0" layoutY="614.0" text="00" />
+                                                <Label fx:id="thisweekExpenseRpt" layoutX="890.0" layoutY="633.0" text="00" />
+                                                <Label fx:id="thismonthExpenseRpt" layoutX="890.0" layoutY="652.0" text="00" />
+                                                <Label fx:id="thisyearExpenseRpt" layoutX="890.0" layoutY="670.0" text="00" />
+                                                <Label fx:id="totalExpenseRpt" layoutX="890.0" layoutY="687.0" text="00" />
+                                                <Label layoutX="83.0" layoutY="601.0" text="todayOrder" />
+                                                <Label layoutX="83.0" layoutY="619.0" text="yesterdayOrder" />
+                                                <Label layoutX="83.0" layoutY="638.0" text="thisweekOrder" />
+                                                <Label layoutX="83.0" layoutY="657.0" text="thismonthOrder" />
+                                                <Label layoutX="83.0" layoutY="675.0" text="thisyearOrder" />
+                                                <Label layoutX="83.0" layoutY="692.0" text="totalOrder" />
+                                                <Label fx:id="todayOrderRpt" layoutX="197.0" layoutY="601.0" text="00" />
+                                                <Label fx:id="yesterdayOrderRpt" layoutX="197.0" layoutY="619.0" text="00" />
+                                                <Label fx:id="thisweekOrderRpt" layoutX="197.0" layoutY="638.0" text="00" />
+                                                <Label fx:id="thismonthOrderRpt" layoutX="197.0" layoutY="657.0" text="00" />
+                                                <Label fx:id="thisyearOrderRpt" layoutX="197.0" layoutY="675.0" text="00" />
+                                                <Label fx:id="totalOrderRpt" layoutX="197.0" layoutY="692.0" text="00" />
+                                                <Label layoutX="422.0" layoutY="603.0" text="todayIncome" />
+                                                <Label layoutX="422.0" layoutY="621.0" text="yesterdayIncome" />
+                                                <Label layoutX="422.0" layoutY="640.0" text="thisweekIncome" />
+                                                <Label layoutX="422.0" layoutY="659.0" text="thismonthIncome" />
+                                                <Label layoutX="422.0" layoutY="677.0" text="thisyearIncome" />
+                                                <Label layoutX="422.0" layoutY="694.0" text="totalIncome" />
+                                                <Label fx:id="todayIncomeRpt" layoutX="536.0" layoutY="603.0" text="00" />
+                                                <Label fx:id="yesterdayIncomeRpt" layoutX="536.0" layoutY="621.0" text="00" />
+                                                <Label fx:id="thisweekIncomeRpt" layoutX="536.0" layoutY="640.0" text="00" />
+                                                <Label fx:id="thismonthIncomeRpt" layoutX="536.0" layoutY="659.0" text="00" />
+                                                <Label fx:id="thisyearIncomeRpt" layoutX="536.0" layoutY="677.0" text="00" />
+                                                <Label fx:id="totalIncomeRpt" layoutX="536.0" layoutY="694.0" text="00" />
                                              </children>
                                           </AnchorPane>
                                        </content>

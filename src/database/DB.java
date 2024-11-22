@@ -314,8 +314,49 @@ public class DB {
     }
     // End Method to get the total count of invoices
     
-    // Get Expenses Data Query Section
+    // Get Income Data Query Section
+    public int getTodayOrder() {
+        return getInvoiceSum("SELECT COUNT(*) FROM invoices WHERE DATE(datetime(date / 1000, 'unixepoch', 'localtime')) = DATE('now', 'localtime')");
+    }
+    public int getYesterdayOrder() {
+        return getInvoiceSum("SELECT COUNT(*) FROM invoices WHERE DATE(datetime(date / 1000, 'unixepoch', 'localtime')) = DATE('now', '-1 day', 'localtime')");
+    }
+    public int getThisWeekOrder() {
+        return getInvoiceSum("SELECT COUNT(*) FROM invoices WHERE strftime('%Y-%W', datetime(date / 1000, 'unixepoch')) = strftime('%Y-%W', 'now')");
+    }
+    public int getThisMonthOrder() {
+        return getInvoiceSum("SELECT COUNT(*) FROM invoices WHERE strftime('%Y-%m', datetime(date / 1000, 'unixepoch')) = strftime('%Y-%m', 'now')");
+    }
+    public int getThisYearOrder() {
+        return getInvoiceSum("SELECT COUNT(*) FROM invoices WHERE strftime('%Y', datetime(date / 1000, 'unixepoch')) = strftime('%Y', 'now')");
+    }
+    public int getTotalOrder() {
+        return getInvoiceSum("SELECT COUNT(*) FROM invoices");
+    }
     
+    
+    
+    // Get Income Data Query Section
+    public double getTodayIncome() {
+        return getExpenseSum("SELECT SUM(grand_total) FROM invoices WHERE DATE(datetime(date / 1000, 'unixepoch', 'localtime')) = DATE('now', 'localtime') AND payment_status ='Complete'");
+    }
+    public double getYesterdayIncome() {
+        return getExpenseSum("SELECT SUM(grand_total) FROM invoices WHERE DATE(datetime(date / 1000, 'unixepoch', 'localtime')) = DATE('now', '-1 day', 'localtime') AND payment_status ='Complete'");
+    }
+    public double getThisWeekIncome() {
+        return getExpenseSum("SELECT SUM(grand_total) FROM invoices WHERE strftime('%Y-%W', datetime(date / 1000, 'unixepoch')) = strftime('%Y-%W', 'now') AND payment_status ='Complete'");
+    }
+    public double getThisMonthIncome() {
+        return getExpenseSum("SELECT SUM(grand_total) FROM invoices WHERE strftime('%Y-%m', datetime(date / 1000, 'unixepoch')) = strftime('%Y-%m', 'now') AND payment_status ='Complete'");
+    }
+    public double getThisYearIncome() {
+        return getExpenseSum("SELECT SUM(grand_total) FROM invoices WHERE strftime('%Y', datetime(date / 1000, 'unixepoch')) = strftime('%Y', 'now') AND payment_status ='Complete'");
+    }
+    public double getTotalIncome() {
+        return getExpenseSum("SELECT SUM(grand_total) FROM invoices WHERE payment_status ='Complete'");
+    }
+    
+    // Get Expenses Data Query Section
     public double getTodayExpenses1() {
         return getExpenseSum("SELECT SUM(ex_amount) FROM expenses WHERE DATE(datetime(ex_date / 1000, 'unixepoch')) = DATE('now')");
     }
@@ -341,7 +382,6 @@ public class DB {
     public double getTotalExpenses() {
         return getExpenseSum("SELECT SUM(ex_amount) FROM expenses");
     }
-
     private double getExpenseSum(String query) {
         double total = 0.0;
         try (PreparedStatement pstmt = connection.prepareStatement(query);
@@ -354,6 +394,7 @@ public class DB {
         }
         return total;
     }
+    
     public double getExpensesForDate(long selectedDateMillis) {
     // Convert selectedDateMillis to the start and end of the day (milliseconds)
     long dayStartMillis = selectedDateMillis;
