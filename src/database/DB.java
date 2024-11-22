@@ -145,7 +145,7 @@ public class DB {
                             System.out.println("-> Initial admin user created.\n------------------------------------------------");
                         }
                     } else {
-                        System.out.println("-> Admin user already exists.\n------------------------------------------------");
+                        //System.out.println("-> Admin user already exists.\n------------------------------------------------");
                     }
                 }
             }

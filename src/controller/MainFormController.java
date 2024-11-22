@@ -247,29 +247,7 @@ public class MainFormController implements Initializable {
     @FXML private ScrollPane cullectBillScrollPane;
     @FXML private Label totalPendingAmount;
     //End
-    @FXML private Button billBtn;
-    public void updateBtn() {
-        updatePaymentStatus(1);
-    }
-    public void updatePaymentStatus(int id) {
-        db.getConnection();
-        String sql = "UPDATE invoices SET payment_status = ? WHERE id = ?";
-        try {
-            prepare = db.connection.prepareStatement(sql);
-            
-            prepare.setString(1, "Complete");
-            prepare.setInt(2, id);
 
-            //prepare.executeUpdate();
-            //billDisplayCard();
-            System.out.println("Payment status updated successfully");
-
-        } catch (SQLException e) {
-            //e.printStackTrace();
-            System.out.println("Error: " +e);
-        }
-    }
-    
     //Invoices Section Start
     @FXML private TextField srcByInvId;
     @FXML private Label totalInvoice;
@@ -323,6 +301,32 @@ public class MainFormController implements Initializable {
     //End
 	
     //Reports Section Start
+    @FXML private Label pendingAmountRpt;
+    @FXML private Label totalItemsRpt;
+    @FXML private Label totalPackageRpt;
+    @FXML private Label totalInvoicesRpt;
+    @FXML private Label totalUsersRpt;
+    
+    @FXML private Label todayOrderRpt;
+    @FXML private Label yesterdayOrderRpt;
+    @FXML private Label thisweekOrderRpt;
+    @FXML private Label thismonthOrderRpt;
+    @FXML private Label thisyearOrderRpt;
+    @FXML private Label totalOrderRpt;
+
+    @FXML private Label todayIncomeRpt;
+    @FXML private Label yesterdayIncomeRpt;
+    @FXML private Label thisweekIncomeRpt;
+    @FXML private Label thismonthIncomeRpt;
+    @FXML private Label thisyearIncomeRpt;
+    @FXML private Label totalIncomeRpt;
+    
+    @FXML private Label todayExpenseRpt;
+    @FXML private Label yesterdayExpenseRpt;
+    @FXML private Label thisweekExpenseRpt;
+    @FXML private Label thismonthExpenseRpt;
+    @FXML private Label thisyearExpenseRpt;
+    @FXML private Label totalExpenseRpt;
     //End
     
     
@@ -494,6 +498,7 @@ public class MainFormController implements Initializable {
             usersForm.setVisible(false);
             settingsForm.setVisible(false);
             
+            loadExpenseDataRpt();
             empClearBtn();
             itemsClearBtn();
             expenseClearBtn();
@@ -536,7 +541,6 @@ public class MainFormController implements Initializable {
 
     }
     // LETS PROCEED TO OUR DASHBOARD FORM : )
-    
     public void logout() {
 
         try {
@@ -820,7 +824,6 @@ public class MainFormController implements Initializable {
         items_Status.setItems(listData);
 
     }
-    // LETS MAKE A BEHAVIOR FOR IMPORT BTN FIRST
     public void itemsImportBtn() {
         
         FileChooser fileChooser = new FileChooser();
@@ -1087,7 +1090,6 @@ public class MainFormController implements Initializable {
         items_ImageView.setImage(null);
         id = 0;
     }
-    // MERGE ALL DATAS
     public ObservableList<ItemsDataModel> itemsDataList() {
 
         ObservableList<ItemsDataModel> listData = FXCollections.observableArrayList();
@@ -1124,7 +1126,6 @@ public class MainFormController implements Initializable {
         }
         return listData;
     }
-    // TO SHOW DATA ON OUR TABLE
     private ObservableList<ItemsDataModel> itemsListData;
     public void itemsShowData() {
         itemsListData = itemsDataList();
@@ -1404,8 +1405,7 @@ public class MainFormController implements Initializable {
             filterByItemName("");
         });
         
-    } 
-    
+    }  
     
     private void setupCartTable() {
         
@@ -1722,7 +1722,6 @@ public class MainFormController implements Initializable {
         // Print the result
         System.out.println("--->"+formattedOutput.toString());
     }
-    
     //// END POS MENU SECTION
     
     //// START CULLECT BILL SECTION
@@ -1732,7 +1731,7 @@ public class MainFormController implements Initializable {
         String sql = "SELECT * FROM invoices WHERE payment_status = 'Pending'";
 
         ObservableList<InvoiceDataModel> listData = FXCollections.observableArrayList();
-        db.getConnection();
+        //db.getConnection();
 
         try {
 
@@ -1773,6 +1772,7 @@ public class MainFormController implements Initializable {
         loadTotalPendingAmount();
         cullectBillListData.clear();
         cullectBillListData.addAll(getCullectBillData());
+        cullectBillListData.sort((bill1, bill2) -> bill2.getDate().compareTo(bill1.getDate()));
 
         int row = 0;
         int column = 0;
@@ -1784,7 +1784,7 @@ public class MainFormController implements Initializable {
         for (int q = 0; q < cullectBillListData.size(); q++) {
             try {
                     FXMLLoader load = new FXMLLoader();
-                    load.setLocation(getClass().getResource("/view/cardBill.fxml")); //cullectBill cardBill
+                    load.setLocation(getClass().getResource("/view/cullectBill.fxml")); //cullectBill cardBill
                     AnchorPane pane = load.load();
                     CullectBillController cardBill = load.getController();
                     cardBill.setData(cullectBillListData.get(q));
@@ -1846,7 +1846,6 @@ public class MainFormController implements Initializable {
             filterByInvoiceID(newValue);
         });
     }
-    // MERGE ALL DATAS
     public ObservableList<InvoiceDataModel> invoiceDataList() {
         ObservableList<InvoiceDataModel> listData = FXCollections.observableArrayList();
         
@@ -1887,9 +1886,7 @@ public class MainFormController implements Initializable {
         }
         return listData;
     }
-    // TO SHOW DATA ON OUR TABLE
     private ObservableList<InvoiceDataModel> invoiceListData;
-    
     public void invoiceShowData() {
         loadInvoiceData();
         filterInvoiceData();
@@ -2082,7 +2079,6 @@ public class MainFormController implements Initializable {
             e.printStackTrace();
         }
     }
-    
     //// END INVOICE SECTION
     
     
@@ -2286,7 +2282,6 @@ public class MainFormController implements Initializable {
 //        alert.showAndWait();
     }
 }
-    // MERGE ALL DATAS
     public ObservableList<ExpenseDataModel> expenseDataList() {
         ObservableList<ExpenseDataModel> listData = FXCollections.observableArrayList();
         
@@ -2319,7 +2314,6 @@ public class MainFormController implements Initializable {
         }
         return listData;
     }
-    // TO SHOW DATA ON OUR TABLE
     private ObservableList<ExpenseDataModel> expenseListData;
     public void expenseShowData() {
         expenseListData = expenseDataList();
@@ -2688,7 +2682,6 @@ public class MainFormController implements Initializable {
         
         dateValue.setDayCellFactory(dayCellFactory);
     }
-      
     /// END EXPENSE SECTION/
     
     
@@ -2733,7 +2726,6 @@ public class MainFormController implements Initializable {
         ObservableList listData = FXCollections.observableArrayList(xVal);
         emp_user_status.setItems(listData);
     }
-    // MERGE ALL DATAS
     public ObservableList<EmployeeDataModel> empUserDataList() {
         ObservableList<EmployeeDataModel> listData = FXCollections.observableArrayList();
         
@@ -3602,6 +3594,23 @@ public class MainFormController implements Initializable {
     }
     /// END USERS SECTION/
     
+    
+    //// START REPORT SECTION
+    private void loadExpenseDataRpt() {
+        // Check if any label is null before proceeding
+        if (todayExpenseRpt != null && yesterdayExpenseRpt != null && thisweekExpenseRpt != null && 
+            thismonthExpenseRpt != null && thisyearExpenseRpt != null && totalExpenseRpt != null) {
+            
+            todayExpenseRpt.setText(String.format("%.2f TK", db.getTodayExpenses()));
+            yesterdayExpenseRpt.setText(String.format("%.2f TK", db.getYesterdayExpenses()));
+            thisweekExpenseRpt.setText(String.format("%.2f TK", db.getThisWeekExpenses()));
+            thismonthExpenseRpt.setText(String.format("%.2f TK", db.getThisMonthExpenses()));
+            thisyearExpenseRpt.setText(String.format("%.2f TK", db.getThisYearExpenses()));
+            totalExpenseRpt.setText(String.format("%.2f TK", db.getTotalExpenses()));
+        } else {
+            System.err.println("One or more labels are not initialized!");
+        }
+    }
     @FXML private AreaChart<String, Number> expenseAreaChart;
     @FXML private BarChart<String, Number> expenseBarChart;
     @FXML private PieChart expensePieChart;
@@ -3639,6 +3648,10 @@ public class MainFormController implements Initializable {
         expenseBarChart.getData().add(incomeData);
         expensePieChart.setData(incomeData1);
     }
+    /// END REPORT SECTION/
+
+    //// START SETTINGS SECTION
+    /// END SETTINGS SECTION/
 
     
     @Override
@@ -3687,6 +3700,7 @@ public class MainFormController implements Initializable {
         loadExpenseData();
         
         //Reports
+        loadExpenseDataRpt();
         
         //User Admin
         loadAdminData(1);

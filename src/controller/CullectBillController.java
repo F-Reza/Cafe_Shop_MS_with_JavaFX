@@ -68,110 +68,63 @@ public class CullectBillController implements Initializable{
 
         // If the user confirms the deletion
         if (option.isPresent() && option.get().equals(ButtonType.OK)) {
-            //updatePaymentStatus(xID);
+            updatePaymentStatus(xID);
             System.out.println("Action: Done! "+xID); 
         } else {
             System.out.println("Action Canceled!");
         }
     }
     
-    public boolean updatePaymentStatusA(int id) {
-        db.getConnection();
-        String sql = "UPDATE invoices SET payment_status = ? WHERE id = ?";
-        try {
-            prepare = db.connection.prepareStatement(sql);
-            prepare.setString(1, "Complete");
-            prepare.setInt(2, id);
-            //prepare.executeUpdate();
-            
-            int rowsUpdated = prepare.executeUpdate();
-            return rowsUpdated > 0; 
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }  
-    public void updatePaymentStatusB(int id) {
-        String sql = "UPDATE invoices SET payment_status = ? WHERE id = ?";
-        try {
-            // Prepare the SQL statement
-            prepare = db.connection.prepareStatement(sql);
-
-            // Set parameters for the prepared statement
-            prepare.setString(1, "Complete"); // Set the payment status
-            prepare.setInt(2, id);            // Set the ID of the invoice
-
-            // Use executeUpdate() instead of executeQuery()
-            prepare.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    public void updatePaymentStatusC(int id) {
-    String sql = "UPDATE invoices SET payment_status = ? WHERE id = ?";
-    try {
-        if (db.connection == null || db.connection.isClosed()) {
-            System.out.println("Database connection is not established.");
-            return;
-        }
-
-        // Prepare the SQL statement
-        prepare = db.connection.prepareStatement(sql);
-
-        // Set parameters for the prepared statement
-        prepare.setString(1, "Complete"); // Set the payment status
-        prepare.setInt(2, id);            // Set the ID of the invoice
-
-        // Execute the update statement
-        int rowsAffected = prepare.executeUpdate();
-        System.out.println(rowsAffected + " row(s) updated.");
-
-        // Commit the transaction if auto-commit is off
-        if (!db.connection.getAutoCommit()) {
-            db.connection.commit();
-        }
-
-    } catch (SQLException e) {
-        System.out.println("SQL Error: " + e.getMessage());
-    } finally {
-        // Close the prepared statement
-        try {
-            if (prepare != null) prepare.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-}
-    
     public void updatePaymentStatus(int id) {
         db.getConnection();
         String sql = "UPDATE invoices SET payment_status = ? WHERE id = ?";
         try {
+            //db.getConnection();
             prepare = db.connection.prepareStatement(sql);
-            
             prepare.setString(1, "Complete");
             prepare.setInt(2, id);
 
-            //prepare.executeUpdate();
+            prepare.executeUpdate();
             System.out.println("Payment status updated successfully");
+            
 
         } catch (SQLException e) {
             //e.printStackTrace();
             System.out.println("Error: " +e);
         }
     }
+public void updatePaymentStatusA(int id) {
+    db.getConnection();
+    String sql = "UPDATE invoices SET payment_status = ? WHERE id = ?";
+    try (
+        PreparedStatement prepare = db.connection.prepareStatement(sql)) {
+        
+        prepare.setString(1, "Complete");
+        prepare.setInt(2, id);
+
+        // Execute the update
+        int rowsAffected = prepare.executeUpdate();
+        if (rowsAffected > 0) {
+            System.out.println("Payment status updated successfully");
+        } else {
+            System.out.println("No invoice found with the given id.");
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error: " + e.getMessage());
+        //e.printStackTrace(); 
+    }
+}
 
     
     public void completeBtn() {
-        //completePaymentInvoice();
+        completePaymentInvoice();
         //MainFormController mForm = new MainFormController();
         //mForm.addToCart(itemData);
         //mForm.customerID();
         //mForm.updatePaymentStatus(1);
         //System.out.println("Action: Done! "+xID); 
-        updatePaymentStatus(xID);
+        //updatePaymentStatus(xID);
         //mForm.updatePaymentStatus(1);
        
     }
@@ -183,3 +136,12 @@ public class CullectBillController implements Initializable{
     }
     
 }
+
+
+//try {
+//    db.closeConnection();
+//    System.out.println("Database connection closed on View Invoice close.");
+//} catch (SQLException e) {
+//    System.out.println("Error closing database connection: " + e.getMessage());
+//    e.printStackTrace();
+//}
