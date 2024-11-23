@@ -302,10 +302,13 @@ public class MainFormController implements Initializable {
     //End
 	
     //Reports Section Start
-    @FXML private Label pendingAmountRpt;
+    @FXML private Label totalOrderTopRpt;
+    @FXML private Label totalExpenseTopRpt;
+    @FXML private Label totalIncomeTopRpt;
+    @FXML private Label totalPendingAmountRpt;
+    @FXML private Label totalInvoicesRpt;
     @FXML private Label totalItemsRpt;
     @FXML private Label totalPackageRpt;
-    @FXML private Label totalInvoicesRpt;
     @FXML private Label totalUsersRpt;
     
     @FXML private Label todayOrderRpt;
@@ -500,6 +503,9 @@ public class MainFormController implements Initializable {
             usersForm.setVisible(false);
             settingsForm.setVisible(false);
             
+            loadITopDataRpt();
+            loadOrderDataRpt();
+            loadIncomeDataRpt();
             loadExpenseDataRpt();
             empClearBtn();
             itemsClearBtn();
@@ -3599,6 +3605,21 @@ public class MainFormController implements Initializable {
     
     
     //// START REPORT SECTION
+    private void loadITopDataRpt() {
+        // Check if any label is null before proceeding
+        if (totalPendingAmountRpt != null && totalInvoicesRpt != null && 
+                totalItemsRpt != null && totalPackageRpt != null && 
+                totalUsersRpt != null) {
+            totalPendingAmountRpt.setText(String.format("%.2f TK", db.getTotalInvoicePendingAmount()));
+            totalInvoicesRpt.setText(""+db.getTotalInvoice());
+            totalItemsRpt.setText(""+db.getTotalItems());
+            totalPackageRpt.setText(""+db.getTotalPackage());
+            int xUsers = db.gettoTalUsers() + 1;
+            totalUsersRpt.setText(""+xUsers);
+        } else {
+            System.err.println("One or more labels are not initialized!");
+        }
+    }
     private void loadOrderDataRpt() {
         // Check if any label is null before proceeding
         if (todayOrderRpt != null && yesterdayOrderRpt != null && thisweekOrderRpt != null && 
@@ -3610,6 +3631,7 @@ public class MainFormController implements Initializable {
             thismonthOrderRpt.setText(""+db.getThisMonthOrder());
             thisyearOrderRpt.setText(""+db.getThisYearOrder());
             totalOrderRpt.setText(""+db.getTotalOrder());
+            totalOrderTopRpt.setText(""+db.getCompleteOrder());
         } else {
             System.err.println("One or more labels are not initialized!");
         }
@@ -3625,6 +3647,7 @@ public class MainFormController implements Initializable {
             thismonthIncomeRpt.setText(String.format("%.2f TK", db.getThisMonthIncome()));
             thisyearIncomeRpt.setText(String.format("%.2f TK", db.getThisYearIncome()));
             totalIncomeRpt.setText(String.format("%.2f TK", db.getTotalIncome()));
+            totalIncomeTopRpt.setText(String.format("%.2f TK", db.getTotalIncome()));
         } else {
             System.err.println("One or more labels are not initialized!");
         }
@@ -3640,6 +3663,7 @@ public class MainFormController implements Initializable {
             thismonthExpenseRpt.setText(String.format("%.2f TK", db.getThisMonthExpenses()));
             thisyearExpenseRpt.setText(String.format("%.2f TK", db.getThisYearExpenses()));
             totalExpenseRpt.setText(String.format("%.2f TK", db.getTotalExpenses()));
+            totalExpenseTopRpt.setText(String.format("%.2f TK", db.getTotalExpenses()));
         } else {
             System.err.println("One or more labels are not initialized!");
         }
@@ -3733,6 +3757,7 @@ public class MainFormController implements Initializable {
         loadExpenseData();
         
         //Reports
+        loadITopDataRpt();
         loadOrderDataRpt();
         loadIncomeDataRpt();
         loadExpenseDataRpt();

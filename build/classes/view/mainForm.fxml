@@ -695,13 +695,13 @@
                                              <children>
                                                 <AnchorPane layoutX="39.0" layoutY="33.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                    <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="CART_PLUS" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Order" textFill="WHITE">
+                                                      <FontAwesomeIcon fill="WHITE" glyphName="CART_PLUS" layoutX="14.0" layoutY="72.0" size="4em" />
+                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Complete Order" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="15" textFill="WHITE">
+                                                      <Label fx:id="totalOrderTopRpt" alignment="TOP_RIGHT" layoutX="53.0" layoutY="7.0" prefHeight="25.0" prefWidth="130.0" text="0" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
@@ -710,13 +710,13 @@
                                                 </AnchorPane>
                                                 <AnchorPane layoutX="268.0" layoutY="33.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                    <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="DOLLAR" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Income" textFill="WHITE">
+                                                      <FontAwesomeIcon fill="WHITE" glyphName="DOLLAR" layoutX="14.0" layoutY="75.0" size="4em" />
+                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total  Income" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="৳50000" textFill="WHITE">
+                                                      <Label fx:id="totalIncomeTopRpt" alignment="TOP_RIGHT" layoutX="7.0" layoutY="7.0" prefHeight="25.0" prefWidth="176.0" text="৳0.0" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
@@ -725,13 +725,13 @@
                                                 </AnchorPane>
                                                 <AnchorPane layoutX="504.0" layoutY="33.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                    <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="MONEY" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Today's Expenses" textFill="WHITE">
+                                                      <FontAwesomeIcon fill="WHITE" glyphName="MONEY" layoutX="14.0" layoutY="73.0" size="4em" />
+                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Expenses" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="৳5454" textFill="WHITE">
+                                                      <Label fx:id="totalExpenseTopRpt" alignment="TOP_RIGHT" layoutX="3.0" layoutY="7.0" prefHeight="25.0" prefWidth="180.0" text="৳0.0" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
@@ -740,13 +740,13 @@
                                                 </AnchorPane>
                                                 <AnchorPane layoutX="737.0" layoutY="33.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
                                                    <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="REFRESH" layoutX="14.0" layoutY="55.0" size="4em" />
+                                                      <FontAwesomeIcon fill="WHITE" glyphName="REFRESH" layoutX="14.0" layoutY="70.0" size="4em" />
                                                       <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Pending Amount" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="৳5454" textFill="WHITE">
+                                                      <Label fx:id="totalPendingAmountRpt" alignment="TOP_RIGHT" layoutX="3.0" layoutY="7.0" prefHeight="25.0" prefWidth="180.0" text="৳0.0" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
@@ -761,7 +761,7 @@
                                                             <Font size="16.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="150" textFill="WHITE">
+                                                      <Label fx:id="totalItemsRpt" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
@@ -776,7 +776,7 @@
                                                             <Font size="16.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="50" textFill="WHITE">
+                                                      <Label fx:id="totalPackageRpt" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
@@ -791,7 +791,7 @@
                                                             <Font size="16.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="20" textFill="WHITE">
+                                                      <Label fx:id="totalInvoicesRpt" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
@@ -806,7 +806,7 @@
                                                             <Font size="16.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="100" textFill="WHITE">
+                                                      <Label fx:id="totalUsersRpt" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>

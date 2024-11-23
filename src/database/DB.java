@@ -287,6 +287,17 @@ public class DB {
 
         return invoice;
     }
+    
+    public int getTotalItems() {
+        return getInvoiceSum("SELECT COUNT(*) FROM items");
+    }
+    public int getTotalPackage() {
+        return getInvoiceSum("SELECT COUNT(*) FROM items WHERE category = 'Packages'");
+    }
+    public int gettoTalUsers() {
+        return getInvoiceSum("SELECT COUNT(*) FROM employees");
+    }
+    
     // Method to get the total count of invoices
     public int getTotalInvoice() {
         return getInvoiceSum("SELECT COUNT(*) FROM invoices");
@@ -312,9 +323,8 @@ public class DB {
         }
         return total;
     }
-    // End Method to get the total count of invoices
-    
-    // Get Income Data Query Section
+
+    // Get Order Data Query Section
     public int getTodayOrder() {
         return getInvoiceSum("SELECT COUNT(*) FROM invoices WHERE DATE(datetime(date / 1000, 'unixepoch', 'localtime')) = DATE('now', 'localtime')");
     }
@@ -333,8 +343,9 @@ public class DB {
     public int getTotalOrder() {
         return getInvoiceSum("SELECT COUNT(*) FROM invoices");
     }
-    
-    
+    public int getCompleteOrder() {
+        return getInvoiceSum("SELECT COUNT(*) FROM invoices WHERE payment_status = 'Complete'");
+    }
     
     // Get Income Data Query Section
     public double getTodayIncome() {
