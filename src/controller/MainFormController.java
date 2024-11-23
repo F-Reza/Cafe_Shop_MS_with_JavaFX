@@ -32,6 +32,7 @@ import java.util.ResourceBundle;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -167,6 +168,15 @@ public class MainFormController implements Initializable {
     @FXML private AnchorPane ScrollAnchor;
     @FXML private Text ScrollingText;
     @FXML private Rectangle scrollRectangle;
+    
+    @FXML private Label todayOrderDash;
+    @FXML private Label todayIncomeDash;
+    @FXML private Label todayExpenseDash;
+    @FXML private Label pendingAmountDash;
+    @FXML private Label totalInvoicesDash;
+    @FXML private Label totalItemsDash;
+    @FXML private Label totalPackageDash;
+    @FXML private Label totalUsersDash;
     
     @FXML private Label newsTextLabel;
     @FXML private Label dashDateLabel;
@@ -394,6 +404,7 @@ public class MainFormController implements Initializable {
             
             loadAdminData(1);
             initializeSlideshow();
+            loadDashTopData();
             empClearBtn();
             itemsClearBtn();
             expenseClearBtn();
@@ -712,6 +723,25 @@ public class MainFormController implements Initializable {
 
     }
     
+    private void loadDashTopData() {
+        // Check if any label is null before proceeding
+        if (todayOrderDash != null && todayIncomeDash != null && todayExpenseDash != null && 
+                pendingAmountDash != null && totalInvoicesDash != null && totalItemsDash != null && 
+                totalPackageDash != null && totalUsersDash != null) {
+            
+            todayOrderDash.setText(""+db.getTodayOrder());
+            todayIncomeDash.setText(String.format("%.2f TK", db.getTodayIncome()));
+            todayExpenseDash.setText(String.format("%.2f TK", db.getTodayExpenses()));
+            pendingAmountDash.setText(String.format("%.2f TK", db.getTotalInvoicePendingAmount()));
+            totalInvoicesDash.setText(""+db.getTotalInvoice());
+            totalItemsDash.setText(""+db.getTotalItems());
+            totalPackageDash.setText(""+db.getTotalPackage());
+            int xUsers = db.gettoTalUsers() + 1;
+            totalUsersDash.setText(""+xUsers);
+        } else {
+            System.err.println("One or more labels are not initialized!");
+        }
+    }
  
     private void startDateTimeDisplay() {
         Timeline dateTimeTimeline = new Timeline(
@@ -732,7 +762,6 @@ public class MainFormController implements Initializable {
         "Today Order: 12 ", "Income: 2500TK ", 
         "Expense: 00 ", "Pending Amount: 250TK "};
     private int phraseIndex = 0; 
-
     private void startTypingEffect() {
         if (phraseIndex >= phrases.length) {
             phraseIndex = 0;  // Loop back to the first phrase
@@ -760,47 +789,6 @@ public class MainFormController implements Initializable {
         });
 
         typingTimeline.play();  // Start the animation
-    }
-    
-    private String scrollingTextContent = "1 This is a scrolling text from right to left. 2 This is a scrolling text from right to left.";
-    private void getTextData() {
-        // Set the scrolling text content
-        ScrollingText.setText(scrollingTextContent);
-        //ScrollText.setStyle("-fx-font-size: 24;"); 
-        // Start scrolling the text
-        
-         // Create a clip to hide overflow, matching ScrollAnchorPane's size
-        Rectangle clip = new Rectangle();
-        //scrollRectangle.widthProperty().bind(ScrollAnchor.widthProperty());
-        //scrollRectangle.heightProperty().bind(ScrollAnchor.heightProperty());
-        
-
-        //ScrollAnchor.setClip(scrollRectangle); // Set clip on ScrollAnchorPane
-        
-        startScrollingText();
-    }
-    private void startScrollingText() {
-        // Create a TranslateTransition for scrolling text
-        TranslateTransition translate = new TranslateTransition(Duration.seconds(10), ScrollingText);
-        
-        // Start from the right of the AnchorPane
-        translate.setFromX(ScrollAnchor.getWidth());
-        
-        // Move to the left, off the screen
-        translate.setToX(-ScrollingText.getLayoutBounds().getWidth());
-        
-        // Repeat indefinitely
-        translate.setCycleCount(TranslateTransition.INDEFINITE);
-        translate.setAutoReverse(false); // No auto-reverse
-
-        // Start the scrolling animation
-        translate.play();
-
-        // Adjust scrolling text based on AnchorPane resize
-        ScrollAnchor.widthProperty().addListener((observable, oldValue, newValue) -> {
-            translate.setFromX(newValue.doubleValue());
-            translate.setToX(-ScrollingText.getLayoutBounds().getWidth());
-        });
     }
     
     //// END DASHBOARD SECTION
@@ -3718,6 +3706,7 @@ public class MainFormController implements Initializable {
         if (!folder.exists()) { folder.mkdir(); }
        
         //Dashboard
+        Platform.runLater(this::loadDashTopData);
         initializeSlideshow();
         startTypingEffect();
         startDateTimeDisplay();

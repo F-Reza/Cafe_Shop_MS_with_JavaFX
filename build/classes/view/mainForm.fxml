@@ -82,7 +82,7 @@
                     <center>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                             <children>
-                                <AnchorPane fx:id="dashboadrForm" prefHeight="720.0" prefWidth="851.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <AnchorPane fx:id="dashboadrForm" prefHeight="720.0" prefWidth="851.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <children>
                                         <AnchorPane layoutX="17.0" layoutY="14.0" prefHeight="160.0" prefWidth="818.0" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="626.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="14.0">
                                             <styleClass>
@@ -103,7 +103,7 @@
                                                                                 <Font size="16.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="todayOrder" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
+                                                                        <Label fx:id="todayOrderDash" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
                                                                             <font>
                                                                                 <Font size="16.0" />
                                                                             </font>
@@ -118,7 +118,7 @@
                                                                                 <Font size="16.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="todayIncome" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="৳0.0" textFill="WHITE">
+                                                                        <Label fx:id="todayIncomeDash" alignment="TOP_RIGHT" layoutX="18.0" layoutY="7.0" prefHeight="25.0" prefWidth="165.0" text="৳0.0" textFill="WHITE">
                                                                             <font>
                                                                                 <Font size="16.0" />
                                                                             </font>
@@ -133,7 +133,7 @@
                                                                                 <Font size="16.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="todayExpenses" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="৳0.0" textFill="WHITE">
+                                                                        <Label fx:id="todayExpenseDash" alignment="TOP_RIGHT" layoutX="14.0" layoutY="7.0" prefHeight="25.0" prefWidth="169.0" text="৳0.0" textFill="WHITE">
                                                                             <font>
                                                                                 <Font size="16.0" />
                                                                             </font>
@@ -148,7 +148,7 @@
                                                             <Font size="16.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label fx:id="pendingAmount" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="৳0.0" textFill="WHITE">
+                                                      <Label fx:id="pendingAmountDash" alignment="TOP_RIGHT" layoutX="14.0" layoutY="7.0" prefHeight="25.0" prefWidth="169.0" text="৳0.0" textFill="WHITE">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
@@ -163,7 +163,7 @@
                                                                                 <Font size="16.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="totalItems" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
+                                                                        <Label fx:id="totalItemsDash" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
                                                                             <font>
                                                                                 <Font size="16.0" />
                                                                             </font>
@@ -178,7 +178,7 @@
                                                                                 <Font size="16.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="totalPackage" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
+                                                                        <Label fx:id="totalPackageDash" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
                                                                             <font>
                                                                                 <Font size="16.0" />
                                                                             </font>
@@ -193,7 +193,7 @@
                                                                                 <Font size="16.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="totalInvoices" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
+                                                                        <Label fx:id="totalInvoicesDash" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
                                                                             <font>
                                                                                 <Font size="16.0" />
                                                                             </font>
@@ -208,7 +208,7 @@
                                                                                 <Font size="16.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="totalUsers" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
+                                                                        <Label fx:id="totalUsersDash" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
                                                                             <font>
                                                                                 <Font size="16.0" />
                                                                             </font>
@@ -680,7 +680,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="reportForm" layoutX="303.0" layoutY="346.0" prefHeight="720.0" prefWidth="851.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="reportForm" layoutX="303.0" layoutY="346.0" prefHeight="720.0" prefWidth="851.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="17.0" layoutY="20.0" prefHeight="692.0" prefWidth="818.0" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="14.0">
                                  <styleClass>
