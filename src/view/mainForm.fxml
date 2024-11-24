@@ -4,7 +4,6 @@
 <?import java.lang.String?>
 <?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.chart.AreaChart?>
-<?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.PieChart?>
@@ -287,7 +286,7 @@
                                           <String fx:value="shadow" />
                                        </styleClass>
                                        <children>
-                                          <AreaChart layoutX="-2.0" prefHeight="183.0" prefWidth="288.0" styleClass="nav-form" stylesheets="@../css/cardItemDesign.css">
+                                          <AreaChart fx:id="orderAreaChart7Days" layoutX="-2.0" prefHeight="183.0" prefWidth="288.0" styleClass="nav-form" stylesheets="@../css/cardItemDesign.css">
                                             <xAxis>
                                               <CategoryAxis side="BOTTOM" />
                                             </xAxis>
@@ -295,17 +294,9 @@
                                               <NumberAxis side="LEFT" />
                                             </yAxis>
                                           </AreaChart>
-                                          <AreaChart layoutX="-2.0" layoutY="188.0" prefHeight="183.0" prefWidth="288.0" styleClass="nav-form" stylesheets="@../css/cardItemDesign.css">
+                                          <AreaChart fx:id="incomeAreaChart7Days" layoutX="-2.0" layoutY="188.0" legendVisible="false" prefHeight="183.0" prefWidth="288.0" styleClass="nav-form" stylesheets="@../css/cardItemDesign.css">
                                              <xAxis>
-                                                <CategoryAxis side="BOTTOM" />
-                                             </xAxis>
-                                             <yAxis>
-                                                <NumberAxis side="LEFT" />
-                                             </yAxis>
-                                          </AreaChart>
-                                          <AreaChart layoutX="-2.0" layoutY="376.0" prefHeight="183.0" prefWidth="288.0" styleClass="nav-form" stylesheets="@../css/cardItemDesign.css">
-                                             <xAxis>
-                                                <CategoryAxis side="BOTTOM" />
+                                                <CategoryAxis side="BOTTOM" fx:id="xAxis7Inc" />
                                              </xAxis>
                                              <yAxis>
                                                 <NumberAxis side="LEFT" />
@@ -829,59 +820,59 @@
                                                       </Label>
                                                    </children>
                                                 </AnchorPane>
-                                                <PieChart fx:id="expensePieChart" layoutX="737.0" layoutY="370.0" prefHeight="216.0" prefWidth="265.0" title="Total Expenses" />
-                                                <AreaChart fx:id="expenseAreaChart" layoutX="378.0" layoutY="370.0" prefHeight="216.0" prefWidth="265.0" title="Total Income">
+                                                <PieChart fx:id="expensePieChart" layoutX="668.0" layoutY="316.0" legendVisible="false" prefHeight="254.0" prefWidth="338.0" title="Total Expenses" />
+                                                <AreaChart fx:id="incomeAreaChart" layoutX="343.0" layoutY="314.0" legendVisible="false" prefHeight="237.0" prefWidth="346.0" title="Income This Year">
                                                   <xAxis>
-                                                    <CategoryAxis side="BOTTOM" />
+                                                    <CategoryAxis side="BOTTOM" fx:id="xAxis" />
                                                   </xAxis>
                                                   <yAxis>
                                                     <NumberAxis side="LEFT" />
                                                   </yAxis>
                                                 </AreaChart>
-                                                <BarChart fx:id="expenseBarChart" layoutX="41.0" layoutY="370.0" prefHeight="216.0" prefWidth="265.0" title="Total Orders">
-                                                  <xAxis>
-                                                    <CategoryAxis side="BOTTOM" />
-                                                  </xAxis>
-                                                  <yAxis>
-                                                    <NumberAxis side="LEFT" />
-                                                  </yAxis>
-                                                </BarChart>
-                                                <Label layoutX="771.0" layoutY="594.0" text="todayExpense" />
-                                                <Label layoutX="771.0" layoutY="612.0" text="yesterdayExpense" />
-                                                <Label layoutX="771.0" layoutY="631.0" text="thisweekExpense" />
-                                                <Label layoutX="771.0" layoutY="650.0" text="thismonthExpense" />
-                                                <Label layoutX="771.0" layoutY="668.0" text="thisyearExpense" />
-                                                <Label layoutX="771.0" layoutY="685.0" text="totalExpense" />
+                                                <Label layoutX="771.0" layoutY="594.0" text="TodayExpense" />
+                                                <Label layoutX="771.0" layoutY="612.0" text="TesterdayExpense" />
+                                                <Label layoutX="771.0" layoutY="631.0" text="ThisweekExpense" />
+                                                <Label layoutX="771.0" layoutY="650.0" text="ThismonthExpense" />
+                                                <Label layoutX="771.0" layoutY="668.0" text="ThisyearExpense" />
+                                                <Label layoutX="771.0" layoutY="685.0" text="TotalExpense" />
                                                 <Label fx:id="todayExpenseRpt" layoutX="890.0" layoutY="596.0" text="00" />
                                                 <Label fx:id="yesterdayExpenseRpt" layoutX="890.0" layoutY="614.0" text="00" />
                                                 <Label fx:id="thisweekExpenseRpt" layoutX="890.0" layoutY="633.0" text="00" />
                                                 <Label fx:id="thismonthExpenseRpt" layoutX="890.0" layoutY="652.0" text="00" />
                                                 <Label fx:id="thisyearExpenseRpt" layoutX="890.0" layoutY="670.0" text="00" />
                                                 <Label fx:id="totalExpenseRpt" layoutX="890.0" layoutY="687.0" text="00" />
-                                                <Label layoutX="83.0" layoutY="601.0" text="todayOrder" />
-                                                <Label layoutX="83.0" layoutY="619.0" text="yesterdayOrder" />
-                                                <Label layoutX="83.0" layoutY="638.0" text="thisweekOrder" />
-                                                <Label layoutX="83.0" layoutY="657.0" text="thismonthOrder" />
-                                                <Label layoutX="83.0" layoutY="675.0" text="thisyearOrder" />
-                                                <Label layoutX="83.0" layoutY="692.0" text="totalOrder" />
+                                                <Label layoutX="83.0" layoutY="601.0" text="TodayOrder" />
+                                                <Label layoutX="83.0" layoutY="619.0" text="YesterdayOrder" />
+                                                <Label layoutX="83.0" layoutY="638.0" text="ThisweekOrder" />
+                                                <Label layoutX="83.0" layoutY="657.0" text="ThismonthOrder" />
+                                                <Label layoutX="83.0" layoutY="675.0" text="ThisyearOrder" />
+                                                <Label layoutX="83.0" layoutY="692.0" text="TotalOrder" />
                                                 <Label fx:id="todayOrderRpt" layoutX="197.0" layoutY="601.0" text="00" />
                                                 <Label fx:id="yesterdayOrderRpt" layoutX="197.0" layoutY="619.0" text="00" />
                                                 <Label fx:id="thisweekOrderRpt" layoutX="197.0" layoutY="638.0" text="00" />
                                                 <Label fx:id="thismonthOrderRpt" layoutX="197.0" layoutY="657.0" text="00" />
                                                 <Label fx:id="thisyearOrderRpt" layoutX="197.0" layoutY="675.0" text="00" />
                                                 <Label fx:id="totalOrderRpt" layoutX="197.0" layoutY="692.0" text="00" />
-                                                <Label layoutX="422.0" layoutY="603.0" text="todayIncome" />
-                                                <Label layoutX="422.0" layoutY="621.0" text="yesterdayIncome" />
-                                                <Label layoutX="422.0" layoutY="640.0" text="thisweekIncome" />
-                                                <Label layoutX="422.0" layoutY="659.0" text="thismonthIncome" />
-                                                <Label layoutX="422.0" layoutY="677.0" text="thisyearIncome" />
-                                                <Label layoutX="422.0" layoutY="694.0" text="totalIncome" />
+                                                <Label layoutX="422.0" layoutY="603.0" text="TodayIncome" />
+                                                <Label layoutX="422.0" layoutY="621.0" text="YesterdayIncome" />
+                                                <Label layoutX="422.0" layoutY="640.0" text="ThisweekIncome" />
+                                                <Label layoutX="422.0" layoutY="659.0" text="ThismonthIncome" />
+                                                <Label layoutX="422.0" layoutY="677.0" text="ThisyearIncome" />
+                                                <Label layoutX="422.0" layoutY="694.0" text="TotalIncome" />
                                                 <Label fx:id="todayIncomeRpt" layoutX="536.0" layoutY="603.0" text="00" />
                                                 <Label fx:id="yesterdayIncomeRpt" layoutX="536.0" layoutY="621.0" text="00" />
                                                 <Label fx:id="thisweekIncomeRpt" layoutX="536.0" layoutY="640.0" text="00" />
                                                 <Label fx:id="thismonthIncomeRpt" layoutX="536.0" layoutY="659.0" text="00" />
                                                 <Label fx:id="thisyearIncomeRpt" layoutX="536.0" layoutY="677.0" text="00" />
                                                 <Label fx:id="totalIncomeRpt" layoutX="536.0" layoutY="694.0" text="00" />
+                                                <AreaChart fx:id="orderAreaChart" layoutX="31.0" layoutY="314.0" legendVisible="false" prefHeight="237.0" prefWidth="322.0" title="Orders This Year">
+                                                   <xAxis>
+                                                      <CategoryAxis side="BOTTOM" fx:id="xAxis1" />
+                                                   </xAxis>
+                                                   <yAxis>
+                                                      <NumberAxis side="LEFT" />
+                                                   </yAxis>
+                                                </AreaChart>
                                              </children>
                                           </AnchorPane>
                                        </content>

@@ -27,8 +27,10 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -45,6 +47,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
@@ -71,7 +74,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -81,10 +83,8 @@ import javafx.util.Duration;
 import models.CartItem;
 import models.EmployeeDataModel;
 import models.InvoiceDataModel;
-import models.InvoiceItem;
 import models.UserDataModel;
-import javafx.scene.shape.Rectangle;
-//import java.awt.Rectangle;
+
 
 
 /**
@@ -107,6 +107,7 @@ public class MainFormController implements Initializable {
     private Image image;
     private static final String IMAGE_DIR = "Images";
     private static String getEmpDate;
+    
     
     //All Form Section Start
     @FXML private AnchorPane main_Form,dashboadrForm,itemsForm,posMenuForm,cullectBillForm,invoicesForm,expensesForm,reportForm,usersForm,settingsForm;
@@ -489,7 +490,6 @@ public class MainFormController implements Initializable {
         }
 
     }
-    // LETS PROCEED TO OUR DASHBOARD FORM : )
     public void logout() {
 
         try {
@@ -524,16 +524,16 @@ public class MainFormController implements Initializable {
 
     }
     public void displayUsername() {
-
-        String user = xValue.username;
-        user = user.substring(0, 1).toUpperCase() + user.substring(1);
-
-        String name = "Welcome, " + user + "!";
-        userName.setText(name);
-        //userName.setText(user);
-
+        String xUser = xValue.username;
+        if(xUser == null){
+            xUser = "Arko!";
+        }  
+        xUser = xUser.substring(0, 1).toUpperCase() + xUser.substring(1);
+        String xName = "Welcome, " + xUser + "!";     
+        userName.setText(xName);
     } 
     
+    private static final String IMAGE_FOLDER = "src/slider_img";
     private List<File> imageFiles = new ArrayList<>();
     private int currentIndex = 0;
     private Timeline slideshowTimeline;
@@ -542,8 +542,6 @@ public class MainFormController implements Initializable {
     private String[] phrases;
     private int phraseIndex = 0;
     private String admin =  "";
-
-    private static final String IMAGE_FOLDER = "src/slider_img"; // Folder to store images
     private void loadImagesFromFolder() {
         File folder = new File(IMAGE_FOLDER);
         if (!folder.exists()) {
@@ -1388,7 +1386,7 @@ public class MainFormController implements Initializable {
         setupCartTable();
         
         for (CartItem item : cartData) {
-            if (item.getItems().getId() == cardData.getId()) {
+            if (Objects.equals(item.getItems().getId(), cardData.getId())) {
                 item.setQuantity(item.getQuantity() + 1);
                 menuTableView.refresh();
                 updateSubTotal();
@@ -1556,6 +1554,16 @@ public class MainFormController implements Initializable {
         xOrderType = menu_OrderType.getSelectionModel().getSelectedItem();
         xServedBy = menu_ServedBy.getText();
         xBillBy = xValue.username;
+        
+        if(menu_OrderType.getSelectionModel().getSelectedItem() == null){
+            xOrderType = "Table";
+        }
+        if(menu_ServedBy.getText().isEmpty() || menu_ServedBy.getText() == null){
+            xServedBy = "Mr. X";
+        }
+        if(xBillBy == null){
+            xBillBy = "Arko";
+        } 
         
         if(xDiscount == 0 && xOthersCharge == 0) {
             xGrandTotal = t_Price;
@@ -1979,6 +1987,7 @@ public class MainFormController implements Initializable {
 
                 // Refresh the table and clear fields
                 invoiceShowData();
+                loadTotalPendingAmount();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -2036,7 +2045,9 @@ public class MainFormController implements Initializable {
     
     
     //// START EXPENSE SECTION
-    private final String[] expenseCategoryList = {"Eutility Bill", "Living Cost", "Emplyee Salery", "Buy Goods"};
+    private final String[] expenseCategoryList = {
+        "Rent/Mortgage","Living Cost","Electricity Bill","Water Bill","Emplyee Salery","Buy Goods","Cleaning Supplies","Safety Equipment",
+        "Advertising","Maintenance","Furniture","Technology","Donations","Insurance","Vat/Taxes","Licenses & Permit","Others"};
     public void expenseCategoryList() {
 
         List<String> xVal = new ArrayList<>();
@@ -2329,7 +2340,9 @@ public class MainFormController implements Initializable {
                         TextField amountField = new TextField(expense.getExAmount().toString()); 
                         
                         ComboBox<String> categoryComboBox = new ComboBox<>();
-                        categoryComboBox.getItems().addAll("Category 1", "Category 2", "Category 3");
+                        categoryComboBox.getItems().addAll("Rent/Mortgage","Living Cost","Electricity Bill","Water Bill","Emplyee Salery",
+                                "Buy Goods","Cleaning Supplies","Safety Equipment","Advertising","Maintenance","Furniture","Technology",
+                                "Donations","Insurance","Vat/Taxes","Licenses & Permit","Others");
                         categoryComboBox.setValue(expense.getExCategory());
                         
                         TextArea descriptionField = new TextArea(expense.getExDescription());
@@ -3612,43 +3625,83 @@ public class MainFormController implements Initializable {
             System.err.println("One or more labels are not initialized!");
         }
     }
-    @FXML private AreaChart<String, Number> expenseAreaChart;
-    @FXML private BarChart<String, Number> expenseBarChart;
-    @FXML private PieChart expensePieChart;
-    public void chartInitialize() {
-        // Sample data
-        XYChart.Series<String, Number> incomeData = new XYChart.Series<>();
-        incomeData.setName("Monthly Order");
+    
+    
+    @FXML private CategoryAxis xAxis,xAxis7Odr, xAxis7Inc;
 
-        incomeData.getData().add(new XYChart.Data<>("January", 5000));
-        incomeData.getData().add(new XYChart.Data<>("February", 7000));
-        incomeData.getData().add(new XYChart.Data<>("March", 6000));
-        incomeData.getData().add(new XYChart.Data<>("April", 8000));
-        incomeData.getData().add(new XYChart.Data<>("May", 7500));
-        incomeData.getData().add(new XYChart.Data<>("June", 8500));
-        incomeData.getData().add(new XYChart.Data<>("Julai", 1000));
-        incomeData.getData().add(new XYChart.Data<>("Agoust", 6000));
-        incomeData.getData().add(new XYChart.Data<>("Sptember", 8000));
-        incomeData.getData().add(new XYChart.Data<>("October", 7500));
-        incomeData.getData().add(new XYChart.Data<>("November", 8500));
-        incomeData.getData().add(new XYChart.Data<>("Desember", 8500));
-        
-        
-         ObservableList<PieChart.Data> incomeData1 = FXCollections.observableArrayList(
-            new PieChart.Data("Salary", 5000),
-            new PieChart.Data("Investments", 3000),
-            new PieChart.Data("Freelance", 1500),
-            new PieChart.Data("Others", 1000),
-            new PieChart.Data("Salary", 5000),
-            new PieChart.Data("Investments", 3000),
-            new PieChart.Data("Freelance", 1500),
-            new PieChart.Data("Others", 1000)
+    @FXML private AreaChart<String, Number> orderAreaChart, orderAreaChart7Days, incomeAreaChart,incomeAreaChart7Days;
+    @FXML private PieChart expensePieChart;
+
+    private void loadExpensesByCategory() {
+    ObservableList<PieChart.Data> pieChartData = db.getExpensesByCategory();
+
+    // Calculate total for percentage calculation
+    double total = pieChartData.stream()
+                               .mapToDouble(PieChart.Data::getPieValue)
+                               .sum();
+
+    // Format labels with percentages
+    pieChartData.forEach(data -> {
+        String percentage = String.format("%.1f%%", (data.getPieValue() / total) * 100);
+        data.nameProperty().set("(" + percentage + ")\n"+data.getName());
+        //xAxis.setTickLabelRotation(45); 
+    });
+
+    expensePieChart.setData(pieChartData);
+}
+    private void loadMonthlyIncomeData() {
+      
+        ObservableList<String> months = FXCollections.observableArrayList(
+        "January", "February", "March", "April", "May", "June", 
+        "July", "August", "September", "October", "November", "December"
         );
-        // Adding data to the chart
-        expenseAreaChart.getData().add(incomeData);
-        expenseBarChart.getData().add(incomeData);
-        expensePieChart.setData(incomeData1);
+        xAxis.setCategories(months);
+
+        ObservableList<XYChart.Data<String, Number>> monthlyData = db.getMonthlyIncomeData();
+
+        if (monthlyData == null || monthlyData.isEmpty()) {
+            System.out.println("No data found for the current year.");
+        } else {
+            for (XYChart.Data<String, Number> data : monthlyData) {
+                //System.out.println(data.getXValue() + ", Total Income: " + data.getYValue());
+            }
+        }
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Monthly Income");
+        series.getData().addAll(monthlyData);
+
+        incomeAreaChart.getData().add(series);
+        xAxis.setTickLabelRotation(90);  
+
     }
+    private void loadLast7DaysIncome() {
+        ObservableList<String> days = FXCollections.observableArrayList(
+            "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
+        );
+        xAxis7Inc.setCategories(days);
+        ObservableList<XYChart.Data<String, Number>> dailyData = db.getLast7DaysIncomeData();
+
+        if (dailyData == null || dailyData.isEmpty()) {
+            System.out.println("No data found for the last 7 days.");
+        } else {
+            for (XYChart.Data<String, Number> data : dailyData) {
+                System.out.println(data.getXValue() + ", Total Income: " + data.getYValue());
+            }
+        }
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Last 7 Days Income");
+
+        series.getData().addAll(dailyData);
+        incomeAreaChart7Days.getData().clear();
+        incomeAreaChart7Days.getData().add(series);
+        xAxis7Inc.setTickLabelRotation(90);
+    }
+
+
+    
+
     /// END REPORT SECTION/
 
     //// START SETTINGS SECTION
@@ -3662,14 +3715,16 @@ public class MainFormController implements Initializable {
         if (!folder.exists()) { folder.mkdir(); }
        
         //Dashboard
+        loadExpensesByCategory();loadLast7DaysIncome();
         Platform.runLater(this::loadDashTopData);
+        Platform.runLater(this::loadMonthlyIncomeData);
+        displayUsername();
         initializePhrases();
         startTypingEffect();
-        //Platform.runLater(this::startTypingEffect);
         initializeSlideshow();
         startDateTimeDisplay();
-        chartInitialize();
-        //displayUsername(); 
+        
+        
 
         
         //Items
