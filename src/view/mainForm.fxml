@@ -295,6 +295,22 @@
                                               <NumberAxis side="LEFT" />
                                             </yAxis>
                                           </AreaChart>
+                                          <AreaChart layoutX="-2.0" layoutY="188.0" prefHeight="183.0" prefWidth="288.0" styleClass="nav-form" stylesheets="@../css/cardItemDesign.css">
+                                             <xAxis>
+                                                <CategoryAxis side="BOTTOM" />
+                                             </xAxis>
+                                             <yAxis>
+                                                <NumberAxis side="LEFT" />
+                                             </yAxis>
+                                          </AreaChart>
+                                          <AreaChart layoutX="-2.0" layoutY="376.0" prefHeight="183.0" prefWidth="288.0" styleClass="nav-form" stylesheets="@../css/cardItemDesign.css">
+                                             <xAxis>
+                                                <CategoryAxis side="BOTTOM" />
+                                             </xAxis>
+                                             <yAxis>
+                                                <NumberAxis side="LEFT" />
+                                             </yAxis>
+                                          </AreaChart>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane layoutX="513.0" layoutY="515.0" prefHeight="93.0" prefWidth="234.0" stylesheets="@../css/cardItemDesign.css" AnchorPane.bottomAnchor="16.0" AnchorPane.rightAnchor="337.0">

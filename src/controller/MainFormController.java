@@ -31,7 +31,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -101,27 +100,6 @@ public class MainFormController implements Initializable {
     private String inv_time;
     private Alert alert;
     
-    @FXML private AnchorPane invoice_DataForm;
-    @FXML private Label invoice_ID;
-    @FXML private Label invoice_Date;
-    @FXML private Label invoice_Time;
-    @FXML private Label invoice_OrderType;
-    @FXML private Label invoice_ServedBy;
-    @FXML private Label invoice_BillBy;
-    @FXML private Label invoice_Subtotal;
-    @FXML private Label invoice_Discount;
-    @FXML private Label invoice_OtherCharge;
-    @FXML private Label invoice_GrandTotal;
-    @FXML private Label invoice_TotalQty;
-    @FXML private Text  invoice_Note;
-    
-    @FXML private TableView<InvoiceItem> invoice_ItemTableView;
-    @FXML private TableColumn<InvoiceItem, Integer> invoice_SN;
-    @FXML private TableColumn<InvoiceItem, String> invoice_ItemName;
-    @FXML private TableColumn<InvoiceItem, Double> invoice_ItemRate;
-    @FXML private TableColumn<InvoiceItem, Integer> invoice_ItemQty;
-    @FXML private TableColumn<InvoiceItem, Double> invoice_ItemAmount;
-    
     //// SET Variable
     private static int id;
     private static String path;
@@ -131,81 +109,33 @@ public class MainFormController implements Initializable {
     private static String getEmpDate;
     
     //All Form Section Start
-    @FXML private AnchorPane main_Form;
-    @FXML private AnchorPane dashboadrForm;
-    @FXML private AnchorPane itemsForm;
-    @FXML private AnchorPane posMenuForm;
-    @FXML private AnchorPane cullectBillForm;
-    @FXML private AnchorPane invoicesForm;
-    @FXML private AnchorPane expensesForm;
-    @FXML private AnchorPane reportForm;
-    @FXML private AnchorPane usersForm;
-    @FXML private AnchorPane settingsForm;
+    @FXML private AnchorPane main_Form,dashboadrForm,itemsForm,posMenuForm,cullectBillForm,invoicesForm,expensesForm,reportForm,usersForm,settingsForm;
     //End
 
     //All Nav Section Start
-    @FXML private Button dashboardBtn;
-    @FXML private Button itemsBtn;
-    @FXML private Button posMenuBtn;
-    @FXML private Button cullectBillBtn;
-    @FXML private Button invoicesBtn;
-    @FXML private Button expensesBtn;
-    @FXML private Button reportBtn;
-    @FXML private Button usersBtn;
-    @FXML private Button settingsBtn;
-
-    @FXML private Button signoutBtn;
+    @FXML private Button dashboardBtn,itemsBtn,posMenuBtn,cullectBillBtn,invoicesBtn,expensesBtn,reportBtn,usersBtn,settingsBtn,signoutBtn;
     @FXML private Label userName;
     //End
 
     //Dashboard Section Start
-    @FXML private Button slideshowAddBtn;
-    @FXML private Button slideshowRemoveBtn;
-    @FXML private Button slideshowNextBtn;
-    @FXML private Button slideshowPreviousBtn;
+    @FXML private Button slideshowAddBtn,slideshowRemoveBtn,slideshowNextBtn,slideshowPreviousBtn;
     @FXML private AnchorPane slideshowAnchorPane;
     @FXML private ImageView slideshowImageView;
-    @FXML private AnchorPane ScrollAnchor;
-    @FXML private Text ScrollingText;
-    @FXML private Rectangle scrollRectangle;
     
-    @FXML private Label todayOrderDash;
-    @FXML private Label todayIncomeDash;
-    @FXML private Label todayExpenseDash;
-    @FXML private Label pendingAmountDash;
-    @FXML private Label totalInvoicesDash;
-    @FXML private Label totalItemsDash;
-    @FXML private Label totalPackageDash;
-    @FXML private Label totalUsersDash;
-    
-    @FXML private Label newsTextLabel;
-    @FXML private Label dashDateLabel;
-    @FXML private Label dashTimeLabel;
-    @FXML private Label todayLabel;
-
+    @FXML private Label todayOrderDash,todayIncomeDash,todayExpenseDash,pendingAmountDash,
+            totalInvoicesDash,totalItemsDash,totalPackageDash,totalUsersDash,
+            newsTextLabel,dashDateLabel,dashTimeLabel,todayLabel;
     //End
 
 
     // Item Section Start
-    @FXML private Button items_AddBtn;
-    @FXML private Button items_UpdateBtn;
-    @FXML private Button items_DeleteBtn;
-    @FXML private Button items_ClearBtn;
-    @FXML private TextField items_Name;
-    @FXML private ComboBox<String> items_Category;
-    @FXML private TextField items_UnitPrice;
-    @FXML private TextField items_Size;
-    @FXML private ComboBox<String> items_Status;
+    @FXML private TextField items_Name,items_UnitPrice,items_Size;
+    @FXML private ComboBox<String> items_Category,items_Status;
     @FXML private ImageView items_ImageView;
     @FXML private Button items_ImportBtn;
     @FXML private TableView<ItemsDataModel> items_TableView;
-    @FXML private TableColumn<ItemsDataModel, String> items_Col_ItemsSn;
-    @FXML private TableColumn<ItemsDataModel, String> items_Col_ItemsName;
-    @FXML private TableColumn<ItemsDataModel, String> items_Col_Category;
-    @FXML private TableColumn<ItemsDataModel, String> items_Col_Size;
-    @FXML private TableColumn<ItemsDataModel, String> items_Col_UnitPrice;
-    @FXML private TableColumn<ItemsDataModel, String> items_Col_Status;
-    @FXML private TableColumn<ItemsDataModel, String> items_Col_Date;
+    @FXML private TableColumn<ItemsDataModel, String> 
+            items_Col_ItemsSn,items_Col_ItemsName,items_Col_Category,items_Col_Size,items_Col_UnitPrice,items_Col_Status,items_Col_Date;
     //End
 
 
@@ -607,6 +537,11 @@ public class MainFormController implements Initializable {
     private List<File> imageFiles = new ArrayList<>();
     private int currentIndex = 0;
     private Timeline slideshowTimeline;
+    private int xOrder;
+    private double xIncome, xExpense, xPendingAmount;
+    private String[] phrases;
+    private int phraseIndex = 0;
+    private String admin =  "";
 
     private static final String IMAGE_FOLDER = "src/slider_img"; // Folder to store images
     private void loadImagesFromFolder() {
@@ -722,33 +657,12 @@ public class MainFormController implements Initializable {
         slideshowPreviousBtn.setOnAction(e -> showPreviousImage());
 
     }
-    
-    private void loadDashTopData() {
-        // Check if any label is null before proceeding
-        if (todayOrderDash != null && todayIncomeDash != null && todayExpenseDash != null && 
-                pendingAmountDash != null && totalInvoicesDash != null && totalItemsDash != null && 
-                totalPackageDash != null && totalUsersDash != null) {
-            
-            todayOrderDash.setText(""+db.getTodayOrder());
-            todayIncomeDash.setText(String.format("%.2f TK", db.getTodayIncome()));
-            todayExpenseDash.setText(String.format("%.2f TK", db.getTodayExpenses()));
-            pendingAmountDash.setText(String.format("%.2f TK", db.getTotalInvoicePendingAmount()));
-            totalInvoicesDash.setText(""+db.getTotalInvoice());
-            totalItemsDash.setText(""+db.getTotalItems());
-            totalPackageDash.setText(""+db.getTotalPackage());
-            int xUsers = db.gettoTalUsers() + 1;
-            totalUsersDash.setText(""+xUsers);
-        } else {
-            System.err.println("One or more labels are not initialized!");
-        }
-    }
- 
     private void startDateTimeDisplay() {
         Timeline dateTimeTimeline = new Timeline(
             new KeyFrame(Duration.seconds(1), event -> {
                 String dateTimed = new SimpleDateFormat("EEEE").format(new Date());
                 String dateTimeD = new SimpleDateFormat("dd MMM yyyy").format(new Date());
-                String dateTimeT = new SimpleDateFormat("HH:mm:ss aa").format(new Date());
+                String dateTimeT = new SimpleDateFormat("hh:mm:ss aa").format(new Date());
                 dashDateLabel.setText(dateTimeD);
                 dashTimeLabel.setText(dateTimeT); 
                 todayLabel.setText(dateTimed); 
@@ -758,11 +672,55 @@ public class MainFormController implements Initializable {
         dateTimeTimeline.setCycleCount(Timeline.INDEFINITE);  // Run indefinitely
         dateTimeTimeline.play();  // Start the date-time display timeline
     }
-    private final String[] phrases = {" ","Hi Arko! ✋ ", "NEWS UPDATE FOR TODAY - ", 
-        "Today Order: 12 ", "Income: 2500TK ", 
-        "Expense: 00 ", "Pending Amount: 250TK "};
-    private int phraseIndex = 0; 
+    
+    private void loadDashTopData() {
+    if (todayOrderDash != null && todayIncomeDash != null && todayExpenseDash != null && 
+        pendingAmountDash != null && totalInvoicesDash != null && totalItemsDash != null && 
+        totalPackageDash != null && totalUsersDash != null) {
+        
+        xOrder = db.getTodayOrder();
+        xIncome = db.getTodayIncome();
+        xExpense = db.getTodayExpenses();
+        xPendingAmount = db.getTotalInvoicePendingAmount();
+
+        todayOrderDash.setText(String.valueOf(xOrder));
+        todayIncomeDash.setText(String.format("%.2f TK", xIncome));
+        todayExpenseDash.setText(String.format("%.2f TK", xExpense));
+        pendingAmountDash.setText(String.format("%.2f TK", xPendingAmount));
+        
+        totalInvoicesDash.setText(""+db.getTotalInvoice());
+        totalItemsDash.setText(""+db.getTotalItems());
+        totalPackageDash.setText(""+db.getTotalPackage());
+        int xUsers = db.gettoTalUsers() + 1;
+        totalUsersDash.setText(""+xUsers);
+        String xAdmin = xValue.username;
+        if(xAdmin == null){
+            admin = "Arko";
+        }else{
+            admin = xAdmin;
+        }
+        initializePhrases();
+    } else {
+        System.err.println("One or more labels are not initialized!");
+    }
+}
+    private void initializePhrases() {
+        phrases = new String[] {
+            " ","Hi "+admin+"! ✋ ", "NEWS UPDATE FOR TODAY - ", 
+            "Today Order: " + xOrder+" ", 
+            "Income: " + xIncome + " TK ", 
+            "Expense: " + xExpense + " TK ", 
+            "Pending Amount: " + xPendingAmount + " TK "
+        };
+        
+        //System.out.println("--------> "+xOrder+"---- "+xIncome+"---- "+xExpense+"---- "+xPendingAmount);
+    }
     private void startTypingEffect() {
+        if (phrases == null || phrases.length == 0) {
+            System.err.println("Phrases array is empty or null!");
+            return;
+        }
+
         if (phraseIndex >= phrases.length) {
             phraseIndex = 0;  // Loop back to the first phrase
         }
@@ -771,9 +729,8 @@ public class MainFormController implements Initializable {
         newsTextLabel.setText("");  // Clear text before typing a new phrase
 
         Timeline typingTimeline = new Timeline();
-        Duration characterDelay = Duration.millis(300);  // Delay between characters
+        Duration characterDelay = Duration.millis(200);  // Delay between characters
 
-        // Typing effect for the current phrase
         for (int i = 0; i < currentPhrase.length(); i++) {
             final int index = i;
             KeyFrame keyFrame = new KeyFrame(characterDelay.multiply(i + 1), event -> {
@@ -782,14 +739,13 @@ public class MainFormController implements Initializable {
             typingTimeline.getKeyFrames().add(keyFrame);
         }
 
-        // After the phrase completes, wait and start the next phrase
         typingTimeline.setOnFinished(event -> {
             phraseIndex++;
-            startTypingEffect();  // Move to the next phrase
+            startTypingEffect();
         });
 
-        typingTimeline.play();  // Start the animation
-    }
+        typingTimeline.play();
+    } 
     
     //// END DASHBOARD SECTION
     
@@ -3707,13 +3663,14 @@ public class MainFormController implements Initializable {
        
         //Dashboard
         Platform.runLater(this::loadDashTopData);
-        initializeSlideshow();
+        initializePhrases();
         startTypingEffect();
+        //Platform.runLater(this::startTypingEffect);
+        initializeSlideshow();
         startDateTimeDisplay();
         chartInitialize();
         //displayUsername(); 
-        //dashboardDisplayNC();
-        //dashboardDisplayTI();
+
         
         //Items
         itemsCategoryList();
