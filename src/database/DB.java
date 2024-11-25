@@ -600,7 +600,6 @@ public class DB {
             String query = "SELECT strftime('%m', datetime(date / 1000, 'unixepoch')) AS month, "
                          + "COUNT(*) AS total_order FROM invoices "
                          + "WHERE strftime('%Y', datetime(date / 1000, 'unixepoch')) = strftime('%Y', 'now') "
-                         + "AND payment_status = 'Complete' "
                          + "GROUP BY strftime('%m', datetime(date / 1000, 'unixepoch')) "
                          + "ORDER BY month";
 
@@ -636,8 +635,7 @@ public class DB {
                          + "strftime('%Y-%m-%d', datetime(date / 1000, 'unixepoch')) AS full_date, "
                          + "COUNT(*) AS total_orders "
                          + "FROM invoices "
-                         + "WHERE payment_status = 'Complete' "
-                         + "AND date >= strftime('%s', 'now', '-7 days') * 1000 "
+                         + "WHERE date >= strftime('%s', 'now', '-7 days') * 1000 "
                          + "AND date <= strftime('%s', 'now') * 1000 "
                          + "GROUP BY full_date "
                          + "ORDER BY full_date";

@@ -18,7 +18,7 @@ and open the template in the editor.
     -fx-background-color: #000;
 }
 .report{
-    -fx-background-color: darkorange;
+    -fx-background-color: darkgray;
 }
 
 .nav-form{

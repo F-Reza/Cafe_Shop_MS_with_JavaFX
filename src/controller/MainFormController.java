@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -323,7 +324,7 @@ public class MainFormController implements Initializable {
 
     //Settings Section Start
     //End
-    
+
     
     //#########################################################################################################
     
@@ -344,6 +345,11 @@ public class MainFormController implements Initializable {
             loadAdminData(1);
             initializeSlideshow();
             loadDashTopData();
+            
+            loadLast7DaysIncome();
+            loadLast7DaysOrder();
+            loadExpensesByCategoryThisYear();
+            
             empClearBtn();
             itemsClearBtn();
             expenseClearBtn();
@@ -499,38 +505,43 @@ public class MainFormController implements Initializable {
 
     }
     public void logout() {
+    try {
+        alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Message");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to logout?");
+        Optional<ButtonType> option = alert.showAndWait();
 
-        try {
+        if (option.isPresent() && option.get().equals(ButtonType.OK)) { //if (option.get().equals(ButtonType.OK)) {
 
-            alert = new Alert(AlertType.CONFIRMATION);
-            alert.setTitle("Confirmation Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Are you sure you want to logout?");
-            Optional<ButtonType> option = alert.showAndWait();
+            Preferences preferences = Preferences.userNodeForPackage(AuthController.class);
+            //preferences.putBoolean("logInSave", false);
+            //preferences.put("logUserName", ""); 
+            preferences.clear();
 
-            if (option.get().equals(ButtonType.OK)) {
+            // Hide the main form
+            signoutBtn.getScene().getWindow().hide();
 
-                // TO HIDE MAIN FORM 
-                signoutBtn.getScene().getWindow().hide();
+            // Load and show the login form
+            Parent root = FXMLLoader.load(getClass().getResource("/view/authPage.fxml"));
+            Stage stage = new Stage();
+            Scene scene = new Scene(root);
+            
+            stage.setMinHeight(450);
+            stage.setMaxHeight(450);
+            stage.setMinWidth(616);
+            stage.setMaxWidth(616);
 
-                // LINK YOUR LOGIN FORM AND SHOW IT 
-                Parent root = FXMLLoader.load(getClass().getResource("/view/authPage.fxml"));
-
-                Stage stage = new Stage();
-                Scene scene = new Scene(root);
-
-                stage.setTitle("GoPpo Management System");
-
-                stage.setScene(scene);
-                stage.show();
-
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            stage.setTitle("GoPoo Management System");
+            stage.setScene(scene);
+            stage.show();
         }
 
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
+
     public void displayUsername() {
         String xUser = xValue.username;
         if(xUser == null){
@@ -703,7 +714,7 @@ public class MainFormController implements Initializable {
         if(xAdmin == null){
             admin = "Arko";
         }else{
-            admin = xAdmin;
+            admin = xAdmin.substring(0, 1).toUpperCase() + xAdmin.substring(1);
         }
         initializePhrases();
     } else {
@@ -1592,6 +1603,16 @@ public class MainFormController implements Initializable {
         getItemList();
         getAllTextVal();
         //printAllTextVal();
+        
+        if(xGrandTotal==0 || cartData.isEmpty()){
+            alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Cart Empty!");
+            alert.showAndWait();
+            System.out.println("-----> Cart Empty! ----- GrandTotal = 00");
+            return;
+        }
         saveInvoiceData();
     }
     private void saveInvoiceData() {

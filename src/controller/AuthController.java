@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import javafx.animation.TranslateTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -71,7 +72,17 @@ public class AuthController implements Initializable {
     @FXML private Button su_signupBtn;
     @FXML private AnchorPane su_signupForm;
     @FXML private TextField su_username;
+    
+    private final Preferences preferences = Preferences.userNodeForPackage(AuthController.class);
+    private static final String LOGIN_SAVE_KEY = "logInSave";
+    private static final String LOGIN_USER_KEY = "logUserName";
+    private static final String LOGIN_USER_ROLL_KEY = "logUserRolle";
 
+    private void saveLoginState(boolean state, String logUserName) {
+        preferences.putBoolean(LOGIN_SAVE_KEY, state);
+        preferences.put(LOGIN_USER_KEY, logUserName);
+    }
+    
     private String[] questionList = {
         "What is your favorite Color?",
         "What is your favorite food?",
@@ -117,47 +128,52 @@ public class AuthController implements Initializable {
                     
                 // IF SUCCESSFULLY LOGIN, THEN PROCEED TO ANOTHER FORM WHICH IS OUR MAIN FORM 
                 if (result.next()) {
-                    // TO GET THE USERNAME THAT USER USED
                     xValue.username = si_username.getText();
-
-                    alert = new Alert(AlertType.INFORMATION);
-                    alert.setTitle("Information Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Successfully Login!");
-                    alert.showAndWait();
-                    System.out.println("Successfully Login! [You are a Admin[");
-                    // LINK YOUR MAIN FORM
-                    Parent root = FXMLLoader.load(getClass().getResource("/view/mainForm.fxml"));
-
-                    Stage stage = new Stage();
-                    Scene scene = new Scene(root);
-
-                    stage.setTitle("GoPoo Management System");
-                    stage.setMinWidth(1384);
-                    stage.setMinHeight(840);
-
-                    stage.setScene(scene);
-                    stage.show();
-
-                    si_loginBtn.getScene().getWindow().hide();
-                    db.closeConnection();
+                    saveLoginState(true,si_username.getText());
+                    loadMainForm();
+//                    xValue.username = si_username.getText();
+//
+//                    alert = new Alert(AlertType.INFORMATION);
+//                    alert.setTitle("Information Message");
+//                    alert.setHeaderText(null);
+//                    alert.setContentText("Successfully Login!");
+//                    alert.showAndWait();
+//                    System.out.println("Successfully Login! [You are a Admin[");
+//                    // LINK YOUR MAIN FORM
+//                    Parent root = FXMLLoader.load(getClass().getResource("/view/mainForm.fxml"));
+//
+//                    Stage stage = new Stage();
+//                    Scene scene = new Scene(root);
+//
+//                    stage.setTitle("GoPoo Management System");
+//                    stage.setMinWidth(1384);
+//                    stage.setMinHeight(840);
+//
+//                    stage.setScene(scene);
+//                    stage.show();
+//
+//                    si_loginBtn.getScene().getWindow().hide();
+//                    db.closeConnection();
 
                 } else if (rstE.next()) {
+                    xValue.username = si_username.getText();
                     try {
                         prepare = db.connection.prepareStatement(selctDataER);
                         prepare.setString(1, si_username.getText());
                         prepare.setString(2, "Manager");
                         ResultSet rstER = prepare.executeQuery();
                         if (rstER.next()) {
-                            System.out.println("-> Successfully Login! [You are a Maneger]");
+                            System.out.println("-> Successfully Login! [You are a Manager]");
                             try {
                                 prepare = db.connection.prepareStatement(selctDataES);
                                 prepare.setString(1, si_username.getText());
                                 prepare.setString(2, "Active");
                                 ResultSet rstES = prepare.executeQuery();
                                 if (rstES.next()) {
+                                    loadManegerForm();
                                     System.out.println("-> Active!");
                                 } else {
+                                    deactiveMsg();
                                     System.out.println("-> Deactive");
                                 }
 
@@ -174,8 +190,10 @@ public class AuthController implements Initializable {
                                 prepare.setString(2, "Active");
                                 ResultSet rstES = prepare.executeQuery();
                                 if (rstES.next()) {
+                                    loadCashierForm();
                                     System.out.println("-> Active!");
                                 } else {
+                                    deactiveMsg();
                                     System.out.println("-> Deactive");
                                 }
 
@@ -207,6 +225,98 @@ public class AuthController implements Initializable {
 
     }
     
+    private void deactiveMsg() {
+        alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Information Message");
+        alert.setHeaderText(null);
+        alert.setContentText("Successfully Login!\nCurrently you are deactivated!.\nNow pending the Admin approval.");
+        alert.showAndWait();
+    }
+    // Load main form
+    private void loadMainForm() {
+        try {
+            alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Information Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Successfully Login!");
+            alert.showAndWait();
+            System.out.println("Successfully Login! [You are a Admin]");
+                    
+            Parent root = FXMLLoader.load(getClass().getResource("/view/mainForm.fxml"));
+            Stage stage = new Stage();
+            Scene scene = new Scene(root);
+
+            stage.setTitle("GoPoo Management System");
+            stage.setMinWidth(1384);
+            stage.setMinHeight(840);
+
+            stage.setScene(scene);
+            stage.show();
+
+            si_loginBtn.getScene().getWindow().hide();
+            //db.closeConnection();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info(e.toString());
+        }
+    }
+    private void loadManegerForm() {
+        try {
+            alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Information Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Successfully Login!");
+            alert.showAndWait();
+            System.out.println("Successfully Login! [You are a Manager]");
+                    
+            Parent root = FXMLLoader.load(getClass().getResource("/view/managerForm.fxml"));
+            Stage stage = new Stage();
+            Scene scene = new Scene(root);
+
+            stage.setTitle("GoPoo Management System");
+            stage.setMinWidth(1384);
+            stage.setMinHeight(840);
+
+            stage.setScene(scene);
+            stage.show();
+
+            si_loginBtn.getScene().getWindow().hide();
+            //db.closeConnection();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info(e.toString());
+        }
+    }
+    private void loadCashierForm() {
+        try {
+            alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Information Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Successfully Login!");
+            alert.showAndWait();
+            System.out.println("Successfully Login! [You are a Cashier]");
+                    
+            Parent root = FXMLLoader.load(getClass().getResource("/view/cashierForm.fxml"));
+            Stage stage = new Stage();
+            Scene scene = new Scene(root);
+
+            stage.setTitle("GoPoo Management System");
+            stage.setMinWidth(1384);
+            stage.setMinHeight(840);
+
+            stage.setScene(scene);
+            stage.show();
+
+            si_loginBtn.getScene().getWindow().hide();
+            //db.closeConnection();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info(e.toString());
+        }
+    }
 
     public void regBtn() {
         db.getConnection();
@@ -504,10 +614,13 @@ public class AuthController implements Initializable {
         }
 
     }
+    
+    
+   
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        //checkSavedLogin();
     }
 
 }
