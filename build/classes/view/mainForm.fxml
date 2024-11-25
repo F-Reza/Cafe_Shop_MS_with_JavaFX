@@ -286,9 +286,9 @@
                                           <String fx:value="shadow" />
                                        </styleClass>
                                        <children>
-                                          <AreaChart fx:id="orderAreaChart7Days" layoutX="-2.0" prefHeight="183.0" prefWidth="288.0" styleClass="nav-form" stylesheets="@../css/cardItemDesign.css">
+                                          <AreaChart fx:id="orderAreaChart7Days" layoutX="-2.0" legendVisible="false" prefHeight="183.0" prefWidth="288.0" styleClass="nav-form" stylesheets="@../css/cardItemDesign.css">
                                             <xAxis>
-                                              <CategoryAxis side="BOTTOM" />
+                                              <CategoryAxis side="BOTTOM" fx:id="xAxis7Ord" />
                                             </xAxis>
                                             <yAxis>
                                               <NumberAxis side="LEFT" />
@@ -302,6 +302,17 @@
                                                 <NumberAxis side="LEFT" />
                                              </yAxis>
                                           </AreaChart>
+                                          <Label layoutX="104.0" text="Last 7 Days Orders" textFill="WHITE" AnchorPane.rightAnchor="95.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font size="10.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="101.0" layoutY="188.0" text="Last 7 Days Incomes" textFill="WHITE" AnchorPane.rightAnchor="95.0" AnchorPane.topAnchor="188.0">
+                                             <font>
+                                                <Font size="10.0" />
+                                             </font>
+                                          </Label>
+                                          <PieChart fx:id="expensePieChartDash" layoutX="-1.0" layoutY="343.0" legendVisible="false" prefHeight="210.0" prefWidth="287.0" title="Expense This Year" titleSide="BOTTOM" AnchorPane.bottomAnchor="3.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane layoutX="513.0" layoutY="515.0" prefHeight="93.0" prefWidth="234.0" stylesheets="@../css/cardItemDesign.css" AnchorPane.bottomAnchor="16.0" AnchorPane.rightAnchor="337.0">
@@ -821,6 +832,14 @@
                                                    </children>
                                                 </AnchorPane>
                                                 <PieChart fx:id="expensePieChart" layoutX="668.0" layoutY="316.0" legendVisible="false" prefHeight="254.0" prefWidth="338.0" title="Total Expenses" />
+                                                <AreaChart fx:id="orderAreaChart" layoutX="31.0" layoutY="314.0" legendVisible="false" prefHeight="237.0" prefWidth="322.0" title="Orders This Year">
+                                                   <xAxis>
+                                                      <CategoryAxis side="BOTTOM" fx:id="xAxisOdr" />
+                                                   </xAxis>
+                                                   <yAxis>
+                                                      <NumberAxis side="LEFT" />
+                                                   </yAxis>
+                                                </AreaChart>
                                                 <AreaChart fx:id="incomeAreaChart" layoutX="343.0" layoutY="314.0" legendVisible="false" prefHeight="237.0" prefWidth="346.0" title="Income This Year">
                                                   <xAxis>
                                                     <CategoryAxis side="BOTTOM" fx:id="xAxis" />
@@ -865,14 +884,6 @@
                                                 <Label fx:id="thismonthIncomeRpt" layoutX="536.0" layoutY="659.0" text="00" />
                                                 <Label fx:id="thisyearIncomeRpt" layoutX="536.0" layoutY="677.0" text="00" />
                                                 <Label fx:id="totalIncomeRpt" layoutX="536.0" layoutY="694.0" text="00" />
-                                                <AreaChart fx:id="orderAreaChart" layoutX="31.0" layoutY="314.0" legendVisible="false" prefHeight="237.0" prefWidth="322.0" title="Orders This Year">
-                                                   <xAxis>
-                                                      <CategoryAxis side="BOTTOM" fx:id="xAxis1" />
-                                                   </xAxis>
-                                                   <yAxis>
-                                                      <NumberAxis side="LEFT" />
-                                                   </yAxis>
-                                                </AreaChart>
                                              </children>
                                           </AnchorPane>
                                        </content>

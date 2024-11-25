@@ -12,12 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -480,6 +475,31 @@ public class DB {
 
         return pieChartData;
     }
+    public ObservableList<PieChart.Data> getExpensesByCategoryThisYear() {
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+        String query = "SELECT ex_category, SUM(ex_amount) AS total "
+                     + "FROM expenses "
+                     + "WHERE strftime('%Y', datetime(ex_date / 1000, 'unixepoch')) = strftime('%Y', 'now') "
+                     + "GROUP BY ex_category";
+
+        try {
+            getConnection(); // Ensure connection is open
+            try (PreparedStatement xstatement = connection.prepareStatement(query);
+                 ResultSet resultSet = xstatement.executeQuery()) {
+
+                while (resultSet.next()) {
+                    String category = resultSet.getString("ex_category");
+                    double total = resultSet.getDouble("total");
+                    pieChartData.add(new PieChart.Data(category, total));
+                }
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error retrieving expenses by category for this year: {0}", e.getMessage());
+        }
+
+        return pieChartData;
+    }
+    
     public ObservableList<XYChart.Data<String, Number>> getMonthlyIncomeData() {
         ObservableList<XYChart.Data<String, Number>> data = FXCollections.observableArrayList();
 
@@ -562,8 +582,89 @@ public class DB {
 
         return data;
     }
+    public ObservableList<XYChart.Data<String, Number>> getMonthlyOrderData() {
+        ObservableList<XYChart.Data<String, Number>> data = FXCollections.observableArrayList();
 
+        String[] monthNames = {
+            "January", "February", "March", "April", "May", "June", 
+            "July", "August", "September", "October", "November", "December"
+        };
 
+        Map<String, Integer> monthlyIncomeMap = new LinkedHashMap<>();
+        for (String month : monthNames) {
+            monthlyIncomeMap.put(month, 0);
+        }
+
+        try {
+            // Query to fetch the sum of grand_total per month for the current year
+            String query = "SELECT strftime('%m', datetime(date / 1000, 'unixepoch')) AS month, "
+                         + "COUNT(*) AS total_order FROM invoices "
+                         + "WHERE strftime('%Y', datetime(date / 1000, 'unixepoch')) = strftime('%Y', 'now') "
+                         + "AND payment_status = 'Complete' "
+                         + "GROUP BY strftime('%m', datetime(date / 1000, 'unixepoch')) "
+                         + "ORDER BY month";
+
+            prepare = connection.prepareStatement(query);
+            result = prepare.executeQuery();
+
+            while (result.next()) {
+                String month = result.getString("month");
+                int totalOrder = result.getInt("total_order");
+
+                int monthIndex = Integer.parseInt(month) - 1;
+                String monthName = monthNames[monthIndex];
+
+                monthlyIncomeMap.put(monthName, totalOrder);
+            }
+
+            for (Map.Entry<String, Integer> entry : monthlyIncomeMap.entrySet()) {
+                data.add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+            }
+
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error while fetching monthly order data: {0}", e.toString());
+        }
+
+        return data;
+    }
+    public ObservableList<XYChart.Data<String, Number>> getLast7DaysOrderData() {
+        ObservableList<XYChart.Data<String, Number>> data = FXCollections.observableArrayList();
+
+        try {
+            // Query to fetch the total number of orders for the last 7 days, grouped by day
+            String query = "SELECT strftime('%w', datetime(date / 1000, 'unixepoch')) AS day_number, "
+                         + "strftime('%Y-%m-%d', datetime(date / 1000, 'unixepoch')) AS full_date, "
+                         + "COUNT(*) AS total_orders "
+                         + "FROM invoices "
+                         + "WHERE payment_status = 'Complete' "
+                         + "AND date >= strftime('%s', 'now', '-7 days') * 1000 "
+                         + "AND date <= strftime('%s', 'now') * 1000 "
+                         + "GROUP BY full_date "
+                         + "ORDER BY full_date";
+
+            prepare = connection.prepareStatement(query);
+            result = prepare.executeQuery();
+
+            // Define the mapping of day numbers to names
+            String[] dayNames = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+
+            while (result.next()) {
+                String dayNumber = result.getString("day_number");
+                String dayName = dayNames[Integer.parseInt(dayNumber)];
+                int totalOrders = result.getInt("total_orders");
+
+                // Add data to the observable list
+                data.add(new XYChart.Data<>(dayName, totalOrders));
+            }
+
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error while fetching order data for the last 7 days: {0}", e.toString());
+        }
+
+        return data;
+    }
+
+   
 
 
 

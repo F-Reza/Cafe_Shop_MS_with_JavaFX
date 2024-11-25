@@ -48,6 +48,7 @@ import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
@@ -3627,28 +3628,48 @@ public class MainFormController implements Initializable {
     }
     
     
-    @FXML private CategoryAxis xAxis,xAxis7Odr, xAxis7Inc;
-
-    @FXML private AreaChart<String, Number> orderAreaChart, orderAreaChart7Days, incomeAreaChart,incomeAreaChart7Days;
-    @FXML private PieChart expensePieChart;
+    @FXML private CategoryAxis xAxis,xAxis7Inc,xAxisOdr,xAxis7Ord;
+    @FXML private AreaChart<String, Number> orderAreaChart,orderAreaChart7Days,incomeAreaChart,incomeAreaChart7Days;
+    @FXML private PieChart expensePieChart,expensePieChartDash;
 
     private void loadExpensesByCategory() {
-    ObservableList<PieChart.Data> pieChartData = db.getExpensesByCategory();
+        ObservableList<PieChart.Data> expensesData = db.getExpensesByCategory();
 
-    // Calculate total for percentage calculation
-    double total = pieChartData.stream()
-                               .mapToDouble(PieChart.Data::getPieValue)
-                               .sum();
+        // Calculate total for percentage calculation
+        double total = expensesData.stream()
+                                   .mapToDouble(PieChart.Data::getPieValue)
+                                   .sum();
 
-    // Format labels with percentages
-    pieChartData.forEach(data -> {
-        String percentage = String.format("%.1f%%", (data.getPieValue() / total) * 100);
-        data.nameProperty().set("(" + percentage + ")\n"+data.getName());
-        //xAxis.setTickLabelRotation(45); 
-    });
+        // Format labels with percentages
+        expensesData.forEach(data -> {
+            String percentage = String.format("%.1f%%", (data.getPieValue() / total) * 100);
+            data.nameProperty().set("(" + percentage + ")\n"+data.getName());
+            //xAxis.setTickLabelRotation(45); 
+        });
 
-    expensePieChart.setData(pieChartData);
-}
+        expensePieChart.setData(expensesData);
+    }
+    private void loadExpensesByCategoryThisYear() {
+        ObservableList<PieChart.Data> expensesData = db.getExpensesByCategoryThisYear();
+        if (expensesData == null || expensesData.isEmpty()) {
+            //System.out.println("No expense data found for the current year.");
+            expensePieChartDash.getData().clear();
+            return;
+        }
+        double total = expensesData.stream()
+                                   .mapToDouble(PieChart.Data::getPieValue)
+                                   .sum();
+
+        expensesData.forEach(data -> {
+            String percentage = String.format("%.1f%%", (data.getPieValue() / total) * 100);
+            data.nameProperty().set(" (" + percentage + ")\n"+data.getName());
+        });
+        expensePieChartDash.getData().clear();
+        expensePieChartDash.setData(expensesData);
+    }
+
+   
+    
     private void loadMonthlyIncomeData() {
       
         ObservableList<String> months = FXCollections.observableArrayList(
@@ -3686,7 +3707,7 @@ public class MainFormController implements Initializable {
             System.out.println("No data found for the last 7 days.");
         } else {
             for (XYChart.Data<String, Number> data : dailyData) {
-                System.out.println(data.getXValue() + ", Total Income: " + data.getYValue());
+                //System.out.println(data.getXValue() + ", Total Income: " + data.getYValue());
             }
         }
 
@@ -3696,8 +3717,69 @@ public class MainFormController implements Initializable {
         series.getData().addAll(dailyData);
         incomeAreaChart7Days.getData().clear();
         incomeAreaChart7Days.getData().add(series);
-        xAxis7Inc.setTickLabelRotation(90);
+        xAxis7Inc.setTickLabelRotation(45);
     }
+    private void loadMonthlyOrderData() {
+      
+        ObservableList<String> months = FXCollections.observableArrayList(
+        "January", "February", "March", "April", "May", "June", 
+        "July", "August", "September", "October", "November", "December"
+        );
+        xAxisOdr.setCategories(months);
+
+        ObservableList<XYChart.Data<String, Number>> monthlyData = db.getMonthlyOrderData();
+
+        if (monthlyData == null || monthlyData.isEmpty()) {
+            System.out.println("No data found for the current year.");
+        } else {
+            for (XYChart.Data<String, Number> data : monthlyData) {
+                //System.out.println(data.getXValue() + ", Total Order: " + data.getYValue());
+            }
+        }
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Monthly Income");
+        series.getData().addAll(monthlyData);
+
+        orderAreaChart.getData().add(series);
+        xAxisOdr.setTickLabelRotation(90);  
+
+    }
+    private void loadLast7DaysOrder() {
+    // Define days of the week
+    ObservableList<String> days = FXCollections.observableArrayList(
+        "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
+    );
+    xAxis7Ord.setCategories(days);
+
+    // Fetch the data for the last 7 days' orders
+    ObservableList<XYChart.Data<String, Number>> dailyOrderData = db.getLast7DaysOrderData();
+
+    if (dailyOrderData == null || dailyOrderData.isEmpty()) {
+        System.out.println("No orders found for the last 7 days.");
+    } else {
+        for (XYChart.Data<String, Number> data : dailyOrderData) {
+            //System.out.println(data.getXValue() + ", Total Orders: " + data.getYValue());
+        }
+    }
+
+    // Create and populate the series
+    XYChart.Series<String, Number> series = new XYChart.Series<>();
+    series.setName("Last 7 Days Orders");
+    series.getData().addAll(dailyOrderData);
+   
+
+    // Update the chart
+    orderAreaChart7Days.getData().clear();
+    orderAreaChart7Days.getData().add(series);
+    xAxis7Ord.setTickLabelRotation(45);
+    //orderAreaChart7Days.lookup(".chart-title").setRotate(90);
+}
+    
+    
+
+
+    
 
 
     
@@ -3715,9 +3797,15 @@ public class MainFormController implements Initializable {
         if (!folder.exists()) { folder.mkdir(); }
        
         //Dashboard
-        loadExpensesByCategory();loadLast7DaysIncome();
+        loadExpensesByCategory();
+        loadExpensesByCategoryThisYear();
+        loadMonthlyIncomeData();
+        loadMonthlyOrderData();
+        loadLast7DaysIncome();
+        loadLast7DaysOrder();
+        
         Platform.runLater(this::loadDashTopData);
-        Platform.runLater(this::loadMonthlyIncomeData);
+        //Platform.runLater(this::loadMonthlyIncomeData);
         displayUsername();
         initializePhrases();
         startTypingEffect();
