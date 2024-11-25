@@ -518,6 +518,7 @@ public class MainFormController implements Initializable {
             //preferences.putBoolean("logInSave", false);
             //preferences.put("logUserName", ""); 
             preferences.clear();
+            db.closeConnection();
 
             // Hide the main form
             signoutBtn.getScene().getWindow().hide();
@@ -535,6 +536,7 @@ public class MainFormController implements Initializable {
             stage.setTitle("GoPoo Management System");
             stage.setScene(scene);
             stage.show();
+            db.closeConnection();
         }
 
     } catch (Exception e) {
@@ -1720,7 +1722,7 @@ public class MainFormController implements Initializable {
         String sql = "SELECT * FROM invoices WHERE payment_status = 'Pending'";
 
         ObservableList<InvoiceDataModel> listData = FXCollections.observableArrayList();
-        //db.getConnection();
+        db.getConnection();
 
         try {
 
@@ -1749,7 +1751,8 @@ public class MainFormController implements Initializable {
 
                 listData.add(invData);
 
-            } 
+            }
+            db.closeConnection();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1758,6 +1761,7 @@ public class MainFormController implements Initializable {
         return listData;
     }
     public void billDisplayCard() { 
+        db.getConnection();
         loadTotalPendingAmount();
         cullectBillListData.clear();
         cullectBillListData.addAll(getCullectBillData());
@@ -1778,10 +1782,9 @@ public class MainFormController implements Initializable {
                     CullectBillController cardBill = load.getController();
                     cardBill.setData(cullectBillListData.get(q));
                     
-                    // Event handler for individual pane clicks
-                    final int index = q; // This captures the index for the lambda
-                    //pane.setOnMouseClicked(event -> addToCart(cullectBillListData.get(index)));
-
+                    // Pass reference of MainFormController to CullectBillController
+                    cardBill.setMainFormController(this);
+                    
                     // Grid setup
                     if (column == 1) {
                             column = 0;

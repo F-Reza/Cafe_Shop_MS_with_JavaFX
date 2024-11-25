@@ -130,6 +130,7 @@ public class AuthController implements Initializable {
                 if (result.next()) {
                     xValue.username = si_username.getText();
                     saveLoginState(true,si_username.getText());
+                    db.closeConnection();
                     loadMainForm();
 //                    xValue.username = si_username.getText();
 //
@@ -170,6 +171,7 @@ public class AuthController implements Initializable {
                                 prepare.setString(2, "Active");
                                 ResultSet rstES = prepare.executeQuery();
                                 if (rstES.next()) {
+                                    db.closeConnection();
                                     loadManegerForm();
                                     System.out.println("-> Active!");
                                 } else {
@@ -190,6 +192,7 @@ public class AuthController implements Initializable {
                                 prepare.setString(2, "Active");
                                 ResultSet rstES = prepare.executeQuery();
                                 if (rstES.next()) {
+                                    db.closeConnection();
                                     loadCashierForm();
                                     System.out.println("-> Active!");
                                 } else {
@@ -223,14 +226,6 @@ public class AuthController implements Initializable {
 
         }
 
-    }
-    
-    private void deactiveMsg() {
-        alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Information Message");
-        alert.setHeaderText(null);
-        alert.setContentText("Successfully Login!\nCurrently you are deactivated!.\nNow pending the Admin approval.");
-        alert.showAndWait();
     }
     // Load main form
     private void loadMainForm() {
@@ -316,6 +311,13 @@ public class AuthController implements Initializable {
             e.printStackTrace();
             logger.info(e.toString());
         }
+    }
+    private void deactiveMsg() {
+        alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Information Message");
+        alert.setHeaderText(null);
+        alert.setContentText("Successfully Login!\nCurrently you are deactivated!.\nNow pending the Admin approval.");
+        alert.showAndWait();
     }
 
     public void regBtn() {
@@ -620,7 +622,7 @@ public class AuthController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //checkSavedLogin();
+        //
     }
 
 }

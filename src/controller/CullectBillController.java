@@ -40,10 +40,7 @@ public class CullectBillController implements Initializable{
     
     @FXML private AnchorPane orderBillCard;
     @FXML private Button card_completeBtn;
-    @FXML private Label card_dateTime;
-    @FXML private Label card_invoiceID;
-    @FXML private Label card_paybleAmount;
-    
+    @FXML private Label card_dateTime, card_invoiceID, card_paybleAmount;
     
     public void setData(InvoiceDataModel invData) {
         long millis = invData.getDate().getTime();
@@ -59,11 +56,12 @@ public class CullectBillController implements Initializable{
         invID = invData.getInvID();
         xBillAmount = String.format("%.2f Tk", invData.getGrandTotal());
     }
+    
     public void completePaymentInvoice() {
-    alert = new Alert(Alert.AlertType.CONFIRMATION);
-    alert.setTitle("Confirmation Message");
-    alert.setHeaderText(null);
-    alert.setContentText("Are you sure you want to Complete Bill Payment "+xBillAmount+"\nWhose Invoice ID:-> "+invID+" ?");
+        alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Message");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to Complete Bill Payment "+xBillAmount+"\nWhose Invoice ID:-> "+invID+" ?");
     Optional<ButtonType> option = alert.showAndWait();
 
         // If the user confirms the deletion
@@ -74,7 +72,6 @@ public class CullectBillController implements Initializable{
             System.out.println("Action Canceled!");
         }
     }
-    
     public void updatePaymentStatus(int id) {
         db.getConnection();
         String sql = "UPDATE invoices SET payment_status = ? WHERE id = ?";
@@ -87,52 +84,29 @@ public class CullectBillController implements Initializable{
             prepare.executeUpdate();
             System.out.println("Payment status updated successfully");
             
-
         } catch (SQLException e) {
             //e.printStackTrace();
             System.out.println("Error: " +e);
         }
     }
-public void updatePaymentStatusA(int id) {
-    db.getConnection();
-    String sql = "UPDATE invoices SET payment_status = ? WHERE id = ?";
-    try (
-        PreparedStatement prepare = db.connection.prepareStatement(sql)) {
-        
-        prepare.setString(1, "Complete");
-        prepare.setInt(2, id);
-
-        // Execute the update
-        int rowsAffected = prepare.executeUpdate();
-        if (rowsAffected > 0) {
-            System.out.println("Payment status updated successfully");
-        } else {
-            System.out.println("No invoice found with the given id.");
-        }
-
-    } catch (SQLException e) {
-        System.out.println("Error: " + e.getMessage());
-        //e.printStackTrace(); 
-    }
-}
-
     
     public void completeBtn() {
         completePaymentInvoice();
-        //MainFormController mForm = new MainFormController();
-        //mForm.addToCart(itemData);
-        //mForm.customerID();
-        //mForm.updatePaymentStatus(1);
-        //System.out.println("Action: Done! "+xID); 
-        //updatePaymentStatus(xID);
-        //mForm.updatePaymentStatus(1);
-       
+        
+        // Refresh the bill list in MainFormController after completing payment
+        if (mainFormController != null) {
+            mainFormController.billDisplayCard();  // Refresh the list
+        }
     }
-    
+  
+    private MainFormController mainFormController;
+    public void setMainFormController(MainFormController mainFormController) {
+        this.mainFormController = mainFormController;
+    } 
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //db.getConnection();
+        //
     }
     
 }
