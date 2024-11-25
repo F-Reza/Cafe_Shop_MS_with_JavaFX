@@ -7,6 +7,7 @@ package controller;
 
 
 import database.DB;
+import java.awt.image.BufferedImage;
 import models.ExpenseDataModel;
 import models.ItemsDataModel;
 import utils.xValue;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -40,14 +42,19 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.print.PrinterJob;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.PieChart;
@@ -71,21 +78,30 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.transform.Transform;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import javafx.util.Duration;
+import javax.imageio.ImageIO;
 import models.CartItem;
 import models.EmployeeDataModel;
 import models.InvoiceDataModel;
 import models.UserDataModel;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 
 
@@ -1574,7 +1590,7 @@ public class MainFormController implements Initializable {
         xNote = menu_Note.getText();
         xOrderType = menu_OrderType.getSelectionModel().getSelectedItem();
         xServedBy = menu_ServedBy.getText();
-        xBillBy = xValue.username;
+        xBillBy = xValue.username.toUpperCase();
         
         if(menu_OrderType.getSelectionModel().getSelectedItem() == null){
             xOrderType = "Table";
@@ -1943,12 +1959,13 @@ public class MainFormController implements Initializable {
                     // Set up print button action
                     printButton.setOnAction(event -> {
                         
-                        // Show cancellation alert
-                        alert = new Alert(AlertType.INFORMATION);
-                        alert.setTitle("Information Message");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Print Your Invoice Here..");
-                        alert.showAndWait();
+                        InvoiceDataModel invoice = getTableView().getItems().get(getIndex());
+                        int id = invoice.getId();
+                        String invID = invoice.getInvID();
+                        //getViewInvoice(id);
+                        Platform.runLater(() -> {
+                            printInvoice(id,invID);
+                        });
                         
                     });
 
@@ -2035,7 +2052,7 @@ public class MainFormController implements Initializable {
     }
     public void getViewInvoice(int getById) {
         try {
-            // Create an FXMLLoader instance
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/invoice.fxml"));
             Parent root = loader.load();
             InvoiceController invoiceController = loader.getController();
@@ -2054,25 +2071,138 @@ public class MainFormController implements Initializable {
             stage.setMaxHeight(818);
             stage.setScene(scene);
 
-            // Show the stage
             stage.show();
 
-            // Add a listener to close the connection when the stage is closed
-//            stage.setOnHiding(event -> {
-//                try {
-//                    db.closeConnection();
-//                    System.out.println("Database connection closed on View Invoice close.");
-//                } catch (SQLException e) {
-//                    System.out.println("Error closing database connection: " + e.getMessage());
-//                    e.printStackTrace();
-//                }
-//            });
-            
         } catch (IOException e) {
             System.out.println("Error loading invoice.fxml: " + e.getMessage());
             e.printStackTrace();
         }
     }
+ 
+    //public void printInvoice(int id) {
+    public void printInvoice(int id, String invID) {
+
+        try {
+            // Load the FXML layout
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/invoice.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller and populate the data
+            InvoiceController invoiceController = loader.getController();
+            invoiceController.setGetById(id); // Replace with the required invoice ID
+
+            // Create a temporary scene to render the root
+            Scene tempScene = new Scene(root);
+
+            // Scale the layout to fit the desired page size (405x818)
+            root.setScaleX(405.0 / root.prefWidth(-1));  // Fit the width
+            root.setScaleY(818.0 / root.prefHeight(-1)); // Fit the height
+            root.layout(); // Ensure the layout is applied
+            
+            
+            // Take a high-quality snapshot
+            SnapshotParameters snapshotParameters = new SnapshotParameters();
+            snapshotParameters.setTransform(javafx.scene.transform.Transform.scale(3.0, 3.0)); // Increase DPI
+            WritableImage snapshot = root.snapshot(snapshotParameters, null);
+            
+
+            // Increase DPI by applying a larger scaling factor
+//            double scaleFactor = 3.0; // Increase this value to enhance the resolution
+//            SnapshotParameters snapshotParameters = new SnapshotParameters();
+//            snapshotParameters.setTransform(javafx.scene.transform.Transform.scale(scaleFactor, scaleFactor)); // Apply scale factor
+//            WritableImage snapshot = root.snapshot(snapshotParameters, null);
+
+            // Save the snapshot to a file Get the user's Downloads folder path
+            //String userHome = System.getProperty("user.home"); // Gets the user's home directory
+            //File downloadsFolder = new File(userHome, "Downloads"); // Appends "Downloads" to the home directory
+            //File outputFile = new File(downloadsFolder, "invoice_" + invID + ".png"); // Creates the file path in Downloads
+            
+            
+            // Save the snapshot to the user's Desktop in the GoPpo folder
+            String userHome = System.getProperty("user.home"); // Get the user's home directory
+            File goPpoFolder = new File(Paths.get(userHome, "Desktop", "GoPpo MS").toString());
+
+            // Create the folder if it doesn't exist
+            if (!goPpoFolder.exists()) {
+                boolean dirCreated = goPpoFolder.mkdirs();
+                if (dirCreated) {
+                    System.out.println("Folder created: " + goPpoFolder.getAbsolutePath());
+                } else {
+                    System.out.println("Failed to create folder: " + goPpoFolder.getAbsolutePath());
+                }
+            }
+
+            // Define the output file
+            File outputFile = new File(goPpoFolder, "invoice_" + invID + ".png");
+
+
+            // Wrap the snapshot in an ImageView for printing
+            ImageView imageView = new ImageView(snapshot);
+            imageView.setFitWidth(405); // Ensure the snapshot matches the desired width
+            imageView.setFitHeight(818); // Ensure the snapshot matches the desired heig
+            
+            // Wrap the snapshot in an ImageView for printing
+//            ImageView imageView = new ImageView(snapshot);
+//            imageView.setFitWidth(405 * scaleFactor); // Ensure the snapshot matches the desired width
+//            imageView.setFitHeight(818 * scaleFactor); // Ensure the snapshot matches the desired height
+
+            // Wrap in a Group for printing
+            Group printGroup = new Group(imageView);
+
+            // Create a PrinterJob
+            PrinterJob job = PrinterJob.createPrinterJob();
+            if (job != null && job.showPrintDialog(null)) {
+                // Print the group containing the high-quality image
+                if (job.printPage(printGroup)) {
+                    job.endJob();
+                    System.out.println("Invoice printed successfully.");
+                    alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Invoice printed successfully.\nInvoice saved in your GoPpo MS folder");
+                    alert.showAndWait();
+
+                    // Save the snapshot to the Your Desktop GoPpo MS folder
+                    try {
+                    ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", outputFile);
+                    System.out.println("Snapshot saved as: " + outputFile.getAbsolutePath());
+                    } catch (IOException e) {
+                        System.out.println("Error saving snapshot: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+
+                    //ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", outputFile); // Save snapshot as PNG
+                    //System.out.println("Snapshot saved in GoPpo MS folder: " + outputFile.getAbsolutePath());
+
+                } else {
+                    System.out.println("Failed to print the invoice.");
+                    alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Failed to print the invoice.");
+                    alert.showAndWait();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error loading invoice.fxml: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Unexpected error: " + e.getMessage());
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     //// END INVOICE SECTION
     
     
