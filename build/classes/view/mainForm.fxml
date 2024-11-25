@@ -81,7 +81,7 @@
                     <center>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                             <children>
-                                <AnchorPane fx:id="dashboadrForm" prefHeight="720.0" prefWidth="851.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <AnchorPane fx:id="dashboadrForm" prefHeight="720.0" prefWidth="851.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <children>
                                         <AnchorPane layoutX="17.0" layoutY="14.0" prefHeight="160.0" prefWidth="818.0" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="626.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="14.0">
                                             <styleClass>
@@ -698,198 +698,214 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="reportForm" layoutX="303.0" layoutY="346.0" prefHeight="720.0" prefWidth="851.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="reportForm" layoutX="22.0" prefHeight="800.0" prefWidth="1117.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <AnchorPane layoutX="17.0" layoutY="20.0" prefHeight="692.0" prefWidth="818.0" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="14.0">
-                                 <styleClass>
-                                    <String fx:value="white-bg" />
-                                    <String fx:value="shadow" />
-                                    <String fx:value="radius" />
-                                 </styleClass>
+                              <AnchorPane layoutY="49.0" prefHeight="486.0" prefWidth="512.0" styleClass="btn" stylesheets="@../css/mainFormDesign.css" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="585.0">
                                  <children>
-                                    <ScrollPane layoutY="-20.0" prefHeight="692.0" prefWidth="818.0" styleClass="transparent" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <content>
-                                          <AnchorPane prefHeight="767.0" prefWidth="1082.0">
-                                             <children>
-                                                <AnchorPane layoutX="39.0" layoutY="33.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="CART_PLUS" layoutX="14.0" layoutY="72.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Complete Order" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="totalOrderTopRpt" alignment="TOP_RIGHT" layoutX="53.0" layoutY="7.0" prefHeight="25.0" prefWidth="130.0" text="0" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="268.0" layoutY="33.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="DOLLAR" layoutX="14.0" layoutY="75.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total  Income" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="totalIncomeTopRpt" alignment="TOP_RIGHT" layoutX="7.0" layoutY="7.0" prefHeight="25.0" prefWidth="176.0" text="৳0.0" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="504.0" layoutY="33.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="MONEY" layoutX="14.0" layoutY="73.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Expenses" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="totalExpenseTopRpt" alignment="TOP_RIGHT" layoutX="3.0" layoutY="7.0" prefHeight="25.0" prefWidth="180.0" text="৳0.0" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="737.0" layoutY="33.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="REFRESH" layoutX="14.0" layoutY="70.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Pending Amount" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="totalPendingAmountRpt" alignment="TOP_RIGHT" layoutX="3.0" layoutY="7.0" prefHeight="25.0" prefWidth="180.0" text="৳0.0" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="278.0" layoutY="180.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="CUTLERY" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Items" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="totalItemsRpt" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="503.0" layoutY="180.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="GIFT" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Package" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="totalPackageRpt" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="46.0" layoutY="180.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="FILE_TEXT" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Invoice" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="totalInvoicesRpt" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <AnchorPane layoutX="737.0" layoutY="180.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
-                                                   <children>
-                                                      <FontAwesomeIcon fill="WHITE" glyphName="USERS" layoutX="14.0" layoutY="55.0" size="4em" />
-                                                      <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Users" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="totalUsersRpt" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </AnchorPane>
-                                                <PieChart fx:id="expensePieChart" layoutX="668.0" layoutY="316.0" legendVisible="false" prefHeight="254.0" prefWidth="338.0" title="Total Expenses" />
-                                                <AreaChart fx:id="orderAreaChart" layoutX="31.0" layoutY="314.0" legendVisible="false" prefHeight="237.0" prefWidth="322.0" title="Orders This Year">
-                                                   <xAxis>
-                                                      <CategoryAxis side="BOTTOM" fx:id="xAxisOdr" />
-                                                   </xAxis>
-                                                   <yAxis>
-                                                      <NumberAxis side="LEFT" />
-                                                   </yAxis>
-                                                </AreaChart>
-                                                <AreaChart fx:id="incomeAreaChart" layoutX="343.0" layoutY="314.0" legendVisible="false" prefHeight="237.0" prefWidth="346.0" title="Income This Year">
-                                                  <xAxis>
-                                                    <CategoryAxis side="BOTTOM" fx:id="xAxis" />
-                                                  </xAxis>
-                                                  <yAxis>
-                                                    <NumberAxis side="LEFT" />
-                                                  </yAxis>
-                                                </AreaChart>
-                                                <Label layoutX="771.0" layoutY="594.0" text="TodayExpense" />
-                                                <Label layoutX="771.0" layoutY="612.0" text="TesterdayExpense" />
-                                                <Label layoutX="771.0" layoutY="631.0" text="ThisweekExpense" />
-                                                <Label layoutX="771.0" layoutY="650.0" text="ThismonthExpense" />
-                                                <Label layoutX="771.0" layoutY="668.0" text="ThisyearExpense" />
-                                                <Label layoutX="771.0" layoutY="685.0" text="TotalExpense" />
-                                                <Label fx:id="todayExpenseRpt" layoutX="890.0" layoutY="596.0" text="00" />
-                                                <Label fx:id="yesterdayExpenseRpt" layoutX="890.0" layoutY="614.0" text="00" />
-                                                <Label fx:id="thisweekExpenseRpt" layoutX="890.0" layoutY="633.0" text="00" />
-                                                <Label fx:id="thismonthExpenseRpt" layoutX="890.0" layoutY="652.0" text="00" />
-                                                <Label fx:id="thisyearExpenseRpt" layoutX="890.0" layoutY="670.0" text="00" />
-                                                <Label fx:id="totalExpenseRpt" layoutX="890.0" layoutY="687.0" text="00" />
-                                                <Label layoutX="83.0" layoutY="601.0" text="TodayOrder" />
-                                                <Label layoutX="83.0" layoutY="619.0" text="YesterdayOrder" />
-                                                <Label layoutX="83.0" layoutY="638.0" text="ThisweekOrder" />
-                                                <Label layoutX="83.0" layoutY="657.0" text="ThismonthOrder" />
-                                                <Label layoutX="83.0" layoutY="675.0" text="ThisyearOrder" />
-                                                <Label layoutX="83.0" layoutY="692.0" text="TotalOrder" />
-                                                <Label fx:id="todayOrderRpt" layoutX="197.0" layoutY="601.0" text="00" />
-                                                <Label fx:id="yesterdayOrderRpt" layoutX="197.0" layoutY="619.0" text="00" />
-                                                <Label fx:id="thisweekOrderRpt" layoutX="197.0" layoutY="638.0" text="00" />
-                                                <Label fx:id="thismonthOrderRpt" layoutX="197.0" layoutY="657.0" text="00" />
-                                                <Label fx:id="thisyearOrderRpt" layoutX="197.0" layoutY="675.0" text="00" />
-                                                <Label fx:id="totalOrderRpt" layoutX="197.0" layoutY="692.0" text="00" />
-                                                <Label layoutX="422.0" layoutY="603.0" text="TodayIncome" />
-                                                <Label layoutX="422.0" layoutY="621.0" text="YesterdayIncome" />
-                                                <Label layoutX="422.0" layoutY="640.0" text="ThisweekIncome" />
-                                                <Label layoutX="422.0" layoutY="659.0" text="ThismonthIncome" />
-                                                <Label layoutX="422.0" layoutY="677.0" text="ThisyearIncome" />
-                                                <Label layoutX="422.0" layoutY="694.0" text="TotalIncome" />
-                                                <Label fx:id="todayIncomeRpt" layoutX="536.0" layoutY="603.0" text="00" />
-                                                <Label fx:id="yesterdayIncomeRpt" layoutX="536.0" layoutY="621.0" text="00" />
-                                                <Label fx:id="thisweekIncomeRpt" layoutX="536.0" layoutY="640.0" text="00" />
-                                                <Label fx:id="thismonthIncomeRpt" layoutX="536.0" layoutY="659.0" text="00" />
-                                                <Label fx:id="thisyearIncomeRpt" layoutX="536.0" layoutY="677.0" text="00" />
-                                                <Label fx:id="totalIncomeRpt" layoutX="536.0" layoutY="694.0" text="00" />
-                                             </children>
-                                          </AnchorPane>
-                                       </content>
-                                    </ScrollPane>
+                                    <AnchorPane layoutX="221.0" layoutY="14.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                       <children>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="MONEY" layoutX="14.0" layoutY="73.0" size="4em" />
+                                          <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Expenses" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="totalExpenseTopRpt" alignment="TOP_RIGHT" layoutX="3.0" layoutY="7.0" prefHeight="25.0" prefWidth="180.0" text="৳0.0" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane layoutX="221.0" layoutY="130.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                       <children>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="REFRESH" layoutX="14.0" layoutY="70.0" size="4em" />
+                                          <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Pending Amount" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="totalPendingAmountRpt" alignment="TOP_RIGHT" layoutX="3.0" layoutY="7.0" prefHeight="25.0" prefWidth="180.0" text="৳0.0" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane layoutX="14.0" layoutY="246.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                       <children>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="CUTLERY" layoutX="14.0" layoutY="55.0" size="4em" />
+                                          <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Items" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="totalItemsRpt" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane layoutX="221.0" layoutY="246.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                       <children>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="GIFT" layoutX="14.0" layoutY="55.0" size="4em" />
+                                          <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Package" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="totalPackageRpt" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane layoutX="14.0" layoutY="362.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                       <children>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="FILE_TEXT" layoutX="14.0" layoutY="55.0" size="4em" />
+                                          <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Invoice" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="totalInvoicesRpt" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane layoutX="221.0" layoutY="362.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                       <children>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="USERS" layoutX="14.0" layoutY="55.0" size="4em" />
+                                          <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total Users" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="totalUsersRpt" alignment="TOP_RIGHT" layoutX="71.0" layoutY="7.0" prefHeight="25.0" prefWidth="112.0" text="0" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane layoutX="14.0" layoutY="130.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                       <children>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="DOLLAR" layoutX="14.0" layoutY="75.0" size="4em" />
+                                          <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Total  Income" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="totalIncomeTopRpt" alignment="TOP_RIGHT" layoutX="7.0" layoutY="7.0" prefHeight="25.0" prefWidth="176.0" text="৳0.0" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="110.0" prefWidth="200.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css">
+                                       <children>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="CART_PLUS" layoutX="14.0" layoutY="72.0" size="4em" />
+                                          <Label alignment="TOP_RIGHT" layoutX="17.0" layoutY="72.0" prefHeight="25.0" prefWidth="167.0" text="Complete Order" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="totalOrderTopRpt" alignment="TOP_RIGHT" layoutX="53.0" layoutY="7.0" prefHeight="25.0" prefWidth="130.0" text="0" textFill="WHITE">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
                                  </children>
                               </AnchorPane>
+                              <PieChart fx:id="expensePieChart" layoutX="533.0" layoutY="520.0" legendVisible="false" prefHeight="266.0" prefWidth="322.0" title="Total Expenses" titleSide="BOTTOM" AnchorPane.bottomAnchor="8.0" AnchorPane.rightAnchor="245.0" />
+                              <AnchorPane layoutX="577.0" layoutY="-1.0" prefHeight="763.0" prefWidth="322.0" styleClass="white-bg" stylesheets="@../css/mainFormDesign.css" AnchorPane.rightAnchor="245.0" AnchorPane.topAnchor="-1.0" />
+                              <AnchorPane layoutX="893.0" prefHeight="800.0" prefWidth="245.0" styleClass="nav-form" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Button fx:id="exportBtn" layoutX="179.0" layoutY="761.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Export" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="16.0" />
+                                    <ComboBox fx:id="tableComboBox" layoutX="16.0" layoutY="761.0" prefWidth="150.0" promptText="Select Table -----" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="16.0" />
+                                    <Label layoutX="30.0" layoutY="351.0" text="TodayExpense" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="369.0" text="TesterdayExpense" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="388.0" text="ThisweekExpense" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="407.0" text="ThismonthExpense" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="425.0" text="ThisyearExpense" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="442.0" text="TotalExpense" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label fx:id="todayExpenseRpt" layoutX="176.0" layoutY="353.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label fx:id="yesterdayExpenseRpt" layoutX="176.0" layoutY="371.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label fx:id="thisweekExpenseRpt" layoutX="176.0" layoutY="390.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label fx:id="thismonthExpenseRpt" layoutX="176.0" layoutY="409.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label fx:id="thisyearExpenseRpt" layoutX="176.0" layoutY="427.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label fx:id="totalExpenseRpt" layoutX="176.0" layoutY="444.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="46.0" text="TodayOrder" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="64.0" text="YesterdayOrder" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="83.0" text="ThisweekOrder" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="102.0" text="ThismonthOrder" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="120.0" text="ThisyearOrder" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="137.0" text="TotalOrder" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label fx:id="todayOrderRpt" alignment="CENTER_RIGHT" layoutX="176.0" layoutY="46.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label fx:id="yesterdayOrderRpt" alignment="CENTER_RIGHT" layoutX="176.0" layoutY="64.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label fx:id="thisweekOrderRpt" alignment="CENTER_RIGHT" layoutX="176.0" layoutY="83.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label fx:id="thismonthOrderRpt" alignment="CENTER_RIGHT" layoutX="176.0" layoutY="102.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label fx:id="thisyearOrderRpt" alignment="CENTER_RIGHT" layoutX="176.0" layoutY="120.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label fx:id="totalOrderRpt" alignment="CENTER_RIGHT" layoutX="176.0" layoutY="137.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="199.0" text="TodayIncome" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="217.0" text="YesterdayIncome" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="236.0" text="ThisweekIncome" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="255.0" text="ThismonthIncome" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="273.0" text="ThisyearIncome" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="290.0" text="TotalIncome" textFill="WHITE" AnchorPane.leftAnchor="15.0" />
+                                    <Label fx:id="todayIncomeRpt" layoutX="176.0" layoutY="199.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label fx:id="yesterdayIncomeRpt" layoutX="176.0" layoutY="217.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label fx:id="thisweekIncomeRpt" layoutX="176.0" layoutY="236.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label fx:id="thismonthIncomeRpt" layoutX="176.0" layoutY="255.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label fx:id="thisyearIncomeRpt" layoutX="176.0" layoutY="273.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label fx:id="totalIncomeRpt" layoutX="176.0" layoutY="290.0" text="00" textFill="WHITE" AnchorPane.rightAnchor="15.0" />
+                                    <Label layoutX="30.0" layoutY="25.0" text="Orders Table Data_________________/" textFill="WHITE" AnchorPane.leftAnchor="15.0">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="30.0" layoutY="179.0" text="Income Table Data________________/" textFill="WHITE" AnchorPane.leftAnchor="15.0">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="30.0" layoutY="331.0" text="Expense Table Data_______________/" textFill="WHITE" AnchorPane.leftAnchor="15.0">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
+                              <AreaChart fx:id="orderAreaChart" layoutX="550.0" legendVisible="false" prefHeight="240.0" prefWidth="322.0" title="Orders This Year" AnchorPane.rightAnchor="245.0" AnchorPane.topAnchor="0.0">
+                                 <xAxis>
+                                    <CategoryAxis side="BOTTOM" fx:id="xAxisOdr" />
+                                 </xAxis>
+                                 <yAxis>
+                                    <NumberAxis side="LEFT" />
+                                 </yAxis>
+                              </AreaChart>
+                              <AreaChart fx:id="incomeAreaChart" layoutX="550.0" layoutY="231.0" legendVisible="false" prefHeight="240.0" prefWidth="322.0" title="Income This Year" AnchorPane.rightAnchor="245.0" AnchorPane.topAnchor="231.0">
+                                 <xAxis>
+                                    <CategoryAxis side="BOTTOM" fx:id="xAxis" />
+                                 </xAxis>
+                                 <yAxis>
+                                    <NumberAxis side="LEFT" />
+                                 </yAxis>
+                              </AreaChart>
+                              <PieChart fx:id="expensePieChartRpt" layoutX="550.0" layoutY="470.0" legendVisible="false" prefHeight="240.0" prefWidth="322.0" title="Expense This Year" AnchorPane.rightAnchor="245.0" AnchorPane.topAnchor="470.0" />
+                              <Label layoutX="30.0" layoutY="18.0" text="Report Section">
+                                 <font>
+                                    <Font name="Arial Bold" size="20.0" />
+                                 </font>
+                              </Label>
+                              <AnchorPane layoutX="20.0" layoutY="546.0" prefHeight="240.0" prefWidth="512.0" styleClass="report" stylesheets="@../css/mainFormDesign.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="585.0" AnchorPane.topAnchor="546.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane fx:id="usersForm" prefHeight="800.0" prefWidth="1117.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

@@ -14,6 +14,12 @@ and open the template in the editor.
     -fx-border-color: #fff;
     -fx-border-width: 0 0 1px 0;
 }
+.sideber{
+    -fx-background-color: #000;
+}
+.report{
+    -fx-background-color: darkorange;
+}
 
 .nav-form{
     -fx-background-color: linear-gradient(to bottom right, #2d6aee, #5188ff);

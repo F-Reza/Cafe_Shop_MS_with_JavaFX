@@ -12,13 +12,16 @@ import models.ItemsDataModel;
 import utils.xValue;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
@@ -30,7 +33,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -46,9 +48,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
-import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
@@ -273,6 +273,13 @@ public class MainFormController implements Initializable {
     @FXML private Label thismonthExpenseRpt;
     @FXML private Label thisyearExpenseRpt;
     @FXML private Label totalExpenseRpt;
+    
+    @FXML private ComboBox tableComboBox;
+    @FXML private Button exportBtn;
+    @FXML private CategoryAxis xAxis,xAxis7Inc,xAxisOdr,xAxis7Ord;
+    @FXML private AreaChart<String, Number> orderAreaChart,orderAreaChart7Days,incomeAreaChart,incomeAreaChart7Days;
+    @FXML private PieChart expensePieChart,expensePieChartDash,expensePieChartRpt;
+
     //End
     
     
@@ -3626,12 +3633,6 @@ public class MainFormController implements Initializable {
             System.err.println("One or more labels are not initialized!");
         }
     }
-    
-    
-    @FXML private CategoryAxis xAxis,xAxis7Inc,xAxisOdr,xAxis7Ord;
-    @FXML private AreaChart<String, Number> orderAreaChart,orderAreaChart7Days,incomeAreaChart,incomeAreaChart7Days;
-    @FXML private PieChart expensePieChart,expensePieChartDash;
-
     private void loadExpensesByCategory() {
         ObservableList<PieChart.Data> expensesData = db.getExpensesByCategory();
 
@@ -3666,10 +3667,29 @@ public class MainFormController implements Initializable {
         });
         expensePieChartDash.getData().clear();
         expensePieChartDash.setData(expensesData);
+        
+    }
+    private void loadExpensesByCategoryThisYearRpt() {
+        ObservableList<PieChart.Data> expensesData = db.getExpensesByCategoryThisYear();
+        if (expensesData == null || expensesData.isEmpty()) {
+            //System.out.println("No expense data found for the current year.");
+            expensePieChartDash.getData().clear();
+            return;
+        }
+        double total = expensesData.stream()
+                                   .mapToDouble(PieChart.Data::getPieValue)
+                                   .sum();
+
+        expensesData.forEach(data -> {
+            String percentage = String.format("%.1f%%", (data.getPieValue() / total) * 100);
+            data.nameProperty().set(" (" + percentage + ")\n"+data.getName());
+        });
+        
+        expensePieChartRpt.getData().clear();
+        expensePieChartRpt.setData(expensesData);
+        
     }
 
-   
-    
     private void loadMonthlyIncomeData() {
       
         ObservableList<String> months = FXCollections.observableArrayList(
@@ -3775,14 +3795,111 @@ public class MainFormController implements Initializable {
     xAxis7Ord.setTickLabelRotation(45);
     //orderAreaChart7Days.lookup(".chart-title").setRotate(90);
 }
-    
-    
+    public void tableDataExport() {
+        db.getConnection();
+        populateTableComboBox();
+        
+        exportBtn.setOnAction(event -> {
+            exportTableData();
+        });
+    }
+    private void populateTableComboBox() {
+    ObservableList<String> tableNames = FXCollections.observableArrayList();
+    try {
+        DatabaseMetaData metaData = db.connection.getMetaData();
+        ResultSet tables = metaData.getTables(null, null, "%", new String[]{"TABLE"});
+        while (tables.next()) {
+            String tableName = tables.getString("TABLE_NAME");
+            if (!"admin".equalsIgnoreCase(tableName)) {
+                // Convert the table name to uppercase before adding it to the list
+                tableNames.add(tableName.toUpperCase());
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    tableComboBox.setItems(tableNames);
+}
+    private boolean showConfirmationDialog(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setContentText(content);
+
+        // Show and wait for the user to click a button
+        Optional<ButtonType> result = alert.showAndWait();
+
+        // Check if the user clicked OK or Cancel
+        return result.isPresent() && result.get() == ButtonType.OK;
+    }
+    private void exportTableData() {
+        String selectedTable = (String) tableComboBox.getValue();
+        if (selectedTable == null || selectedTable.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "No table selected!", "Please select a table to export.");
+            return;
+        }
+
+        // Show confirmation dialog
+        boolean confirmed = showConfirmationDialog("Export Data", "Are you sure you want to export the table data?");
+
+        // If user clicks 'Cancel', stop execution and do not export
+        if (!confirmed) {
+            showAlert(Alert.AlertType.WARNING, "Cancelled", "Export Cancelled!", "You have cancelled the export.");
+            return; // Return early if the user cancels
+        }
+
+        // If user clicks 'OK', proceed with the export
+        File downloadsDir = new File(System.getProperty("user.home") + "/Downloads");
+        if (!downloadsDir.exists()) {
+            downloadsDir.mkdirs();
+        }
+
+        File exportFile = new File(downloadsDir, selectedTable.toUpperCase() + ".csv");
+
+        try (
+             Statement statement = db.connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + selectedTable);
+             FileWriter fileWriter = new FileWriter(exportFile)) {
+
+            // Write CSV headers
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                fileWriter.append(metaData.getColumnName(i));
+                if (i < columnCount) {
+                    fileWriter.append(",");
+                }
+            }
+            fileWriter.append("\n");
+
+            // Write CSV rows
+            while (resultSet.next()) {
+                for (int i = 1; i <= columnCount; i++) {
+                    fileWriter.append(resultSet.getString(i));
+                    if (i < columnCount) {
+                        fileWriter.append(",");
+                    }
+                }
+                fileWriter.append("\n");
+            }
+
+            // Show success alert if export is successful
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Data Exported", "Table data exported successfully to Downloads folder!");
+
+        } catch (SQLException | IOException e) {
+            // Handle errors and show an alert if an error occurs
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Export Failed", "An error occurred while exporting table data.");
+        }
+    }
+    private void showAlert(Alert.AlertType alertType, String title, String header, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
 
 
-    
-
-
-    
 
     /// END REPORT SECTION/
 
@@ -3798,14 +3915,18 @@ public class MainFormController implements Initializable {
        
         //Dashboard
         loadExpensesByCategory();
-        loadExpensesByCategoryThisYear();
+        loadExpensesByCategoryThisYearRpt();
         loadMonthlyIncomeData();
         loadMonthlyOrderData();
+        tableDataExport();
+        
         loadLast7DaysIncome();
         loadLast7DaysOrder();
+        loadExpensesByCategoryThisYear();
+        
+        
         
         Platform.runLater(this::loadDashTopData);
-        //Platform.runLater(this::loadMonthlyIncomeData);
         displayUsername();
         initializePhrases();
         startTypingEffect();
