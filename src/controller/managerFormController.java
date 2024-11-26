@@ -6,6 +6,7 @@
 package controller;
 
 
+import controller.*;
 import database.DB;
 import java.awt.image.BufferedImage;
 import java.awt.print.PrinterJob;
@@ -109,7 +110,7 @@ import org.apache.pdfbox.printing.PDFPageable;
  *
  * @author F_Reza
  */
-public class MainFormController implements Initializable {
+public class managerFormController implements Initializable {
     private DB db = new DB();
     private PreparedStatement prepare;
     private Statement statement;
@@ -1793,7 +1794,8 @@ public class MainFormController implements Initializable {
                     cardBill.setData(cullectBillListData.get(q));
                     
                     // Pass reference of MainFormController to CullectBillController
-                    cardBill.setMainFormController(this);
+                    //Add new for manager
+                    cardBill.setmanagerFormController(this);
                     
                     // Grid setup
                     if (column == 1) {
@@ -1931,14 +1933,12 @@ public class MainFormController implements Initializable {
                 
                 private final Button viewButton = new Button("View");
                 private final Button printButton = new Button("Print");
-                private final Button deleteButton = new Button("Delete");
-                private final HBox actionButtons = new HBox(viewButton, printButton, deleteButton);
+                private final HBox actionButtons = new HBox(viewButton, printButton);
                 
                 {
                     // Style the buttons
                     viewButton.setStyle("-fx-background-color: #00a2ed; -fx-text-fill: white;");
                     printButton.setStyle("-fx-background-color: #5b5b5b; -fx-text-fill: white;");
-                    deleteButton.setStyle("-fx-background-color: #ed0000; -fx-text-fill: white;");
                     actionButtons.setSpacing(10); // Add spacing between the buttons
                     actionButtons.setAlignment(Pos.CENTER); // Center-align the buttons in the cell
                     
@@ -1963,13 +1963,6 @@ public class MainFormController implements Initializable {
                         
                     });
 
-                    // Set up delete button action
-                    deleteButton.setOnAction(event -> {
-                        InvoiceDataModel invoice = getTableView().getItems().get(getIndex());
-                        int id = invoice.getId();
-                        String invID = invoice.getInvID();
-                        deleteInvoice(id, invID);
-                    });
                     
                 }
                 
@@ -2003,42 +1996,7 @@ public class MainFormController implements Initializable {
         invoice_Col_Date.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(0.8));
         //invoice_Col_Action.maxWidthProperty().bind(invoice_TableView.widthProperty().multiply(1.8));
     }
-    public void deleteInvoice(int id, String invID) {
-    // Confirmation alert before deletion
-    alert = new Alert(AlertType.CONFIRMATION);
-    alert.setTitle("Confirmation Message");
-    alert.setHeaderText(null);
-    alert.setContentText("Are you sure you want to DELETE this Invoice '"+invID+"' ?");
-    Optional<ButtonType> option = alert.showAndWait();
 
-        // If the user confirms the deletion
-        if (option.isPresent() && option.get().equals(ButtonType.OK)) {
-            String deleteData = "DELETE FROM invoices WHERE id = " + id;
-            try {
-                // Execute the delete query
-                prepare = db.connection.prepareStatement(deleteData);
-                prepare.executeUpdate();
-
-                // Show success alert
-                alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Success Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Invoice successfully deleted!");
-                alert.showAndWait();
-
-                System.out.println("-> Invoice Data Deleted!");
-
-                // Refresh the table and clear fields
-                invoiceShowData();
-                loadTotalPendingAmount();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            //System.out.println("-> Invoice Data Cancle for Deleteing!");
-        }
-    }
     public void getViewInvoice(int getById) {
         try {
 
@@ -2628,213 +2586,6 @@ public class MainFormController implements Initializable {
         expense_Col_Description.setCellValueFactory(new PropertyValueFactory<>("exDescription"));
         expense_Col_ExpensedBy.setCellValueFactory(new PropertyValueFactory<>("exBy"));
         expense_Col_Date.setCellValueFactory(new PropertyValueFactory<>("exDate"));
-
-        // Check if the action column is already added, to avoid duplicates
-        boolean actionColumnExists = false;
-        for (TableColumn<ExpenseDataModel, ?> column : expense_TableView.getColumns()) {
-            if (column.getText().equals("Actions")) {
-                actionColumnExists = true;
-                break;
-            }
-        }
-
-        if (!actionColumnExists) {
-            // Creating an action column for Edit and Delete buttons
-            TableColumn<ExpenseDataModel, ExpenseDataModel> expenseActionCol = new TableColumn<>("Actions");
-
-            // Explicitly specify the generic types instead of using <>
-            expenseActionCol.setCellFactory((final TableColumn<ExpenseDataModel, ExpenseDataModel> param) -> new TableCell<ExpenseDataModel, ExpenseDataModel>() {
-                
-                private final Button editButton = new Button("Edit");
-                private final Button deleteButton = new Button("Delete");
-                private final HBox actionButtons = new HBox(editButton, deleteButton);
-                
-                {
-                    // Style the buttons
-                    editButton.setStyle("-fx-background-color: #00a2ed; -fx-text-fill: white;");
-                    deleteButton.setStyle("-fx-background-color: #ed0000; -fx-text-fill: white;");
-                    actionButtons.setSpacing(10); // Add spacing between the buttons
-                    actionButtons.setAlignment(Pos.CENTER); // Center-align the buttons in the cell
-                    
-                    // Set up edit button action
-                    editButton.setOnAction(event -> {
-                        // Get the selected expense data
-                        ExpenseDataModel expense = getTableView().getItems().get(getIndex());
-                        // Create a new Stage (window) for editing
-                        Stage editStage = new Stage();
-                        editStage.initModality(Modality.APPLICATION_MODAL); // Make the stage modal
-                        editStage.setTitle("Edit Expense");
-                        editStage.initStyle(StageStyle.UTILITY); // Make the window undecorated
-
-                        // Create a layout for the new window
-                        VBox editLayout = new VBox(10);
-                        editLayout.setPadding(new Insets(10));
-                        
-                        // Create fields for Name, Description, Amount, Date, and Category
-                        TextField amountField = new TextField(expense.getExAmount().toString()); 
-                        
-                        ComboBox<String> categoryComboBox = new ComboBox<>();
-                        categoryComboBox.getItems().addAll("Rent/Mortgage","Living Cost","Electricity Bill","Water Bill","Emplyee Salery",
-                                "Buy Goods","Cleaning Supplies","Safety Equipment","Advertising","Maintenance","Furniture","Technology",
-                                "Donations","Insurance","Vat/Taxes","Licenses & Permit","Others");
-                        categoryComboBox.setValue(expense.getExCategory());
-                        
-                        TextArea descriptionField = new TextArea(expense.getExDescription());
-                        TextField expenseByField = new TextField(String.valueOf(expense.getExBy()));
-                        java.sql.Date sqlDate = (java.sql.Date) expense.getExDate();
-                        LocalDate localDate = sqlDate.toLocalDate();  // Convert to LocalDate
-                        //expense_Date.setValue(localDate); 
-                        DatePicker datePicker = new DatePicker(localDate);
-                        getExpDateValidationForUpdate(datePicker);
-                        
-                        // Set preferred width and height for the TextFields
-                        amountField.setMinHeight(30);
-                        amountField.setStyle("-fx-font-size: 14px;"); 
-                        
-                        //descriptionField.setMinHeight(80);
-                        descriptionField.setStyle("-fx-font-size: 14px;"); 
-
-                        expenseByField.setMinHeight(30);
-                        expenseByField.setStyle("-fx-font-size: 14px;"); 
-                        
-                        categoryComboBox.setMinHeight(30);
-                        categoryComboBox.setMinWidth(240);
-
-                        // Add fields to the layout
-                        editLayout.getChildren().addAll(
-                            new Label("Amount:"), amountField,
-                            new Label("Category:"), categoryComboBox,
-                            new Label("Description:"), descriptionField,
-                            new Label("Expense By:"), expenseByField,
-                            new Label("Date:"), datePicker
-                        );
-
-                        // Create an Update button to confirm edits
-                        Button updateButton = new Button("Update");
-                        // Set button styling
-                        updateButton.setStyle("-fx-background-color: black; -fx-text-fill: white;");
-                        
-                        updateButton.setOnAction(updateEvent -> {
-                            int exp_id = expense.getId();
-                            
-                            // Get the values from the input fields
-                            String amountText = amountField.getText();
-                            String categoryText = categoryComboBox.getValue();
-                            String descriptionText = descriptionField.getText();
-                            String byText = expenseByField.getText();
-                            LocalDate dateValue = datePicker.getValue();
-                            // Convert LocalDate back to java.sql.Date if needed
-                            java.sql.Date selectedDate = java.sql.Date.valueOf(dateValue);
-
-                            double expenseAmount = 0.0;
-
-                            // Check if any fields are empty
-                            if (amountText.isEmpty()
-                                    || categoryText == null
-                                    || descriptionText.isEmpty()
-                                    || byText.isEmpty()
-                                    || dateValue == null) {
-                                System.out.println("-> Expense Data Empty" + dateValue);
-
-                                // Show alert if any field is empty
-                                Alert alert = new Alert(Alert.AlertType.WARNING);
-                                alert.setTitle("Warning Message");
-                                alert.setHeaderText(null);
-                                alert.setContentText("Please fill all blank fields");
-                                alert.showAndWait();
-
-                            } else if (amountText != null) {
-                                // If amountText is not empty, try to parse it as a double
-                                try {
-                                    expenseAmount = Double.parseDouble(amountText);
-
-                                    // Check if the parsed expense amount is greater than 0
-                                    if (expenseAmount > 0) {
-                                        
-                                        Double expAmount = Double.parseDouble(amountText);
-                                        // Proceed with the update query since all validations passed
-                                        updateExpense(exp_id, expAmount, categoryText, descriptionText, byText, selectedDate);
-                                        System.out.println("-> Expense Data Updated!");
-                                        editStage.close();
-                                    } else {
-                                        // Show an alert if the amount is less than or equal to 0
-                                        Alert alert = new Alert(Alert.AlertType.WARNING);
-                                        alert.setTitle("Warning Message");
-                                        alert.setHeaderText(null);
-                                        alert.setContentText("Amount should be greater than 0.");
-                                        alert.showAndWait();
-                                    }
-                                } catch (NumberFormatException e) {
-                                    // Show an alert if the input for amount is not a valid number
-                                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                                    alert.setTitle("Error Message");
-                                    alert.setHeaderText(null);
-                                    alert.setContentText("Invalid 'Amount' number format: " + amountText);
-                                    alert.showAndWait();
-                                }
-
-                            } else {
-                                // Handle other cases if necessary (e.g., when amountText is somehow null)
-                                //expenseUpdateQry();
-                                System.out.println("-> ERROR: ExpenseUpdate");
-                                editStage.close();
-                            }
-                        });
-
-                        // Create a Close button
-                        Button closeButton= new Button("Close");
-                        closeButton.setOnAction(closeEvent -> editStage.close());
-
-                        // Add buttons to the layout
-                        HBox buttonLayout = new HBox(20, updateButton, closeButton);
-                        editLayout.getChildren().add(buttonLayout);
-                        buttonLayout.setAlignment(Pos.CENTER);
-                        VBox.setVgrow(buttonLayout, Priority.ALWAYS);
-
-                        // Set the scene and show the stage
-                        Scene editScene = new Scene(editLayout, 522, 446);
-                        
-                        editStage.setMinWidth(522);
-                        editStage.setMaxWidth(522);
-                        editStage.setMinHeight(440);
-                        editStage.setMaxHeight(440);
-                        
-                        editStage.setScene(editScene);
-                        editStage.show();
-                    });
-
-
-
-                    
-                    // Set up delete button action
-                    deleteButton.setOnAction(event -> {
-                        // Get the selected expense from the table
-                        ExpenseDataModel expense = getTableView().getItems().get(getIndex());
-                        // Assuming your ExpenseDataModel has an `id` field
-                        int id = expense.getId();
-                        // Call the deleteExpense method and pass the id
-                        deleteExpense(id);
-                        // Remove the expense from the TableView
-                        //getTableView().getItems().remove(expense);
-                    });
-                    
-                }
-                
-                @Override
-                protected void updateItem(ExpenseDataModel item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty) {
-                        setGraphic(null); // If the row is empty, remove the buttons
-                    } else {
-                        setGraphic(actionButtons); // Otherwise, show the buttons
-                    }
-                }
-            });
-
-            // Add the action column to the table only once
-            expense_TableView.getColumns().add(expenseActionCol);
-            expenseActionCol.maxWidthProperty().bind(expense_TableView.widthProperty().multiply(1.5));
-        }
 
         // Set the data for the TableView
         expense_TableView.setItems(expenseListData);

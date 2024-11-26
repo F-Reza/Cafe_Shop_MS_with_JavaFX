@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
+<?import java.lang.String?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="547.0" prefWidth="455.0" stylesheets="@../css/cardItemDesign.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.DevInfoController">
+   <styleClass>
+      <String fx:value="white-bg" />
+      <String fx:value="shadow" />
+   </styleClass>
+   <children>
+      <AnchorPane layoutX="118.0" layoutY="126.0" prefHeight="220.0" prefWidth="220.0" stylesheets="@../css/mainFormDesign.css">
+         <children>
+            <ImageView fitHeight="205.0" fitWidth="198.0" layoutX="11.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../img/NDLogo.png" />
+               </image>
+            </ImageView>
+         </children>
+         <styleClass>
+            <String fx:value="shadow" />
+            <String fx:value="nav-form" />
+         </styleClass>
+      </AnchorPane>
+      <FontAwesomeIcon fx:id="facebookBtn" glyphName="FACEBOOK" layoutX="178.0" layoutY="511.0" onMouseClicked="#clkFacebookBtn" size="3em" text="" />
+      <FontAwesomeIcon fx:id="youtubeBtn" glyphName="YOUTUBE" layoutX="370.0" layoutY="510.0" onMouseClicked="#clkYoutubeBtn" size="3em" text="" />
+      <FontAwesomeIcon fx:id="instaBtn" glyphName="INSTAGRAM" layoutX="239.0" layoutY="510.0" onMouseClicked="#clkInstaBtn" size="3em" text="" />
+      <FontAwesomeIcon fx:id="githubBtn" glyphName="GITHUB" layoutX="114.0" layoutY="509.0" onMouseClicked="#clkGithubBtn" size="3em" />
+      <FontAwesomeIcon fx:id="twitterBtn" glyphName="TWITTER" layoutX="305.0" layoutY="511.0" onMouseClicked="#clkTwitterBtn" size="3em" text="" />
+      <FontAwesomeIcon fx:id="whatsAppBtn" glyphName="WHATSAPP" layoutX="55.0" layoutY="509.0" onMouseClicked="#clkWhatsAppBtn" size="3em" />
+      <Label layoutX="113.0" layoutY="382.0" text="&gt;নেক্সট ডিজিট&lt;">
+         <font>
+            <Font name="System Bold" size="29.0" />
+         </font>
+      </Label>
+      <Label fx:id="currentYear" alignment="CENTER" layoutX="115.0" layoutY="81.0" prefHeight="27.0" prefWidth="220.0" text="&gt;&lt;">
+         <font>
+            <Font name="Arial" size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="182.0" layoutY="63.0" text="App Version 1.0.0" />
+      <Label layoutX="147.0" layoutY="46.0" text="App Release Date :12/12/2024 " />
+   </children>
+</AnchorPane>

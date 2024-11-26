@@ -65,7 +65,7 @@
                                                 <Font size="13.0" />
                                             </font>
                                         </Button>
-                                        <Label layoutX="96.0" layoutY="683.0" text="GoPpo MS" AnchorPane.bottomAnchor="20.0" />
+                                        <Label fx:id="devInfoBtn" layoutX="96.0" layoutY="683.0" text="GoPpo MS" AnchorPane.bottomAnchor="20.0" />
                                         <Label layoutX="86.0" layoutY="702.0" text="Powered By NextDigit" textFill="WHITE" AnchorPane.bottomAnchor="6.0">
                                             <font>
                                                 <Font size="8.0" />
@@ -1166,9 +1166,9 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <TextField layoutX="40.0" layoutY="61.0" prefHeight="34.0" prefWidth="346.0" />
-                                    <TextField layoutX="40.0" layoutY="111.0" prefHeight="34.0" prefWidth="346.0" />
-                                    <TextField layoutX="40.0" layoutY="161.0" prefHeight="34.0" prefWidth="346.0" />
+                                    <TextField layoutX="40.0" layoutY="61.0" prefHeight="34.0" prefWidth="346.0" promptText="Type header-1" />
+                                    <TextField layoutX="40.0" layoutY="111.0" prefHeight="34.0" prefWidth="346.0" promptText="Type header-2" />
+                                    <TextField layoutX="40.0" layoutY="161.0" prefHeight="34.0" prefWidth="346.0" promptText="Type header-3" />
                                     <Label layoutX="14.0" layoutY="70.0" text="H-1" />
                                     <Label layoutX="14.0" layoutY="120.0" text="H-2" />
                                     <Label layoutX="14.0" layoutY="170.0" text="H-3" />
@@ -1185,7 +1185,7 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <TextField layoutX="40.0" layoutY="61.0" prefHeight="34.0" prefWidth="346.0" />
+                                    <TextField layoutX="40.0" layoutY="61.0" prefHeight="34.0" prefWidth="346.0" promptText="Type footer-1" />
                                     <Label layoutX="14.0" layoutY="70.0" text="F-1" />
                                     <Label layoutX="136.0" layoutY="25.0" text="Footer Section">
                                        <font>

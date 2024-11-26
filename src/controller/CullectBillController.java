@@ -97,11 +97,22 @@ public class CullectBillController implements Initializable{
         if (mainFormController != null) {
             mainFormController.billDisplayCard();  // Refresh the list
         }
+        
+        //Add new for manager
+        if (managerFormController != null) {
+            managerFormController.billDisplayCard(); 
+        }
     }
   
     private MainFormController mainFormController;
     public void setMainFormController(MainFormController mainFormController) {
         this.mainFormController = mainFormController;
+    } 
+    
+    //Add new for manager
+    private managerFormController managerFormController;
+    public void setmanagerFormController(managerFormController managerFormController) {
+        this.managerFormController = managerFormController;
     } 
     
     @Override

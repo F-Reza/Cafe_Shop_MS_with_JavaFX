@@ -131,3 +131,11 @@ and open the template in the editor.
 .btn-signout:hover{
     -fx-background-color: linear-gradient(to bottom right, #726f6f, #0a0303); 
 }
+
+
+.deactive-btn{
+    -fx-background-color: darkgray; 
+    -fx-cursor: hand;
+    -fx-text-fill: #fff;
+    -fx-font-size: 14px;
+}
