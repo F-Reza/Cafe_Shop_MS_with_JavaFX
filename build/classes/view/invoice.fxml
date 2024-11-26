@@ -11,9 +11,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane id="AnchorPane" fx:id="invoice_DataForm" prefHeight="786.0" prefWidth="384.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.InvoiceController">
+<AnchorPane id="AnchorPane" fx:id="invoice_DataForm" prefHeight="786.0" prefWidth="384.0" styleClass="white-bg" stylesheets="@../css/cardItemDesign.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.InvoiceController">
    <children>
-      <AnchorPane prefHeight="164.0" prefWidth="386.0">
+      <AnchorPane prefHeight="164.0" prefWidth="386.0" styleClass="white-bg" stylesheets="@../css/cardItemDesign.css">
          <children>
             <ImageView fitHeight="63.0" fitWidth="66.0" layoutX="162.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -29,7 +29,7 @@
             <Label layoutX="98.0" layoutY="135.0" text="Savar, Dhaka. Phone: 01861-656619" />
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="1.0" layoutY="164.0" prefHeight="86.0" prefWidth="384.0">
+      <AnchorPane layoutX="1.0" layoutY="164.0" prefHeight="86.0" prefWidth="384.0" styleClass="white-bg" stylesheets="@../css/cardItemDesign.css">
          <children>
             <Label fx:id="invoice_ID" layoutX="19.0" layoutY="6.0" prefHeight="18.0" prefWidth="207.0" text="Invoice ID: 100121224" />
             <Label fx:id="invoice_OrderType" layoutX="19.0" layoutY="26.0" prefHeight="18.0" prefWidth="155.0" text="Order Type:" />
@@ -40,7 +40,7 @@
             <Label alignment="CENTER" layoutY="58.0" prefHeight="18.0" prefWidth="386.0" text="------------------------------------------------------------------------------" />
          </children>
       </AnchorPane>
-      <TableView fx:id="invoice_ItemTableView" layoutX="13.0" layoutY="253.0" prefHeight="348.0" prefWidth="362.0" stylesheets="@../css/invoiceDesign.css">
+      <TableView fx:id="invoice_ItemTableView" layoutX="13.0" layoutY="253.0" prefHeight="348.0" prefWidth="362.0" styleClass="white-bg" stylesheets="@../css/invoiceDesign.css">
         <columns>
           <TableColumn fx:id="invoice_SN" prefWidth="33.0" text="SN" />
           <TableColumn fx:id="invoice_ItemName" prefWidth="152.0" text="Item Name" />
@@ -52,7 +52,7 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
-      <AnchorPane layoutX="13.0" layoutY="604.0" prefHeight="105.0" prefWidth="200.0">
+      <AnchorPane layoutX="13.0" layoutY="604.0" prefHeight="105.0" prefWidth="200.0" styleClass="white-bg" stylesheets="@../css/cardItemDesign.css">
          <children>
             <Label fx:id="invoice_TotalQty" layoutX="2.0" layoutY="6.0" prefHeight="18.0" prefWidth="113.0" text="Total Qty: 0" />
             <Label fx:id="invoice_Subtotal" alignment="CENTER_RIGHT" layoutX="164.0" layoutY="6.0" prefHeight="18.0" prefWidth="193.0" text="Subtotal: 520.00 TK" />

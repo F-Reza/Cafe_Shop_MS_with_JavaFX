@@ -8,6 +8,7 @@ package controller;
 
 import database.DB;
 import java.awt.image.BufferedImage;
+import java.awt.print.PrinterJob;
 import models.ExpenseDataModel;
 import models.ItemsDataModel;
 import utils.xValue;
@@ -49,9 +50,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.print.PrinterJob;
-import javafx.scene.Group;
-import javafx.scene.Node;
+import javax.print.PrintService;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
@@ -82,17 +81,15 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.transform.Transform;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import javafx.util.Duration;
-import javax.imageio.ImageIO;
+import javax.print.PrintServiceLookup;
 import models.CartItem;
 import models.EmployeeDataModel;
 import models.InvoiceDataModel;
@@ -101,7 +98,9 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.printing.PDFPageable;
 
 
 
@@ -559,7 +558,6 @@ public class MainFormController implements Initializable {
         e.printStackTrace();
     }
 }
-
     public void displayUsername() {
         String xUser = xValue.username;
         if(xUser == null){
@@ -1658,12 +1656,6 @@ public class MainFormController implements Initializable {
 
             prepare.executeUpdate();
 
-//            alert = new Alert(AlertType.INFORMATION);
-//            alert.setTitle("Confirmation Message");
-//            alert.setHeaderText(null);
-//            alert.setContentText("Successfully Added!");
-//            alert.showAndWait();
-
             System.out.println("-> Invoice Data Inserted!.");
             
             orderSummary();
@@ -2042,12 +2034,7 @@ public class MainFormController implements Initializable {
                 e.printStackTrace();
             }
         } else {
-            // Show cancellation alert
-//            alert = new Alert(AlertType.ERROR);
-//            alert.setTitle("Cancellation Message");
-//            alert.setHeaderText(null);
-//            alert.setContentText("Deletion cancelled.");
-//            alert.showAndWait();
+            //System.out.println("-> Invoice Data Cancle for Deleteing!");
         }
     }
     public void getViewInvoice(int getById) {
@@ -2078,10 +2065,7 @@ public class MainFormController implements Initializable {
             e.printStackTrace();
         }
     }
- 
-    //public void printInvoice(int id) {
-    public void printInvoice(int id, String invID) {
-
+    public void printInvoiceXok(int id, String invID) {
         try {
             // Load the FXML layout
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/invoice.fxml"));
@@ -2098,26 +2082,12 @@ public class MainFormController implements Initializable {
             root.setScaleX(405.0 / root.prefWidth(-1));  // Fit the width
             root.setScaleY(818.0 / root.prefHeight(-1)); // Fit the height
             root.layout(); // Ensure the layout is applied
-            
-            
+
             // Take a high-quality snapshot
             SnapshotParameters snapshotParameters = new SnapshotParameters();
             snapshotParameters.setTransform(javafx.scene.transform.Transform.scale(3.0, 3.0)); // Increase DPI
             WritableImage snapshot = root.snapshot(snapshotParameters, null);
-            
 
-            // Increase DPI by applying a larger scaling factor
-//            double scaleFactor = 3.0; // Increase this value to enhance the resolution
-//            SnapshotParameters snapshotParameters = new SnapshotParameters();
-//            snapshotParameters.setTransform(javafx.scene.transform.Transform.scale(scaleFactor, scaleFactor)); // Apply scale factor
-//            WritableImage snapshot = root.snapshot(snapshotParameters, null);
-
-            // Save the snapshot to a file Get the user's Downloads folder path
-            //String userHome = System.getProperty("user.home"); // Gets the user's home directory
-            //File downloadsFolder = new File(userHome, "Downloads"); // Appends "Downloads" to the home directory
-            //File outputFile = new File(downloadsFolder, "invoice_" + invID + ".png"); // Creates the file path in Downloads
-            
-            
             // Save the snapshot to the user's Desktop in the GoPpo folder
             String userHome = System.getProperty("user.home"); // Get the user's home directory
             File goPpoFolder = new File(Paths.get(userHome, "Desktop", "GoPpo MS").toString());
@@ -2132,57 +2102,35 @@ public class MainFormController implements Initializable {
                 }
             }
 
-            // Define the output file
-            File outputFile = new File(goPpoFolder, "invoice_" + invID + ".png");
+            // Define the output PDF file
+            File outputFile = new File(goPpoFolder, "invoice_" + invID + ".pdf");
 
+            // Convert the snapshot to a BufferedImage
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
 
-            // Wrap the snapshot in an ImageView for printing
-            ImageView imageView = new ImageView(snapshot);
-            imageView.setFitWidth(405); // Ensure the snapshot matches the desired width
-            imageView.setFitHeight(818); // Ensure the snapshot matches the desired heig
-            
-            // Wrap the snapshot in an ImageView for printing
-//            ImageView imageView = new ImageView(snapshot);
-//            imageView.setFitWidth(405 * scaleFactor); // Ensure the snapshot matches the desired width
-//            imageView.setFitHeight(818 * scaleFactor); // Ensure the snapshot matches the desired height
+            // Create a PDF document
+            try (PDDocument document = new PDDocument()) {
+                PDPage page = new PDPage(new PDRectangle((float) bufferedImage.getWidth(), (float) bufferedImage.getHeight()));
+                document.addPage(page);
 
-            // Wrap in a Group for printing
-            Group printGroup = new Group(imageView);
+                PDImageXObject image = LosslessFactory.createFromImage(document, bufferedImage);
 
-            // Create a PrinterJob
-            PrinterJob job = PrinterJob.createPrinterJob();
-            if (job != null && job.showPrintDialog(null)) {
-                // Print the group containing the high-quality image
-                if (job.printPage(printGroup)) {
-                    job.endJob();
-                    System.out.println("Invoice printed successfully.");
-                    alert = new Alert(AlertType.INFORMATION);
-                    alert.setTitle("Information Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Invoice printed successfully.\nInvoice saved in your GoPpo MS folder");
-                    alert.showAndWait();
-
-                    // Save the snapshot to the Your Desktop GoPpo MS folder
-                    try {
-                    ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", outputFile);
-                    System.out.println("Snapshot saved as: " + outputFile.getAbsolutePath());
-                    } catch (IOException e) {
-                        System.out.println("Error saving snapshot: " + e.getMessage());
-                        e.printStackTrace();
-                    }
-
-                    //ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", outputFile); // Save snapshot as PNG
-                    //System.out.println("Snapshot saved in GoPpo MS folder: " + outputFile.getAbsolutePath());
-
-                } else {
-                    System.out.println("Failed to print the invoice.");
-                    alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Error Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Failed to print the invoice.");
-                    alert.showAndWait();
+                try (PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, false)) {
+                    contentStream.drawImage(image, 0, 0, (float) bufferedImage.getWidth(), (float) bufferedImage.getHeight());
                 }
+
+                // Save the PDF to the output file
+                document.save(outputFile);
+                System.out.println("PDF saved as: " + outputFile.getAbsolutePath());
+
+                // Alert user about successful save
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Information Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Invoice saved successfully.\nPDF saved in your GoPpo MS folder.");
+                alert.showAndWait();
             }
+
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Error loading invoice.fxml: " + e.getMessage());
@@ -2191,16 +2139,108 @@ public class MainFormController implements Initializable {
             System.out.println("Unexpected error: " + e.getMessage());
         }
     }
+    public void printInvoice(int id, String invID) {
+        try {
+            // Load the FXML layout
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/invoice.fxml"));
+            Parent root = loader.load();
 
+            // Get the controller and populate the data
+            InvoiceController invoiceController = loader.getController();
+            invoiceController.setGetById(id); // Replace with the required invoice ID
 
+            // Create a temporary scene to render the root
+            Scene tempScene = new Scene(root);
 
+            // Scale the layout to fit the desired page size (405x818)
+            root.setScaleX(405.0 / root.prefWidth(-1));  // Fit the width
+            root.setScaleY(818.0 / root.prefHeight(-1)); // Fit the height
+            root.layout(); // Ensure the layout is applied
 
+            // Take a high-quality snapshot
+            SnapshotParameters snapshotParameters = new SnapshotParameters();
+            snapshotParameters.setTransform(javafx.scene.transform.Transform.scale(3.0, 3.0)); // Increase DPI
+            WritableImage snapshot = root.snapshot(snapshotParameters, null);
 
+            // Save the snapshot to the user's Desktop in the GoPpo folder
+            String userHome = System.getProperty("user.home"); // Get the user's home directory
+            File goPpoFolder = new File(Paths.get(userHome, "Desktop", "GoPpo MS").toString());
 
+            // Create the folder if it doesn't exist
+            if (!goPpoFolder.exists()) {
+                boolean dirCreated = goPpoFolder.mkdirs();
+                if (dirCreated) {
+                    System.out.println("Folder created: " + goPpoFolder.getAbsolutePath());
+                } else {
+                    System.out.println("Failed to create folder: " + goPpoFolder.getAbsolutePath());
+                }
+            }
 
+            // Define the output PDF file
+            File outputFile = new File(goPpoFolder, "invoice_" + invID + ".pdf");
 
+            // Convert the snapshot to a BufferedImage
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
 
+            // Create a PDF document
+            try (PDDocument document = new PDDocument()) {
+                PDPage page = new PDPage(new PDRectangle((float) bufferedImage.getWidth(), (float) bufferedImage.getHeight()));
+                document.addPage(page);
 
+                PDImageXObject image = LosslessFactory.createFromImage(document, bufferedImage);
+
+                try (PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, false)) {
+                    contentStream.drawImage(image, 0, 0, (float) bufferedImage.getWidth(), (float) bufferedImage.getHeight());
+                }
+
+                // Save the PDF to the output file
+                document.save(outputFile);
+                System.out.println("PDF saved as: " + outputFile.getAbsolutePath());
+
+                // Send the PDF to the default printer
+                PrintService defaultPrinter = PrintServiceLookup.lookupDefaultPrintService();
+                if (defaultPrinter != null) {
+                    PDDocument printDocument = PDDocument.load(outputFile);
+                    PrinterJob printerJob = PrinterJob.getPrinterJob();
+                    printerJob.setPrintService(defaultPrinter);
+                    PDFPageable pageable = new PDFPageable(printDocument);
+                    printerJob.setPageable(pageable);
+
+                    if (printerJob.printDialog()) {
+                        printerJob.print();
+                        System.out.println("Invoice printed successfully.");
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Information Message");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Invoice printed successfully.\nPDF saved in your GoPpo MS folder.");
+                        alert.showAndWait();
+                    } else {
+                        System.out.println("Print job canceled by the user.");
+                    }
+
+                    printDocument.close();
+                } else {
+                    System.out.println("No default printer configured.");
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("No default printer configured.");
+                    alert.showAndWait();
+                }
+
+            } catch (IOException e) {
+                System.out.println("Error generating PDF: " + e.getMessage());
+                e.printStackTrace();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error loading invoice.fxml: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Unexpected error: " + e.getMessage());
+        }
+    }
 
 
     //// END INVOICE SECTION
@@ -3985,7 +4025,7 @@ public class MainFormController implements Initializable {
         // Check if the user clicked OK or Cancel
         return result.isPresent() && result.get() == ButtonType.OK;
     }
-    private void exportTableData() {
+    private void exportTableDataX() {
         String selectedTable = (String) tableComboBox.getValue();
         if (selectedTable == null || selectedTable.isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Error", "No table selected!", "Please select a table to export.");
@@ -4002,7 +4042,7 @@ public class MainFormController implements Initializable {
         }
 
         // If user clicks 'OK', proceed with the export
-        File downloadsDir = new File(System.getProperty("user.home") + "/Downloads");
+        File downloadsDir = new File(System.getProperty("user.home") + "/Downloads"); //Need update here Download USER Desktop and GOPpo MS folder
         if (!downloadsDir.exists()) {
             downloadsDir.mkdirs();
         }
@@ -4045,6 +4085,69 @@ public class MainFormController implements Initializable {
             showAlert(Alert.AlertType.ERROR, "Error", "Export Failed", "An error occurred while exporting table data.");
         }
     }
+    private void exportTableDataZ() {
+        String selectedTable = (String) tableComboBox.getValue();
+        if (selectedTable == null || selectedTable.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "No table selected!", "Please select a table to export.");
+            return;
+        }
+
+        // Show confirmation dialog
+        boolean confirmed = showConfirmationDialog("Export Data", "Are you sure you want to export the table data?");
+
+        // If user clicks 'Cancel', stop execution and do not export
+        if (!confirmed) {
+            showAlert(Alert.AlertType.WARNING, "Cancelled", "Export Cancelled!", "You have cancelled the export.");
+            return; // Return early if the user cancels
+        }
+
+        // Determine the folder path: Desktop/GoPpo MS
+        File desktopDir = new File(System.getProperty("user.home"), "Desktop");
+        File goppoMsDir = new File(desktopDir, "GoPpo MS");
+        if (!goppoMsDir.exists()) {
+            goppoMsDir.mkdirs(); // Create the GoPpo MS directory if it doesn't exist
+        }
+
+        // Set the export file path
+        File exportFile = new File(goppoMsDir, selectedTable.toUpperCase() + ".csv");
+
+        try (
+            Statement statement = db.connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + selectedTable);
+            FileWriter fileWriter = new FileWriter(exportFile)) {
+
+            // Write CSV headers
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                fileWriter.append(metaData.getColumnName(i));
+                if (i < columnCount) {
+                    fileWriter.append(",");
+                }
+            }
+            fileWriter.append("\n");
+
+            // Write CSV rows
+            while (resultSet.next()) {
+                for (int i = 1; i <= columnCount; i++) {
+                    fileWriter.append(resultSet.getString(i));
+                    if (i < columnCount) {
+                        fileWriter.append(",");
+                    }
+                }
+                fileWriter.append("\n");
+            }
+
+            // Show success alert if export is successful
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Data Exported", 
+                "Table data exported successfully to Desktop/GoPpo MS folder!");
+
+        } catch (SQLException | IOException e) {
+            // Handle errors and show an alert if an error occurs
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Export Failed", "An error occurred while exporting table data.");
+        }
+    }
     private void showAlert(Alert.AlertType alertType, String title, String header, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
@@ -4052,6 +4155,80 @@ public class MainFormController implements Initializable {
         alert.setContentText(content);
         alert.showAndWait();
     }
+    private String convertTimestampToDate(long timestamp) {
+        Date date = new Date(timestamp);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");//(YYYY-MM-DD HH:MM:SS)
+        return sdf.format(date);
+    }
+    private void exportTableData() {
+    String selectedTable = (String) tableComboBox.getValue();
+    if (selectedTable == null || selectedTable.isEmpty()) {
+        showAlert(Alert.AlertType.ERROR, "Error", "No table selected!", "Please select a table to export.");
+        return;
+    }
+
+    boolean confirmed = showConfirmationDialog("Export Data", "Are you sure you want to export the table data?");
+    if (!confirmed) {
+        showAlert(Alert.AlertType.WARNING, "Cancelled", "Export Cancelled!", "You have cancelled the export.");
+        return;
+    }
+
+    // Define the export directory (Desktop/GoPpo MS folder)
+    File desktopDir = new File(System.getProperty("user.home"), "Desktop");
+    File goppoMsDir = new File(desktopDir, "GoPpo MS");
+    if (!goppoMsDir.exists()) {
+        goppoMsDir.mkdirs();
+    }
+
+    File exportFile = new File(goppoMsDir, selectedTable.toUpperCase() + ".csv");
+
+    try (
+        Statement statement = db.connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM " + selectedTable);
+        FileWriter fileWriter = new FileWriter(exportFile)) {
+
+        // Write the CSV headers
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int columnCount = metaData.getColumnCount();
+        for (int i = 1; i <= columnCount; i++) {
+            fileWriter.append(metaData.getColumnName(i));
+            if (i < columnCount) {
+                fileWriter.append(",");
+            }
+        }
+        fileWriter.append("\n");
+
+        // Write the CSV rows
+        while (resultSet.next()) {
+            for (int i = 1; i <= columnCount; i++) {
+                String columnName = metaData.getColumnName(i);
+                String value = resultSet.getString(i);
+
+                // If the column is 'date', convert it from UNIX timestamp to a readable date format
+                if ("date".equalsIgnoreCase(columnName) && value != null) {
+                    long timestamp = Long.parseLong(value);
+                    value = convertTimestampToDate(timestamp); // Convert UNIX timestamp to readable date
+                }
+                if ("items".equalsIgnoreCase(columnName) && value != null) {
+                    value = "List Of Cart Items";
+                }
+
+                fileWriter.append(value == null ? "" : value);
+                if (i < columnCount) {
+                    fileWriter.append(",");
+                }
+            }
+            fileWriter.append("\n");
+        }
+
+        // Show success alert
+        showAlert(Alert.AlertType.INFORMATION, "Success", "Data Exported", "Table data exported successfully to Desktop/GoPpo MS folder!");
+
+    } catch (SQLException | IOException e) {
+        e.printStackTrace();
+        showAlert(Alert.AlertType.ERROR, "Error", "Export Failed", "An error occurred while exporting table data.");
+    }
+}
 
 
 
