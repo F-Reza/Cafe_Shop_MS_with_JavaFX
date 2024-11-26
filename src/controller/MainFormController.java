@@ -338,6 +338,7 @@ public class MainFormController implements Initializable {
     //End
 
     //Settings Section Start
+    @FXML private Button appUpBtn;
     //End
 
     
@@ -705,7 +706,6 @@ public class MainFormController implements Initializable {
         dateTimeTimeline.setCycleCount(Timeline.INDEFINITE);  // Run indefinitely
         dateTimeTimeline.play();  // Start the date-time display timeline
     }
-    
     private void loadDashTopData() {
     if (todayOrderDash != null && todayIncomeDash != null && todayExpenseDash != null && 
         pendingAmountDash != null && totalInvoicesDash != null && totalItemsDash != null && 
@@ -1250,7 +1250,6 @@ public class MainFormController implements Initializable {
             }
         }
     }
-    
     public void menuDisplayCard(int columnCount) { 
         cardListData.clear();
         cardListData.addAll(menuGetData());
@@ -1295,7 +1294,6 @@ public class MainFormController implements Initializable {
             menuDisplayCard(columnCount); // Update the display with the new column count
         });
     }
-
     private void displayFilteredCards(ObservableList<ItemsDataModel> filteredItems, int columnCount) {
         menuGridPane.getChildren().clear(); // Clear existing cards
         int row = 0;
@@ -1391,7 +1389,6 @@ public class MainFormController implements Initializable {
         });
         
     }  
-    
     private void setupCartTable() {
         
         menu_Col_SN.setCellValueFactory(new PropertyValueFactory<>("serialNumber"));
@@ -1630,6 +1627,9 @@ public class MainFormController implements Initializable {
             return;
         }
         saveInvoiceData();
+        //getViewInvoiceByInvId(xInvID);
+        printInvoiceByInvId(xInvID);
+        
     }
     private void saveInvoiceData() {
         try {
@@ -2065,6 +2065,34 @@ public class MainFormController implements Initializable {
             e.printStackTrace();
         }
     }
+    public void getViewInvoiceByInvId(String getByInvId) {
+        try {
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/invoice.fxml"));
+            Parent root = loader.load();
+            InvoiceController invoiceController = loader.getController();
+            invoiceController.setGetByInvId(getByInvId);
+            
+            Stage stage = new Stage();
+            Scene scene = new Scene(root);
+
+            stage.setTitle("View Invoice");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initStyle(StageStyle.UTILITY);
+
+            stage.setMinWidth(405);
+            stage.setMaxWidth(405);
+            stage.setMinHeight(818);
+            stage.setMaxHeight(818);
+            stage.setScene(scene);
+
+            stage.show();
+
+        } catch (IOException e) {
+            System.out.println("Error loading invoice.fxml: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
     public void printInvoiceXok(int id, String invID) {
         try {
             // Load the FXML layout
@@ -2212,7 +2240,109 @@ public class MainFormController implements Initializable {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Information Message");
                         alert.setHeaderText(null);
-                        alert.setContentText("Invoice printed successfully.\nPDF saved in your GoPpo MS folder.");
+                        alert.setContentText("Invoice printed successfully.\nPDF saved in your Desktop/GoPpo MS folder!.");
+                        alert.showAndWait();
+                    } else {
+                        System.out.println("Print job canceled by the user.");
+                    }
+
+                    printDocument.close();
+                } else {
+                    System.out.println("No default printer configured.");
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("No default printer configured.");
+                    alert.showAndWait();
+                }
+
+            } catch (IOException e) {
+                System.out.println("Error generating PDF: " + e.getMessage());
+                e.printStackTrace();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error loading invoice.fxml: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Unexpected error: " + e.getMessage());
+        }
+    }
+    public void printInvoiceByInvId(String invID) {
+        try {
+            // Load the FXML layout
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/invoice.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller and populate the data
+            InvoiceController invoiceController = loader.getController();
+            invoiceController.setGetByInvId(invID); // Replace with the required invoice ID
+
+            // Create a temporary scene to render the root
+            Scene tempScene = new Scene(root);
+
+            // Scale the layout to fit the desired page size (405x818)
+            root.setScaleX(405.0 / root.prefWidth(-1));  // Fit the width
+            root.setScaleY(818.0 / root.prefHeight(-1)); // Fit the height
+            root.layout(); // Ensure the layout is applied
+
+            // Take a high-quality snapshot
+            SnapshotParameters snapshotParameters = new SnapshotParameters();
+            snapshotParameters.setTransform(javafx.scene.transform.Transform.scale(3.0, 3.0)); // Increase DPI
+            WritableImage snapshot = root.snapshot(snapshotParameters, null);
+
+            // Save the snapshot to the user's Desktop in the GoPpo folder
+            String userHome = System.getProperty("user.home"); // Get the user's home directory
+            File goPpoFolder = new File(Paths.get(userHome, "Desktop", "GoPpo MS").toString());
+
+            // Create the folder if it doesn't exist
+            if (!goPpoFolder.exists()) {
+                boolean dirCreated = goPpoFolder.mkdirs();
+                if (dirCreated) {
+                    System.out.println("Folder created: " + goPpoFolder.getAbsolutePath());
+                } else {
+                    System.out.println("Failed to create folder: " + goPpoFolder.getAbsolutePath());
+                }
+            }
+
+            // Define the output PDF file
+            File outputFile = new File(goPpoFolder, "invoice_" + invID + ".pdf");
+
+            // Convert the snapshot to a BufferedImage
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
+
+            // Create a PDF document
+            try (PDDocument document = new PDDocument()) {
+                PDPage page = new PDPage(new PDRectangle((float) bufferedImage.getWidth(), (float) bufferedImage.getHeight()));
+                document.addPage(page);
+
+                PDImageXObject image = LosslessFactory.createFromImage(document, bufferedImage);
+
+                try (PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, false)) {
+                    contentStream.drawImage(image, 0, 0, (float) bufferedImage.getWidth(), (float) bufferedImage.getHeight());
+                }
+
+                // Save the PDF to the output file
+                document.save(outputFile);
+                System.out.println("PDF saved as: " + outputFile.getAbsolutePath());
+
+                // Send the PDF to the default printer
+                PrintService defaultPrinter = PrintServiceLookup.lookupDefaultPrintService();
+                if (defaultPrinter != null) {
+                    PDDocument printDocument = PDDocument.load(outputFile);
+                    PrinterJob printerJob = PrinterJob.getPrinterJob();
+                    printerJob.setPrintService(defaultPrinter);
+                    PDFPageable pageable = new PDFPageable(printDocument);
+                    printerJob.setPageable(pageable);
+
+                    if (printerJob.printDialog()) {
+                        printerJob.print();
+                        System.out.println("Invoice printed successfully.");
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Information Message");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Invoice printed successfully.\nPDF saved in your Desktop/GoPpo MS folder!.");
                         alert.showAndWait();
                     } else {
                         System.out.println("Print job canceled by the user.");
@@ -4235,6 +4365,13 @@ public class MainFormController implements Initializable {
     /// END REPORT SECTION/
 
     //// START SETTINGS SECTION
+    public void appUpBtn(){
+        showAlert(AlertType.CONFIRMATION, 
+            "Information Masseges", 
+            "This Features Currently Not Available!", 
+            "Please Wait Until Next Update.... 👍"
+        );
+    }
     /// END SETTINGS SECTION/
 
     

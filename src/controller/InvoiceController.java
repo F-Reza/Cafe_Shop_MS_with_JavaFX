@@ -6,7 +6,6 @@
 package controller;
 
 import database.DB;
-import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -15,28 +14,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.print.PrinterJob;
-import javafx.scene.Group;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import models.InvoiceDataModel;
 import models.InvoiceItem;
 
@@ -52,6 +39,7 @@ public class InvoiceController implements Initializable{
     private String inv_date;
     private String inv_time;
     private int getById;
+    private String getByInvId;
     
     
     @FXML private AnchorPane invoice_DataForm;
@@ -195,6 +183,80 @@ public class InvoiceController implements Initializable{
         invoice_ItemRate.setCellValueFactory(new PropertyValueFactory<>("rate"));
         invoice_ItemQty.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         invoice_ItemAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
+    }
+    
+    
+    public void setGetByInvId(String getByInvId) {
+        this.getByInvId = getByInvId;
+        loadInvoiceDataByInvId(getByInvId);
+    }
+    public InvoiceDataModel getInvoiceByInvId(String getByInvId) {
+        InvoiceDataModel invoice = null;
+        String query = "SELECT * FROM invoices WHERE inv_id = ?";
+
+        try {
+            db.getConnection();
+            prepare = db.connection.prepareStatement(query);
+            prepare.setString(1, getByInvId);
+            ResultSet resultSet = prepare.executeQuery();
+
+            if (resultSet.next()) {
+                invoice = new InvoiceDataModel(
+                    resultSet.getInt("id"),
+                    resultSet.getString("inv_id"),
+                    resultSet.getString("items"),
+                    resultSet.getDouble("subtotal"),
+                    resultSet.getDouble("discount"),
+                    resultSet.getDouble("others_charge"),
+                    resultSet.getDouble("grand_total"),
+                    resultSet.getInt("total_qty"),
+                    resultSet.getString("note"),
+                    resultSet.getString("order_type"),
+                    resultSet.getString("served_by"),
+                    resultSet.getString("bill_by"),
+                    resultSet.getString("payment_status"),
+                    resultSet.getDate("date")
+                );
+            }
+            db.closeConnection();
+
+        } catch (SQLException e) {
+            System.out.println(e.toString());
+        }
+
+        return invoice;
+    }
+    public void loadInvoiceDataByInvId(String getByInvId) {
+    InvoiceDataModel invoice = getInvoiceByInvId(getByInvId);
+        if (invoice != null) {
+            
+            long millis = invoice.getDate().getTime();
+            SimpleDateFormat sdfD = new SimpleDateFormat("dd MMM yyyy");
+            SimpleDateFormat sdfT = new SimpleDateFormat("hh:mm:aa");  
+            Date resultdate = new Date(millis);
+            inv_date = sdfD.format(resultdate.getTime());
+            inv_time = sdfT.format(resultdate.getTime());
+        
+        
+            invoice_ID.setText("Invoice ID: "+invoice.getInvID());
+            invoice_Date.setText(inv_date);
+            invoice_Time.setText(inv_time);
+            invoice_OrderType.setText("Order Type: "+invoice.getOrderType());
+            invoice_ServedBy.setText("Served By: "+invoice.getServedBy());
+            invoice_BillBy.setText("Bill By: "+invoice.getBillBy());
+            invoice_Subtotal.setText(String.format("Subtotal: %.2f Tk", invoice.getSubTotal()));
+            invoice_Discount.setText("Discount: "+invoice.getDiscount());
+            invoice_OtherCharge.setText("Others Charge: "+invoice.getOthersCharge());
+            invoice_GrandTotal.setText(String.format("Grand Total: ৳ %.2f Tk", invoice.getGrandTotal()));
+            invoice_TotalQty.setText("Total Qty: "+invoice.getTotalQty().toString());
+            invoice_Note.setText("Note: "+invoice.getNote());
+        
+            String items = invoice.getItems();
+            //System.out.println("----------> :" +items);
+            String formattedItems = convertItemsFormat(items);
+            //System.out.println("----------> :" +formattedItems);
+            populateTableView(formattedItems);
+        }
     }
 
     @Override
