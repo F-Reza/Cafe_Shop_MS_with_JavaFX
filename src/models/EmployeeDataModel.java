@@ -15,7 +15,7 @@ import java.util.Date;
 public class EmployeeDataModel {
 
     private int id;
-    private String username;
+    private String userName;
     private String password;
     private String userRole;
     private String status;
@@ -24,13 +24,13 @@ public class EmployeeDataModel {
     // Corrected Construc
     public EmployeeDataModel(
             int id, 
-            String username, 
+            String userName, 
             String password, 
             String userRole, 
             String status, 
             Date date) {
         this.id = id;
-        this.username = username;
+        this.userName = userName;
         this.password = password;
         this.userRole = userRole;
         this.status = status;
@@ -42,8 +42,8 @@ public class EmployeeDataModel {
         return id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return userName;
     }
 
     public String getPassword() {

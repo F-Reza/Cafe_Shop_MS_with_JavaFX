@@ -2901,7 +2901,7 @@ public class managerFormController implements Initializable {
         emp_id = empData.getId();
         emp_date = empData.getDate();
         // Populate the fields with selected data
-        emp_username.setText(empData.getUsername());
+        emp_username.setText(empData.getUserName());
         emp_password.setText(empData.getPassword()); // Set the password (masked)
         emp_user_role.setValue(empData.getUserRole());
         emp_user_status.setValue(empData.getStatus());
@@ -2919,7 +2919,7 @@ public class managerFormController implements Initializable {
     }
 
         id = empData.getId();
-        emp_username.setText(empData.getUsername());
+        emp_username.setText(empData.getUserName());
         emp_password.setText(empData.getPassword()); // Initially mask the password
         emp_user_role.setValue(empData.getUserRole());
         emp_user_status.setValue(empData.getStatus());
@@ -3085,9 +3085,9 @@ public class managerFormController implements Initializable {
 
         } else if(emp_username.getText() == null ? 
                 empUser_TableView.getSelectionModel()
-                        .getSelectedItem().getUsername() == null : 
+                        .getSelectedItem().getUserName() == null : 
                 emp_username.getText().equals(empUser_TableView.getSelectionModel()
-                        .getSelectedItem().getUsername())) {
+                        .getSelectedItem().getUserName())) {
             empUpdateQry();
             //System.out.println("-> Update Done!");
             

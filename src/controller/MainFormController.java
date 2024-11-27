@@ -120,11 +120,13 @@ public class MainFormController implements Initializable {
     
     //// SET Variable
     private static int id;
+    private Image image;
     private static String path;
     private static String imagePath;
-    private Image image;
-    private static final String IMAGE_DIR = "Images";
+    private static final String ITEM_IMAGE_DIR = "item_img";
+    private static final String SLIDER_IMAGE_DIR = "src/slider_img";
     private static String getEmpDate;
+    
     
     
     //All Form Section Start
@@ -570,8 +572,6 @@ public class MainFormController implements Initializable {
         String xName = "Welcome, " + xUser + "!";     
         userName.setText(xName);
     } 
-    
-    private static final String IMAGE_FOLDER = "src/slider_img";
     private List<File> imageFiles = new ArrayList<>();
     private int currentIndex = 0;
     private Timeline slideshowTimeline;
@@ -581,7 +581,7 @@ public class MainFormController implements Initializable {
     private int phraseIndex = 0;
     private String admin =  "";
     private void loadImagesFromFolder() {
-        File folder = new File(IMAGE_FOLDER);
+        File folder = new File(SLIDER_IMAGE_DIR);
         if (!folder.exists()) {
             folder.mkdirs();
         }
@@ -631,7 +631,7 @@ public class MainFormController implements Initializable {
 
         if (selectedFile != null) {
             try {
-                Path targetPath = new File(IMAGE_FOLDER, selectedFile.getName()).toPath();
+                Path targetPath = new File(SLIDER_IMAGE_DIR, selectedFile.getName()).toPath();
                 Files.copy(selectedFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
                 imageFiles.add(targetPath.toFile());
                 currentIndex = imageFiles.size() - 1; // Show the newly imported image
@@ -812,37 +812,43 @@ public class MainFormController implements Initializable {
 
     }
     public void itemsImportBtn() {
-        
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(
             new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
         );
-        
+
         File file = fileChooser.showOpenDialog(main_Form.getScene().getWindow());
-        
+
         if (file != null) {
-            
-            path = file.getAbsolutePath();
             image = new Image(file.toURI().toString(), 146, 146, false, true);
             items_ImageView.setImage(image);
-            
+
             try {
                 // Get the original file name
                 String originalFileName = file.getName();
-                String newImageName = "item_image_" + originalFileName;
+                String newImageName = "item_img_" + originalFileName;
 
-                // Copy the selected file to the MyFolder directory with the new image name
-                File destination = new File(IMAGE_DIR + File.separator + newImageName);
+                // Ensure the Images directory exists
+                File imageDir = new File(ITEM_IMAGE_DIR);
+                if (!imageDir.exists()) {
+                    imageDir.mkdirs();
+                }
+
+                // Copy the selected file to the Images directory
+                File destination = new File(imageDir, newImageName);
                 Files.copy(file.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-                // Save the image path to the SQLite database
-                imagePath = destination.getAbsolutePath();
+                // Save only the relative path (e.g., "Images/item_img1.jpg") for the database
+                imagePath = ITEM_IMAGE_DIR + File.separator + newImageName;
+
+                // Replace backslashes with forward slashes for consistency (optional)
+                imagePath = imagePath.replace("\\", "/");
 
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
-
     }
     private void itemInsertQry() {
         try {
@@ -3060,67 +3066,65 @@ public class MainFormController implements Initializable {
     }
     private ObservableList<EmployeeDataModel> empUserListData;
     public void empUserShowData() {
-        empUserListData = empUserDataList();
+    empUserListData = empUserDataList();
 
-        emp_Col_Sn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        emp_Col_Sn.setCellValueFactory(cellData -> {
-            int index = empUser_TableView.getItems().indexOf(cellData.getValue()) + 1;
-            return new SimpleStringProperty(String.valueOf(index));
-        });
-        // Setting up the columns for the TableView
-        emp_Col_UserName.setCellValueFactory(new PropertyValueFactory<>("username"));
-        emp_Col_Password.setCellValueFactory(new PropertyValueFactory<>("password"));
-        emp_Col_UserRole.setCellValueFactory(new PropertyValueFactory<>("userRole"));
-        emp_Col_Status.setCellValueFactory(new PropertyValueFactory<>("status"));
-        emp_Col_Date.setCellValueFactory(new PropertyValueFactory<>("date"));
+    // Correcting the column setup for emp_Col_Sn (serial number column)
+    emp_Col_Sn.setCellValueFactory(cellData -> {
+        int index = empUser_TableView.getItems().indexOf(cellData.getValue()) + 1;
+        return new SimpleStringProperty(String.valueOf(index));
+    });
 
-        // Custom cell factory for the password column to show/hide password
-        emp_Col_Password.setCellFactory(column -> new TableCell<EmployeeDataModel, String>() {
-            private final Button showHideBtn = new Button("Show");
-            private boolean isPasswordVisible = false;
+    // Setting up other columns for the TableView
+    emp_Col_UserName.setCellValueFactory(new PropertyValueFactory<>("userName"));
+    emp_Col_Password.setCellValueFactory(new PropertyValueFactory<>("password"));
+    emp_Col_UserRole.setCellValueFactory(new PropertyValueFactory<>("userRole"));
+    emp_Col_Status.setCellValueFactory(new PropertyValueFactory<>("status"));
+    emp_Col_Date.setCellValueFactory(new PropertyValueFactory<>("date"));
 
-            @Override
-            protected void updateItem(String password, boolean empty) {
-                super.updateItem(password, empty);
+    // Custom cell factory for the password column to show/hide password
+    emp_Col_Password.setCellFactory(column -> new TableCell<EmployeeDataModel, String>() {
+        private final Button showHideBtn = new Button("Show");
+        private boolean isPasswordVisible = false;
 
-                if (empty || password == null) {
-                    setText(null);
-                    setGraphic(null);
+        @Override
+        protected void updateItem(String password, boolean empty) {
+            super.updateItem(password, empty);
+
+            if (empty || password == null) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                if (isPasswordVisible) {
+                    setText(password); // Show the plain password
+                    showHideBtn.setText("Hide");
                 } else {
-                    if (isPasswordVisible) {
-                        setText(password); // Show the plain password
-                        showHideBtn.setText("Hide");
-                    } else {
-                        setText(maskPassword(password)); // Show masked password
-                        showHideBtn.setText("Show");
-                    }
-
-                    // Style the button: height 20, grey background
-                    showHideBtn.setStyle("-fx-background-color: #e4ae61; -fx-pref-height: 20px; -fx-font-size: 10px;");
-
-                    // Toggle the password visibility when the button is clicked
-                    showHideBtn.setOnAction(e -> {
-                        isPasswordVisible = !isPasswordVisible;
-                        updateItem(password, false);
-                    });
-
-                    setGraphic(showHideBtn); // Add the button to the cell
+                    setText(maskPassword(password)); // Show masked password
+                    showHideBtn.setText("Show");
                 }
-            }
 
-            // Method to mask the password (replace with asterisks)
-            private String maskPassword(String password) {
-                StringBuilder maskedPassword = new StringBuilder();
-                for (int i = 0; i < password.length(); i++) {
-                    maskedPassword.append('*');  // You can use any character, like '•'
-                }
-                return maskedPassword.toString();
-            }
-        });
+                // Style the button
+                showHideBtn.setStyle("-fx-background-color: #e4ae61; -fx-pref-height: 20px; -fx-font-size: 10px;");
 
-        // Set the list of items for the TableView
-        empUser_TableView.setItems(empUserListData);
-    }
+                // Toggle the password visibility
+                showHideBtn.setOnAction(e -> {
+                    isPasswordVisible = !isPasswordVisible;
+                    updateItem(password, false);
+                });
+
+                setGraphic(showHideBtn); // Add the button to the cell
+            }
+        }
+
+        // Method to mask the password
+        private String maskPassword(String password) {
+            return String.join("", java.util.Collections.nCopies(password.length(), "*"));
+        }
+
+    });
+
+    // Set the list of items for the TableView
+    empUser_TableView.setItems(empUserListData);
+}
     public void showPass() {
         // Listener for the show/hide password CheckBox
         showPassCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -3150,7 +3154,7 @@ public class MainFormController implements Initializable {
         emp_id = empData.getId();
         emp_date = empData.getDate();
         // Populate the fields with selected data
-        emp_username.setText(empData.getUsername());
+        emp_username.setText(empData.getUserName());
         emp_password.setText(empData.getPassword()); // Set the password (masked)
         emp_user_role.setValue(empData.getUserRole());
         emp_user_status.setValue(empData.getStatus());
@@ -3168,7 +3172,7 @@ public class MainFormController implements Initializable {
     }
 
         id = empData.getId();
-        emp_username.setText(empData.getUsername());
+        emp_username.setText(empData.getUserName());
         emp_password.setText(empData.getPassword()); // Initially mask the password
         emp_user_role.setValue(empData.getUserRole());
         emp_user_status.setValue(empData.getStatus());
@@ -3334,9 +3338,9 @@ public class MainFormController implements Initializable {
 
         } else if(emp_username.getText() == null ? 
                 empUser_TableView.getSelectionModel()
-                        .getSelectedItem().getUsername() == null : 
+                        .getSelectedItem().getUserName() == null : 
                 emp_username.getText().equals(empUser_TableView.getSelectionModel()
-                        .getSelectedItem().getUsername())) {
+                        .getSelectedItem().getUserName())) {
             empUpdateQry();
             //System.out.println("-> Update Done!");
             
@@ -3621,13 +3625,20 @@ public class MainFormController implements Initializable {
                         // Get the original file name
                         String originalFileName = file.getName();
                         String newImageName = "pp_" + originalFileName;
+                        
+                        // Ensure the Images directory exists
+                        File imageDir = new File(ITEM_IMAGE_DIR);
+                        if (!imageDir.exists()) {
+                            imageDir.mkdirs();
+                        }
 
-                        // Copy the selected file to the MyFolder directory with the new image name
-                        File destination = new File(IMAGE_DIR + File.separator + newImageName);
+                        // Copy the selected file to the Images directory
+                        File destination = new File(imageDir, newImageName);
                         Files.copy(file.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-                        // Save the image path to the SQLite database
-                        imagePath = destination.getAbsolutePath();
+                        imagePath = ITEM_IMAGE_DIR + File.separator + newImageName;
+
+                        imagePath = imagePath.replace("\\", "/");
 
                     } catch (Exception ex) {
                         ex.printStackTrace();
@@ -4412,7 +4423,7 @@ public class MainFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Create the folder if not exists
-        File folder = new File("Images");
+        File folder = new File("item_img");
         if (!folder.exists()) { folder.mkdir(); }
        
         //Dashboard

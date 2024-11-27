@@ -143,7 +143,7 @@ public class DB {
                             insertStatement.setString(5, "admin"); //answer
                             insertStatement.setString(6, "Admin"); //user_role
                             insertStatement.setString(7, "Active"); //status
-                            insertStatement.setString(8, "..\\img\\users.jpg"); //image
+                            insertStatement.setString(8, "item_img/pp_users.jpg"); //image
                             insertStatement.setLong(9, System.currentTimeMillis()); //date
 
                             insertStatement.executeUpdate();
