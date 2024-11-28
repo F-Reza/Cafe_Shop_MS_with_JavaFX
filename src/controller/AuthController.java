@@ -132,29 +132,6 @@ public class AuthController implements Initializable {
                     saveLoginState(true,si_username.getText());
                     db.closeConnection();
                     loadMainForm();
-//                    xValue.username = si_username.getText();
-//
-//                    alert = new Alert(AlertType.INFORMATION);
-//                    alert.setTitle("Information Message");
-//                    alert.setHeaderText(null);
-//                    alert.setContentText("Successfully Login!");
-//                    alert.showAndWait();
-//                    System.out.println("Successfully Login! [You are a Admin[");
-//                    // LINK YOUR MAIN FORM
-//                    Parent root = FXMLLoader.load(getClass().getResource("/view/mainForm.fxml"));
-//
-//                    Stage stage = new Stage();
-//                    Scene scene = new Scene(root);
-//
-//                    stage.setTitle("GoPoo Management System");
-//                    stage.setMinWidth(1384);
-//                    stage.setMinHeight(840);
-//
-//                    stage.setScene(scene);
-//                    stage.show();
-//
-//                    si_loginBtn.getScene().getWindow().hide();
-//                    db.closeConnection();
 
                 } else if (rstE.next()) {
                     xValue.username = si_username.getText();

@@ -83,6 +83,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -130,6 +131,7 @@ public class MainFormController implements Initializable {
     
     
     //All Form Section Start
+    @FXML private StackPane main_window;
     @FXML private AnchorPane main_Form,dashboadrForm,itemsForm,posMenuForm,cullectBillForm,invoicesForm,expensesForm,reportForm,usersForm,settingsForm;
     //End
 
@@ -146,6 +148,15 @@ public class MainFormController implements Initializable {
     @FXML private Label todayOrderDash,todayIncomeDash,todayExpenseDash,pendingAmountDash,
             totalInvoicesDash,totalItemsDash,totalPackageDash,totalUsersDash,
             newsTextLabel,dashDateLabel,dashTimeLabel,todayLabel;
+    private List<File> imageFiles = new ArrayList<>();
+    private int currentIndex = 0;
+    private Timeline slideshowTimeline;
+    private int xOrder;
+    private double xIncome, xExpense, xPendingAmount;
+    private String[] phrases;
+    private int phraseIndex = 0;
+    private String admin =  "";
+    Boolean isWindowStatus = false;
     //End
 
 
@@ -293,8 +304,10 @@ public class MainFormController implements Initializable {
     @FXML private Label thisyearExpenseRpt;
     @FXML private Label totalExpenseRpt;
     
+    @FXML private Label selectedDateExpenseS, dateRangeExpenseD;
+    @FXML private DatePicker expenseDatePickerS, startExpDatePickerD, endExpDatePickerD;
+    @FXML private Button exportBtn, getExpSpecificBtnS, getExpDateRangeBtnD, getExpRpt_ClearBtnS,getExpRpt_ClearBtnD;
     @FXML private ComboBox tableComboBox;
-    @FXML private Button exportBtn;
     @FXML private CategoryAxis xAxis,xAxis7Inc,xAxisOdr,xAxis7Ord;
     @FXML private AreaChart<String, Number> orderAreaChart,orderAreaChart7Days,incomeAreaChart,incomeAreaChart7Days;
     @FXML private PieChart expensePieChart,expensePieChartDash,expensePieChartRpt;
@@ -364,7 +377,7 @@ public class MainFormController implements Initializable {
             loadAdminData(1);
             initializeSlideshow();
             loadDashTopData();
-            
+
             loadLast7DaysIncome();
             loadLast7DaysOrder();
             loadExpensesByCategoryThisYear();
@@ -404,9 +417,10 @@ public class MainFormController implements Initializable {
             usersForm.setVisible(false);
             settingsForm.setVisible(false);
 
-            //menuDisplayCard();
+            getDynamicDisplayCard();
             setupCartTable();
             setDynamicColumnWidthForCartTable();
+            
             empClearBtn();
             itemsClearBtn();
             expenseClearBtn();
@@ -572,14 +586,6 @@ public class MainFormController implements Initializable {
         String xName = "Welcome, " + xUser + "!";     
         userName.setText(xName);
     } 
-    private List<File> imageFiles = new ArrayList<>();
-    private int currentIndex = 0;
-    private Timeline slideshowTimeline;
-    private int xOrder;
-    private double xIncome, xExpense, xPendingAmount;
-    private String[] phrases;
-    private int phraseIndex = 0;
-    private String admin =  "";
     private void loadImagesFromFolder() {
         File folder = new File(SLIDER_IMAGE_DIR);
         if (!folder.exists()) {
@@ -669,11 +675,28 @@ public class MainFormController implements Initializable {
         slideshowTimeline.setCycleCount(Timeline.INDEFINITE);
         slideshowTimeline.play();
     }
+    private void deactiveMsgMax() {
+        slideshowImageView.fitWidthProperty().bind(slideshowAnchorPane.widthProperty());
+        slideshowImageView.fitHeightProperty().bind(slideshowAnchorPane.heightProperty());
+        slideshowImageView.setPreserveRatio(false);
+        slideshowImageView.setImage(image);
+    }
+    private void deactiveMsgDown() {
+        // Unbind properties and restore fixed size with stretching to fit container
+        slideshowImageView.fitWidthProperty().unbind();
+        slideshowImageView.fitHeightProperty().unbind();
+        slideshowImageView.setPreserveRatio(false); // Disable aspect ratio preservation
+        slideshowImageView.setSmooth(true); // Smooth scaling
+        slideshowImageView.setFitWidth(slideshowAnchorPane.getPrefWidth()+2);
+        slideshowImageView.setFitHeight(slideshowAnchorPane.getPrefHeight()+1);
+        slideshowImageView.setImage(image);
+    }
     public void dynamicView() {
         // Bind the ImageView's fitWidth and fitHeight to the AnchorPane's width and height
         slideshowImageView.fitWidthProperty().bind(slideshowAnchorPane.widthProperty());
         slideshowImageView.fitHeightProperty().bind(slideshowAnchorPane.heightProperty());
-        slideshowImageView.setPreserveRatio(false);
+        //slideshowImageView.setPreserveRatio(false);
+
         // Load a default image if needed
         //slideshowImageView.setImage(new Image("file:src/img/slider.jpg"));
         slideshowImageView.setImage(image);
@@ -684,7 +707,6 @@ public class MainFormController implements Initializable {
         startAutoPlay();
         updateImageView();
         dynamicView();
-        //getTextData();
 
         // Set up button actions
         slideshowAddBtn.setOnAction(e -> importImage());
@@ -1295,11 +1317,16 @@ public class MainFormController implements Initializable {
         }
     }
     public void getDynamicDisplayCard() {
-        menuDisplayCard(4);
+        if (!isWindowStatus) {
+            menuDisplayCard(4);
+            //menuDisplayCardX();
+        } else {
+            menuDisplayCard(7);
+        }
         double thresholdWidth = 1000.0;
         menuScrollPane.widthProperty().addListener((obs, oldVal, newVal) -> {
             int columnCount = (newVal.doubleValue() > thresholdWidth) ? 7 : 4;
-            menuDisplayCard(columnCount); // Update the display with the new column count
+            menuDisplayCard(columnCount);
         });
     }
     private void displayFilteredCards(ObservableList<ItemsDataModel> filteredItems, int columnCount) {
@@ -2869,6 +2896,14 @@ public class MainFormController implements Initializable {
         }
     }
     public void getExpSpecificBtn() {
+        if(expenseDatePicker.getValue() == null){
+            alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Warning Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Date can't be Empty!");
+            alert.showAndWait();
+            return;
+        }
         onDateSelected();
     }
     public void onDateSelected() {
@@ -2989,6 +3024,587 @@ public class MainFormController implements Initializable {
         dateValue.setDayCellFactory(dayCellFactory);
     }
     /// END EXPENSE SECTION/
+    
+    
+    //// START REPORT SECTION
+    private void loadITopDataRpt() {
+        // Check if any label is null before proceeding
+        if (totalPendingAmountRpt != null && totalInvoicesRpt != null && 
+                totalItemsRpt != null && totalPackageRpt != null && 
+                totalUsersRpt != null) {
+            totalPendingAmountRpt.setText(String.format("%.2f TK", db.getTotalInvoicePendingAmount()));
+            totalInvoicesRpt.setText(""+db.getTotalInvoice());
+            totalItemsRpt.setText(""+db.getTotalItems());
+            totalPackageRpt.setText(""+db.getTotalPackage());
+            int xUsers = db.gettoTalUsers() + 1;
+            totalUsersRpt.setText(""+xUsers);
+        } else {
+            System.err.println("One or more labels are not initialized!");
+        }
+    }
+    private void loadOrderDataRpt() {
+        // Check if any label is null before proceeding
+        if (todayOrderRpt != null && yesterdayOrderRpt != null && thisweekOrderRpt != null && 
+            thismonthOrderRpt != null && thisyearOrderRpt != null && totalIncomeRpt != null) {
+            
+            todayOrderRpt.setText(""+db.getTodayOrder());
+            yesterdayOrderRpt.setText(""+db.getYesterdayOrder());
+            thisweekOrderRpt.setText(""+db.getThisWeekOrder());
+            thismonthOrderRpt.setText(""+db.getThisMonthOrder());
+            thisyearOrderRpt.setText(""+db.getThisYearOrder());
+            totalOrderRpt.setText(""+db.getTotalOrder());
+            totalOrderTopRpt.setText(""+db.getCompleteOrder());
+        } else {
+            System.err.println("One or more labels are not initialized!");
+        }
+    }
+    private void loadIncomeDataRpt() {
+        // Check if any label is null before proceeding
+        if (todayIncomeRpt != null && yesterdayIncomeRpt != null && thisweekIncomeRpt != null && 
+            thismonthIncomeRpt != null && thisyearIncomeRpt != null && totalIncomeRpt != null) {
+            
+            todayIncomeRpt.setText(String.format("%.2f TK", db.getTodayIncome()));
+            yesterdayIncomeRpt.setText(String.format("%.2f TK", db.getYesterdayIncome()));
+            thisweekIncomeRpt.setText(String.format("%.2f TK", db.getThisWeekIncome()));
+            thismonthIncomeRpt.setText(String.format("%.2f TK", db.getThisMonthIncome()));
+            thisyearIncomeRpt.setText(String.format("%.2f TK", db.getThisYearIncome()));
+            totalIncomeRpt.setText(String.format("%.2f TK", db.getTotalIncome()));
+            totalIncomeTopRpt.setText(String.format("%.2f TK", db.getTotalIncome()));
+        } else {
+            System.err.println("One or more labels are not initialized!");
+        }
+    }
+    private void loadExpenseDataRpt() {
+        // Check if any label is null before proceeding
+        if (todayExpenseRpt != null && yesterdayExpenseRpt != null && thisweekExpenseRpt != null && 
+            thismonthExpenseRpt != null && thisyearExpenseRpt != null && totalExpenseRpt != null) {
+            
+            todayExpenseRpt.setText(String.format("%.2f TK", db.getTodayExpenses()));
+            yesterdayExpenseRpt.setText(String.format("%.2f TK", db.getYesterdayExpenses()));
+            thisweekExpenseRpt.setText(String.format("%.2f TK", db.getThisWeekExpenses()));
+            thismonthExpenseRpt.setText(String.format("%.2f TK", db.getThisMonthExpenses()));
+            thisyearExpenseRpt.setText(String.format("%.2f TK", db.getThisYearExpenses()));
+            totalExpenseRpt.setText(String.format("%.2f TK", db.getTotalExpenses()));
+            totalExpenseTopRpt.setText(String.format("%.2f TK", db.getTotalExpenses()));
+        } else {
+            System.err.println("One or more labels are not initialized!");
+        }
+    }
+    private void loadExpensesByCategory() {
+        ObservableList<PieChart.Data> expensesData = db.getExpensesByCategory();
+
+        // Calculate total for percentage calculation
+        double total = expensesData.stream()
+                                   .mapToDouble(PieChart.Data::getPieValue)
+                                   .sum();
+
+        // Format labels with percentages
+        expensesData.forEach(data -> {
+            String percentage = String.format("%.1f%%", (data.getPieValue() / total) * 100);
+            data.nameProperty().set("(" + percentage + ")\n"+data.getName());
+            //xAxis.setTickLabelRotation(45); 
+        });
+
+        expensePieChart.setData(expensesData);
+    }
+    private void loadExpensesByCategoryThisYear() {
+        ObservableList<PieChart.Data> expensesData = db.getExpensesByCategoryThisYear();
+        if (expensesData == null || expensesData.isEmpty()) {
+            //System.out.println("No expense data found for the current year.");
+            expensePieChartDash.getData().clear();
+            return;
+        }
+        double total = expensesData.stream()
+                                   .mapToDouble(PieChart.Data::getPieValue)
+                                   .sum();
+
+        expensesData.forEach(data -> {
+            String percentage = String.format("%.1f%%", (data.getPieValue() / total) * 100);
+            data.nameProperty().set(" (" + percentage + ")\n"+data.getName());
+        });
+        expensePieChartDash.getData().clear();
+        expensePieChartDash.setData(expensesData);
+        
+    }
+    private void loadExpensesByCategoryThisYearRpt() {
+        ObservableList<PieChart.Data> expensesData = db.getExpensesByCategoryThisYear();
+        if (expensesData == null || expensesData.isEmpty()) {
+            //System.out.println("No expense data found for the current year.");
+            expensePieChartDash.getData().clear();
+            return;
+        }
+        double total = expensesData.stream()
+                                   .mapToDouble(PieChart.Data::getPieValue)
+                                   .sum();
+
+        expensesData.forEach(data -> {
+            String percentage = String.format("%.1f%%", (data.getPieValue() / total) * 100);
+            data.nameProperty().set(" (" + percentage + ")\n"+data.getName());
+        });
+        
+        expensePieChartRpt.getData().clear();
+        expensePieChartRpt.setData(expensesData);
+        
+    }
+    private void loadMonthlyIncomeData() {
+      
+        ObservableList<String> months = FXCollections.observableArrayList(
+        "January", "February", "March", "April", "May", "June", 
+        "July", "August", "September", "October", "November", "December"
+        );
+        xAxis.setCategories(months);
+
+        ObservableList<XYChart.Data<String, Number>> monthlyData = db.getMonthlyIncomeData();
+
+        if (monthlyData == null || monthlyData.isEmpty()) {
+            System.out.println("No data found for the current year.");
+        } else {
+            for (XYChart.Data<String, Number> data : monthlyData) {
+                //System.out.println(data.getXValue() + ", Total Income: " + data.getYValue());
+            }
+        }
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Monthly Income");
+        series.getData().addAll(monthlyData);
+
+        incomeAreaChart.getData().add(series);
+        xAxis.setTickLabelRotation(90);  
+
+    }
+    private void loadLast7DaysIncome() {
+        ObservableList<String> days = FXCollections.observableArrayList(
+            "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
+        );
+        xAxis7Inc.setCategories(days);
+        ObservableList<XYChart.Data<String, Number>> dailyData = db.getLast7DaysIncomeData();
+
+        if (dailyData == null || dailyData.isEmpty()) {
+            System.out.println("No data found for the last 7 days.");
+        } else {
+            for (XYChart.Data<String, Number> data : dailyData) {
+                //System.out.println(data.getXValue() + ", Total Income: " + data.getYValue());
+            }
+        }
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Last 7 Days Income");
+
+        series.getData().addAll(dailyData);
+        incomeAreaChart7Days.getData().clear();
+        incomeAreaChart7Days.getData().add(series);
+        xAxis7Inc.setTickLabelRotation(45);
+    }
+    private void loadMonthlyOrderData() {
+      
+        ObservableList<String> months = FXCollections.observableArrayList(
+        "January", "February", "March", "April", "May", "June", 
+        "July", "August", "September", "October", "November", "December"
+        );
+        xAxisOdr.setCategories(months);
+
+        ObservableList<XYChart.Data<String, Number>> monthlyData = db.getMonthlyOrderData();
+
+        if (monthlyData == null || monthlyData.isEmpty()) {
+            System.out.println("No data found for the current year.");
+        } else {
+            for (XYChart.Data<String, Number> data : monthlyData) {
+                //System.out.println(data.getXValue() + ", Total Order: " + data.getYValue());
+            }
+        }
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Monthly Income");
+        series.getData().addAll(monthlyData);
+
+        orderAreaChart.getData().add(series);
+        xAxisOdr.setTickLabelRotation(90);  
+
+    }
+    private void loadLast7DaysOrder() {
+    // Define days of the week
+    ObservableList<String> days = FXCollections.observableArrayList(
+        "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
+    );
+    xAxis7Ord.setCategories(days);
+
+    // Fetch the data for the last 7 days' orders
+    ObservableList<XYChart.Data<String, Number>> dailyOrderData = db.getLast7DaysOrderData();
+
+    if (dailyOrderData == null || dailyOrderData.isEmpty()) {
+        System.out.println("No orders found for the last 7 days.");
+    } else {
+        for (XYChart.Data<String, Number> data : dailyOrderData) {
+            //System.out.println(data.getXValue() + ", Total Orders: " + data.getYValue());
+        }
+    }
+
+    // Create and populate the series
+    XYChart.Series<String, Number> series = new XYChart.Series<>();
+    series.setName("Last 7 Days Orders");
+    series.getData().addAll(dailyOrderData);
+   
+
+    // Update the chart
+    orderAreaChart7Days.getData().clear();
+    orderAreaChart7Days.getData().add(series);
+    xAxis7Ord.setTickLabelRotation(45);
+    //orderAreaChart7Days.lookup(".chart-title").setRotate(90);
+}
+    public void tableDataExport() {
+        db.getConnection();
+        populateTableComboBox();
+        
+        exportBtn.setOnAction(event -> {
+            exportTableData();
+        });
+    }
+    private void populateTableComboBox() {
+    ObservableList<String> tableNames = FXCollections.observableArrayList();
+    try {
+        DatabaseMetaData metaData = db.connection.getMetaData();
+        ResultSet tables = metaData.getTables(null, null, "%", new String[]{"TABLE"});
+        while (tables.next()) {
+            String tableName = tables.getString("TABLE_NAME");
+            if (!"admin".equalsIgnoreCase(tableName)) {
+                // Convert the table name to uppercase before adding it to the list
+                tableNames.add(tableName.toUpperCase());
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    tableComboBox.setItems(tableNames);
+}
+    private boolean showConfirmationDialog(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setContentText(content);
+
+        // Show and wait for the user to click a button
+        Optional<ButtonType> result = alert.showAndWait();
+
+        // Check if the user clicked OK or Cancel
+        return result.isPresent() && result.get() == ButtonType.OK;
+    }
+    private void exportTableDataX() {
+        String selectedTable = (String) tableComboBox.getValue();
+        if (selectedTable == null || selectedTable.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "No table selected!", "Please select a table to export.");
+            return;
+        }
+
+        // Show confirmation dialog
+        boolean confirmed = showConfirmationDialog("Export Data", "Are you sure you want to export the table data?");
+
+        // If user clicks 'Cancel', stop execution and do not export
+        if (!confirmed) {
+            showAlert(Alert.AlertType.WARNING, "Cancelled", "Export Cancelled!", "You have cancelled the export.");
+            return; // Return early if the user cancels
+        }
+
+        // If user clicks 'OK', proceed with the export
+        File downloadsDir = new File(System.getProperty("user.home") + "/Downloads"); //Need update here Download USER Desktop and GOPpo MS folder
+        if (!downloadsDir.exists()) {
+            downloadsDir.mkdirs();
+        }
+
+        File exportFile = new File(downloadsDir, selectedTable.toUpperCase() + ".csv");
+
+        try (
+             Statement statement = db.connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + selectedTable);
+             FileWriter fileWriter = new FileWriter(exportFile)) {
+
+            // Write CSV headers
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                fileWriter.append(metaData.getColumnName(i));
+                if (i < columnCount) {
+                    fileWriter.append(",");
+                }
+            }
+            fileWriter.append("\n");
+
+            // Write CSV rows
+            while (resultSet.next()) {
+                for (int i = 1; i <= columnCount; i++) {
+                    fileWriter.append(resultSet.getString(i));
+                    if (i < columnCount) {
+                        fileWriter.append(",");
+                    }
+                }
+                fileWriter.append("\n");
+            }
+
+            // Show success alert if export is successful
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Data Exported", "Table data exported successfully to Downloads folder!");
+
+        } catch (SQLException | IOException e) {
+            // Handle errors and show an alert if an error occurs
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Export Failed", "An error occurred while exporting table data.");
+        }
+    }
+    private void exportTableDataZ() {
+        String selectedTable = (String) tableComboBox.getValue();
+        if (selectedTable == null || selectedTable.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "No table selected!", "Please select a table to export.");
+            return;
+        }
+
+        // Show confirmation dialog
+        boolean confirmed = showConfirmationDialog("Export Data", "Are you sure you want to export the table data?");
+
+        // If user clicks 'Cancel', stop execution and do not export
+        if (!confirmed) {
+            showAlert(Alert.AlertType.WARNING, "Cancelled", "Export Cancelled!", "You have cancelled the export.");
+            return; // Return early if the user cancels
+        }
+
+        // Determine the folder path: Desktop/GoPpo MS
+        File desktopDir = new File(System.getProperty("user.home"), "Desktop");
+        File goppoMsDir = new File(desktopDir, "GoPpo MS");
+        if (!goppoMsDir.exists()) {
+            goppoMsDir.mkdirs(); // Create the GoPpo MS directory if it doesn't exist
+        }
+
+        // Set the export file path
+        File exportFile = new File(goppoMsDir, selectedTable.toUpperCase() + ".csv");
+
+        try (
+            Statement statement = db.connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + selectedTable);
+            FileWriter fileWriter = new FileWriter(exportFile)) {
+
+            // Write CSV headers
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                fileWriter.append(metaData.getColumnName(i));
+                if (i < columnCount) {
+                    fileWriter.append(",");
+                }
+            }
+            fileWriter.append("\n");
+
+            // Write CSV rows
+            while (resultSet.next()) {
+                for (int i = 1; i <= columnCount; i++) {
+                    fileWriter.append(resultSet.getString(i));
+                    if (i < columnCount) {
+                        fileWriter.append(",");
+                    }
+                }
+                fileWriter.append("\n");
+            }
+
+            // Show success alert if export is successful
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Data Exported", 
+                "Table data exported successfully to Desktop/GoPpo MS folder!");
+
+        } catch (SQLException | IOException e) {
+            // Handle errors and show an alert if an error occurs
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Export Failed", "An error occurred while exporting table data.");
+        }
+    }
+    private void showAlert(Alert.AlertType alertType, String title, String header, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+    private String convertTimestampToDate(long timestamp) {
+        Date date = new Date(timestamp);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");//(YYYY-MM-DD HH:MM:SS)
+        return sdf.format(date);
+    }
+    private void exportTableData() {
+    String selectedTable = (String) tableComboBox.getValue();
+    if (selectedTable == null || selectedTable.isEmpty()) {
+        showAlert(Alert.AlertType.ERROR, "Error", "No table selected!", "Please select a table to export.");
+        return;
+    }
+
+    boolean confirmed = showConfirmationDialog("Export Data", "Are you sure you want to export the table data?");
+    if (!confirmed) {
+        showAlert(Alert.AlertType.WARNING, "Cancelled", "Export Cancelled!", "You have cancelled the export.");
+        return;
+    }
+
+    // Define the export directory (Desktop/GoPpo MS folder)
+    File desktopDir = new File(System.getProperty("user.home"), "Desktop");
+    File goppoMsDir = new File(desktopDir, "GoPpo MS");
+    if (!goppoMsDir.exists()) {
+        goppoMsDir.mkdirs();
+    }
+
+    File exportFile = new File(goppoMsDir, selectedTable.toUpperCase() + ".csv");
+
+    try (
+        Statement statement = db.connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM " + selectedTable);
+        FileWriter fileWriter = new FileWriter(exportFile)) {
+
+        // Write the CSV headers
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int columnCount = metaData.getColumnCount();
+        for (int i = 1; i <= columnCount; i++) {
+            fileWriter.append(metaData.getColumnName(i));
+            if (i < columnCount) {
+                fileWriter.append(",");
+            }
+        }
+        fileWriter.append("\n");
+
+        // Write the CSV rows
+        while (resultSet.next()) {
+            for (int i = 1; i <= columnCount; i++) {
+                String columnName = metaData.getColumnName(i);
+                String value = resultSet.getString(i);
+
+                // If the column is 'date', convert it from UNIX timestamp to a readable date format
+                if ("date".equalsIgnoreCase(columnName) && value != null) {
+                    long timestamp = Long.parseLong(value);
+                    value = convertTimestampToDate(timestamp); // Convert UNIX timestamp to readable date
+                }
+                if ("items".equalsIgnoreCase(columnName) && value != null) {
+                    value = "List Of Cart Items";
+                }
+
+                fileWriter.append(value == null ? "" : value);
+                if (i < columnCount) {
+                    fileWriter.append(",");
+                }
+            }
+            fileWriter.append("\n");
+        }
+
+        // Show success alert
+        showAlert(Alert.AlertType.INFORMATION, "Success", "Data Exported", "Table data exported successfully to Desktop/GoPpo MS folder!");
+
+    } catch (SQLException | IOException e) {
+        e.printStackTrace();
+        showAlert(Alert.AlertType.ERROR, "Error", "Export Failed", "An error occurred while exporting table data.");
+    }
+}
+    public void getExpSpecificBtnS() {
+        if(expenseDatePickerS.getValue() == null){
+            alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Warning Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Date can't be Empty!");
+            alert.showAndWait();
+            return;
+        }
+        onDateSelectedS();
+    }
+    public void onDateSelectedS() {
+        LocalDate selectedDate = expenseDatePickerS.getValue();
+        if (selectedDate != null) {
+            // Convert LocalDate to Date in milliseconds
+            Date date = Date.from(selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            long millis = date.getTime(); // Convert to milliseconds
+
+            // Fetch and display expense for the selected date
+            double expenseForSelectedDate = db.getExpensesForDate(millis);
+            selectedDateExpenseS.setText(String.format("%.2f TK", expenseForSelectedDate));
+        }
+    }
+    public void getExpRpt_ClearBtnS() {
+        selectedDateExpenseS.setText("0.0");
+        expenseDatePickerS.setValue(null);
+    } 
+    public void getExpDateRangeBtnD() {
+        onDateRangeSelectedD();
+    }
+    public void onDateRangeSelectedD() {
+        LocalDate startDate = startExpDatePickerD.getValue();
+        LocalDate endDate = endExpDatePickerD.getValue();
+        
+        if (startDate == null || endDate == null) {
+            if (startDate == null) {
+            alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Warning Message");
+            alert.setHeaderText(null);
+            alert.setContentText("From date is Empty!");
+            alert.showAndWait();
+            } else{
+                alert = new Alert(AlertType.WARNING);
+                alert.setTitle("Warning Message");
+                alert.setHeaderText(null);
+                alert.setContentText("To date is Empty!");
+                alert.showAndWait();
+            }
+            return;  
+        } 
+
+        if (startDate != null && endDate != null) {
+            // Validation: Check if the start date is after the end date
+            if (startDate.isAfter(endDate)) {
+                dateRangeExpenseD.setText("Invalid Date Range!");
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Invalid Date Range\nplease select 'From date' to 'To Date' correctly and get data.");
+                alert.showAndWait();
+                return;
+            }
+
+            // Convert LocalDate to milliseconds
+            long startMillis = Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime();
+            long endMillis = Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime() 
+                             + (24 * 60 * 60 * 1000) - 1;  // Set the end time to the end of the day
+
+            // Fetch and display expense for the selected date range
+            double expenseForDateRange = db.getExpensesForDateRange(startMillis, endMillis);
+            dateRangeExpenseD.setText(String.format("%.2f TK", expenseForDateRange));
+        }
+        
+    }
+    public void getExpRpt_ClearBtnD() {
+        dateRangeExpenseD.setText("0.0");
+        startExpDatePickerD.setValue(null);
+        endExpDatePickerD.setValue(null);
+    }
+    
+    private void setupDevInfoLongPress() {
+        PauseTransition longPress = new PauseTransition(Duration.seconds(2));
+        devInfoBtn.setOnMousePressed(event -> {
+            longPress.setOnFinished(e -> getViewDevInfo());
+            longPress.playFromStart();
+        });
+        devInfoBtn.setOnMouseReleased(event -> longPress.stop());
+    }
+    public void getViewDevInfo() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/devInfo.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            Scene scene = new Scene(root);
+
+            stage.setTitle("Developer Information");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initStyle(StageStyle.UTILITY);
+
+            stage.setMinWidth(455);
+            //stage.setMaxWidth(455);
+            stage.setMinHeight(547);
+            //stage.setMaxHeight(547);
+            stage.setScene(scene);
+
+            stage.show();
+
+        } catch (IOException e) {
+            System.out.println("Error loading invoice.fxml: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    /// END REPORT SECTION/
     
     
     //// START USERS SECTION
@@ -3906,508 +4522,6 @@ public class MainFormController implements Initializable {
     /// END USERS SECTION/
     
     
-    //// START REPORT SECTION
-    private void loadITopDataRpt() {
-        // Check if any label is null before proceeding
-        if (totalPendingAmountRpt != null && totalInvoicesRpt != null && 
-                totalItemsRpt != null && totalPackageRpt != null && 
-                totalUsersRpt != null) {
-            totalPendingAmountRpt.setText(String.format("%.2f TK", db.getTotalInvoicePendingAmount()));
-            totalInvoicesRpt.setText(""+db.getTotalInvoice());
-            totalItemsRpt.setText(""+db.getTotalItems());
-            totalPackageRpt.setText(""+db.getTotalPackage());
-            int xUsers = db.gettoTalUsers() + 1;
-            totalUsersRpt.setText(""+xUsers);
-        } else {
-            System.err.println("One or more labels are not initialized!");
-        }
-    }
-    private void loadOrderDataRpt() {
-        // Check if any label is null before proceeding
-        if (todayOrderRpt != null && yesterdayOrderRpt != null && thisweekOrderRpt != null && 
-            thismonthOrderRpt != null && thisyearOrderRpt != null && totalIncomeRpt != null) {
-            
-            todayOrderRpt.setText(""+db.getTodayOrder());
-            yesterdayOrderRpt.setText(""+db.getYesterdayOrder());
-            thisweekOrderRpt.setText(""+db.getThisWeekOrder());
-            thismonthOrderRpt.setText(""+db.getThisMonthOrder());
-            thisyearOrderRpt.setText(""+db.getThisYearOrder());
-            totalOrderRpt.setText(""+db.getTotalOrder());
-            totalOrderTopRpt.setText(""+db.getCompleteOrder());
-        } else {
-            System.err.println("One or more labels are not initialized!");
-        }
-    }
-    private void loadIncomeDataRpt() {
-        // Check if any label is null before proceeding
-        if (todayIncomeRpt != null && yesterdayIncomeRpt != null && thisweekIncomeRpt != null && 
-            thismonthIncomeRpt != null && thisyearIncomeRpt != null && totalIncomeRpt != null) {
-            
-            todayIncomeRpt.setText(String.format("%.2f TK", db.getTodayIncome()));
-            yesterdayIncomeRpt.setText(String.format("%.2f TK", db.getYesterdayIncome()));
-            thisweekIncomeRpt.setText(String.format("%.2f TK", db.getThisWeekIncome()));
-            thismonthIncomeRpt.setText(String.format("%.2f TK", db.getThisMonthIncome()));
-            thisyearIncomeRpt.setText(String.format("%.2f TK", db.getThisYearIncome()));
-            totalIncomeRpt.setText(String.format("%.2f TK", db.getTotalIncome()));
-            totalIncomeTopRpt.setText(String.format("%.2f TK", db.getTotalIncome()));
-        } else {
-            System.err.println("One or more labels are not initialized!");
-        }
-    }
-    private void loadExpenseDataRpt() {
-        // Check if any label is null before proceeding
-        if (todayExpenseRpt != null && yesterdayExpenseRpt != null && thisweekExpenseRpt != null && 
-            thismonthExpenseRpt != null && thisyearExpenseRpt != null && totalExpenseRpt != null) {
-            
-            todayExpenseRpt.setText(String.format("%.2f TK", db.getTodayExpenses()));
-            yesterdayExpenseRpt.setText(String.format("%.2f TK", db.getYesterdayExpenses()));
-            thisweekExpenseRpt.setText(String.format("%.2f TK", db.getThisWeekExpenses()));
-            thismonthExpenseRpt.setText(String.format("%.2f TK", db.getThisMonthExpenses()));
-            thisyearExpenseRpt.setText(String.format("%.2f TK", db.getThisYearExpenses()));
-            totalExpenseRpt.setText(String.format("%.2f TK", db.getTotalExpenses()));
-            totalExpenseTopRpt.setText(String.format("%.2f TK", db.getTotalExpenses()));
-        } else {
-            System.err.println("One or more labels are not initialized!");
-        }
-    }
-    private void loadExpensesByCategory() {
-        ObservableList<PieChart.Data> expensesData = db.getExpensesByCategory();
-
-        // Calculate total for percentage calculation
-        double total = expensesData.stream()
-                                   .mapToDouble(PieChart.Data::getPieValue)
-                                   .sum();
-
-        // Format labels with percentages
-        expensesData.forEach(data -> {
-            String percentage = String.format("%.1f%%", (data.getPieValue() / total) * 100);
-            data.nameProperty().set("(" + percentage + ")\n"+data.getName());
-            //xAxis.setTickLabelRotation(45); 
-        });
-
-        expensePieChart.setData(expensesData);
-    }
-    private void loadExpensesByCategoryThisYear() {
-        ObservableList<PieChart.Data> expensesData = db.getExpensesByCategoryThisYear();
-        if (expensesData == null || expensesData.isEmpty()) {
-            //System.out.println("No expense data found for the current year.");
-            expensePieChartDash.getData().clear();
-            return;
-        }
-        double total = expensesData.stream()
-                                   .mapToDouble(PieChart.Data::getPieValue)
-                                   .sum();
-
-        expensesData.forEach(data -> {
-            String percentage = String.format("%.1f%%", (data.getPieValue() / total) * 100);
-            data.nameProperty().set(" (" + percentage + ")\n"+data.getName());
-        });
-        expensePieChartDash.getData().clear();
-        expensePieChartDash.setData(expensesData);
-        
-    }
-    private void loadExpensesByCategoryThisYearRpt() {
-        ObservableList<PieChart.Data> expensesData = db.getExpensesByCategoryThisYear();
-        if (expensesData == null || expensesData.isEmpty()) {
-            //System.out.println("No expense data found for the current year.");
-            expensePieChartDash.getData().clear();
-            return;
-        }
-        double total = expensesData.stream()
-                                   .mapToDouble(PieChart.Data::getPieValue)
-                                   .sum();
-
-        expensesData.forEach(data -> {
-            String percentage = String.format("%.1f%%", (data.getPieValue() / total) * 100);
-            data.nameProperty().set(" (" + percentage + ")\n"+data.getName());
-        });
-        
-        expensePieChartRpt.getData().clear();
-        expensePieChartRpt.setData(expensesData);
-        
-    }
-
-    private void loadMonthlyIncomeData() {
-      
-        ObservableList<String> months = FXCollections.observableArrayList(
-        "January", "February", "March", "April", "May", "June", 
-        "July", "August", "September", "October", "November", "December"
-        );
-        xAxis.setCategories(months);
-
-        ObservableList<XYChart.Data<String, Number>> monthlyData = db.getMonthlyIncomeData();
-
-        if (monthlyData == null || monthlyData.isEmpty()) {
-            System.out.println("No data found for the current year.");
-        } else {
-            for (XYChart.Data<String, Number> data : monthlyData) {
-                //System.out.println(data.getXValue() + ", Total Income: " + data.getYValue());
-            }
-        }
-
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Monthly Income");
-        series.getData().addAll(monthlyData);
-
-        incomeAreaChart.getData().add(series);
-        xAxis.setTickLabelRotation(90);  
-
-    }
-    private void loadLast7DaysIncome() {
-        ObservableList<String> days = FXCollections.observableArrayList(
-            "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
-        );
-        xAxis7Inc.setCategories(days);
-        ObservableList<XYChart.Data<String, Number>> dailyData = db.getLast7DaysIncomeData();
-
-        if (dailyData == null || dailyData.isEmpty()) {
-            System.out.println("No data found for the last 7 days.");
-        } else {
-            for (XYChart.Data<String, Number> data : dailyData) {
-                //System.out.println(data.getXValue() + ", Total Income: " + data.getYValue());
-            }
-        }
-
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Last 7 Days Income");
-
-        series.getData().addAll(dailyData);
-        incomeAreaChart7Days.getData().clear();
-        incomeAreaChart7Days.getData().add(series);
-        xAxis7Inc.setTickLabelRotation(45);
-    }
-    private void loadMonthlyOrderData() {
-      
-        ObservableList<String> months = FXCollections.observableArrayList(
-        "January", "February", "March", "April", "May", "June", 
-        "July", "August", "September", "October", "November", "December"
-        );
-        xAxisOdr.setCategories(months);
-
-        ObservableList<XYChart.Data<String, Number>> monthlyData = db.getMonthlyOrderData();
-
-        if (monthlyData == null || monthlyData.isEmpty()) {
-            System.out.println("No data found for the current year.");
-        } else {
-            for (XYChart.Data<String, Number> data : monthlyData) {
-                //System.out.println(data.getXValue() + ", Total Order: " + data.getYValue());
-            }
-        }
-
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Monthly Income");
-        series.getData().addAll(monthlyData);
-
-        orderAreaChart.getData().add(series);
-        xAxisOdr.setTickLabelRotation(90);  
-
-    }
-    private void loadLast7DaysOrder() {
-    // Define days of the week
-    ObservableList<String> days = FXCollections.observableArrayList(
-        "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
-    );
-    xAxis7Ord.setCategories(days);
-
-    // Fetch the data for the last 7 days' orders
-    ObservableList<XYChart.Data<String, Number>> dailyOrderData = db.getLast7DaysOrderData();
-
-    if (dailyOrderData == null || dailyOrderData.isEmpty()) {
-        System.out.println("No orders found for the last 7 days.");
-    } else {
-        for (XYChart.Data<String, Number> data : dailyOrderData) {
-            //System.out.println(data.getXValue() + ", Total Orders: " + data.getYValue());
-        }
-    }
-
-    // Create and populate the series
-    XYChart.Series<String, Number> series = new XYChart.Series<>();
-    series.setName("Last 7 Days Orders");
-    series.getData().addAll(dailyOrderData);
-   
-
-    // Update the chart
-    orderAreaChart7Days.getData().clear();
-    orderAreaChart7Days.getData().add(series);
-    xAxis7Ord.setTickLabelRotation(45);
-    //orderAreaChart7Days.lookup(".chart-title").setRotate(90);
-}
-    public void tableDataExport() {
-        db.getConnection();
-        populateTableComboBox();
-        
-        exportBtn.setOnAction(event -> {
-            exportTableData();
-        });
-    }
-    private void populateTableComboBox() {
-    ObservableList<String> tableNames = FXCollections.observableArrayList();
-    try {
-        DatabaseMetaData metaData = db.connection.getMetaData();
-        ResultSet tables = metaData.getTables(null, null, "%", new String[]{"TABLE"});
-        while (tables.next()) {
-            String tableName = tables.getString("TABLE_NAME");
-            if (!"admin".equalsIgnoreCase(tableName)) {
-                // Convert the table name to uppercase before adding it to the list
-                tableNames.add(tableName.toUpperCase());
-            }
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    tableComboBox.setItems(tableNames);
-}
-    private boolean showConfirmationDialog(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(title);
-        alert.setContentText(content);
-
-        // Show and wait for the user to click a button
-        Optional<ButtonType> result = alert.showAndWait();
-
-        // Check if the user clicked OK or Cancel
-        return result.isPresent() && result.get() == ButtonType.OK;
-    }
-    private void exportTableDataX() {
-        String selectedTable = (String) tableComboBox.getValue();
-        if (selectedTable == null || selectedTable.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Error", "No table selected!", "Please select a table to export.");
-            return;
-        }
-
-        // Show confirmation dialog
-        boolean confirmed = showConfirmationDialog("Export Data", "Are you sure you want to export the table data?");
-
-        // If user clicks 'Cancel', stop execution and do not export
-        if (!confirmed) {
-            showAlert(Alert.AlertType.WARNING, "Cancelled", "Export Cancelled!", "You have cancelled the export.");
-            return; // Return early if the user cancels
-        }
-
-        // If user clicks 'OK', proceed with the export
-        File downloadsDir = new File(System.getProperty("user.home") + "/Downloads"); //Need update here Download USER Desktop and GOPpo MS folder
-        if (!downloadsDir.exists()) {
-            downloadsDir.mkdirs();
-        }
-
-        File exportFile = new File(downloadsDir, selectedTable.toUpperCase() + ".csv");
-
-        try (
-             Statement statement = db.connection.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + selectedTable);
-             FileWriter fileWriter = new FileWriter(exportFile)) {
-
-            // Write CSV headers
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                fileWriter.append(metaData.getColumnName(i));
-                if (i < columnCount) {
-                    fileWriter.append(",");
-                }
-            }
-            fileWriter.append("\n");
-
-            // Write CSV rows
-            while (resultSet.next()) {
-                for (int i = 1; i <= columnCount; i++) {
-                    fileWriter.append(resultSet.getString(i));
-                    if (i < columnCount) {
-                        fileWriter.append(",");
-                    }
-                }
-                fileWriter.append("\n");
-            }
-
-            // Show success alert if export is successful
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Data Exported", "Table data exported successfully to Downloads folder!");
-
-        } catch (SQLException | IOException e) {
-            // Handle errors and show an alert if an error occurs
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", "Export Failed", "An error occurred while exporting table data.");
-        }
-    }
-    private void exportTableDataZ() {
-        String selectedTable = (String) tableComboBox.getValue();
-        if (selectedTable == null || selectedTable.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Error", "No table selected!", "Please select a table to export.");
-            return;
-        }
-
-        // Show confirmation dialog
-        boolean confirmed = showConfirmationDialog("Export Data", "Are you sure you want to export the table data?");
-
-        // If user clicks 'Cancel', stop execution and do not export
-        if (!confirmed) {
-            showAlert(Alert.AlertType.WARNING, "Cancelled", "Export Cancelled!", "You have cancelled the export.");
-            return; // Return early if the user cancels
-        }
-
-        // Determine the folder path: Desktop/GoPpo MS
-        File desktopDir = new File(System.getProperty("user.home"), "Desktop");
-        File goppoMsDir = new File(desktopDir, "GoPpo MS");
-        if (!goppoMsDir.exists()) {
-            goppoMsDir.mkdirs(); // Create the GoPpo MS directory if it doesn't exist
-        }
-
-        // Set the export file path
-        File exportFile = new File(goppoMsDir, selectedTable.toUpperCase() + ".csv");
-
-        try (
-            Statement statement = db.connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + selectedTable);
-            FileWriter fileWriter = new FileWriter(exportFile)) {
-
-            // Write CSV headers
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                fileWriter.append(metaData.getColumnName(i));
-                if (i < columnCount) {
-                    fileWriter.append(",");
-                }
-            }
-            fileWriter.append("\n");
-
-            // Write CSV rows
-            while (resultSet.next()) {
-                for (int i = 1; i <= columnCount; i++) {
-                    fileWriter.append(resultSet.getString(i));
-                    if (i < columnCount) {
-                        fileWriter.append(",");
-                    }
-                }
-                fileWriter.append("\n");
-            }
-
-            // Show success alert if export is successful
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Data Exported", 
-                "Table data exported successfully to Desktop/GoPpo MS folder!");
-
-        } catch (SQLException | IOException e) {
-            // Handle errors and show an alert if an error occurs
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", "Export Failed", "An error occurred while exporting table data.");
-        }
-    }
-    private void showAlert(Alert.AlertType alertType, String title, String header, String content) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-    private String convertTimestampToDate(long timestamp) {
-        Date date = new Date(timestamp);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");//(YYYY-MM-DD HH:MM:SS)
-        return sdf.format(date);
-    }
-    private void exportTableData() {
-    String selectedTable = (String) tableComboBox.getValue();
-    if (selectedTable == null || selectedTable.isEmpty()) {
-        showAlert(Alert.AlertType.ERROR, "Error", "No table selected!", "Please select a table to export.");
-        return;
-    }
-
-    boolean confirmed = showConfirmationDialog("Export Data", "Are you sure you want to export the table data?");
-    if (!confirmed) {
-        showAlert(Alert.AlertType.WARNING, "Cancelled", "Export Cancelled!", "You have cancelled the export.");
-        return;
-    }
-
-    // Define the export directory (Desktop/GoPpo MS folder)
-    File desktopDir = new File(System.getProperty("user.home"), "Desktop");
-    File goppoMsDir = new File(desktopDir, "GoPpo MS");
-    if (!goppoMsDir.exists()) {
-        goppoMsDir.mkdirs();
-    }
-
-    File exportFile = new File(goppoMsDir, selectedTable.toUpperCase() + ".csv");
-
-    try (
-        Statement statement = db.connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("SELECT * FROM " + selectedTable);
-        FileWriter fileWriter = new FileWriter(exportFile)) {
-
-        // Write the CSV headers
-        ResultSetMetaData metaData = resultSet.getMetaData();
-        int columnCount = metaData.getColumnCount();
-        for (int i = 1; i <= columnCount; i++) {
-            fileWriter.append(metaData.getColumnName(i));
-            if (i < columnCount) {
-                fileWriter.append(",");
-            }
-        }
-        fileWriter.append("\n");
-
-        // Write the CSV rows
-        while (resultSet.next()) {
-            for (int i = 1; i <= columnCount; i++) {
-                String columnName = metaData.getColumnName(i);
-                String value = resultSet.getString(i);
-
-                // If the column is 'date', convert it from UNIX timestamp to a readable date format
-                if ("date".equalsIgnoreCase(columnName) && value != null) {
-                    long timestamp = Long.parseLong(value);
-                    value = convertTimestampToDate(timestamp); // Convert UNIX timestamp to readable date
-                }
-                if ("items".equalsIgnoreCase(columnName) && value != null) {
-                    value = "List Of Cart Items";
-                }
-
-                fileWriter.append(value == null ? "" : value);
-                if (i < columnCount) {
-                    fileWriter.append(",");
-                }
-            }
-            fileWriter.append("\n");
-        }
-
-        // Show success alert
-        showAlert(Alert.AlertType.INFORMATION, "Success", "Data Exported", "Table data exported successfully to Desktop/GoPpo MS folder!");
-
-    } catch (SQLException | IOException e) {
-        e.printStackTrace();
-        showAlert(Alert.AlertType.ERROR, "Error", "Export Failed", "An error occurred while exporting table data.");
-    }
-}
-
-
-    private void setupDevInfoLongPress() {
-        PauseTransition longPress = new PauseTransition(Duration.seconds(2));
-        devInfoBtn.setOnMousePressed(event -> {
-            longPress.setOnFinished(e -> getViewDevInfo());
-            longPress.playFromStart();
-        });
-        devInfoBtn.setOnMouseReleased(event -> longPress.stop());
-    }
-    public void getViewDevInfo() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/devInfo.fxml"));
-            Parent root = loader.load();
-
-            Stage stage = new Stage();
-            Scene scene = new Scene(root);
-
-            stage.setTitle("Developer Information");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initStyle(StageStyle.UTILITY);
-
-            stage.setMinWidth(455);
-            //stage.setMaxWidth(455);
-            stage.setMinHeight(547);
-            //stage.setMaxHeight(547);
-            stage.setScene(scene);
-
-            stage.show();
-
-        } catch (IOException e) {
-            System.out.println("Error loading invoice.fxml: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-    /// END REPORT SECTION/
 
     //// START SETTINGS SECTION
     public void appUpBtn(){
@@ -4419,7 +4533,6 @@ public class MainFormController implements Initializable {
     }
     /// END SETTINGS SECTION/
 
-    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Create the folder if not exists
@@ -4495,6 +4608,30 @@ public class MainFormController implements Initializable {
         
         //Settings
         
+        
+        
+        
+       // Schedule logic to execute after the application is fully initialized
+        Platform.runLater(() -> {
+            Stage stage = (Stage) main_window.getScene().getWindow();
+            if (stage != null) {
+                // Add a listener for maximize/restore events
+                stage.maximizedProperty().addListener((observable, oldValue, newValue) -> {
+                    if (newValue) {
+                        deactiveMsgMax();
+                        isWindowStatus = true; // Window is maximized
+                        //System.out.println("------> Window is maximized");
+                    } else {
+                        deactiveMsgDown();
+                        isWindowStatus = false; // Window is restored down
+                        //System.out.println("------> Window is restored down");
+                    }
+                });
+                //System.out.println("Stage is: " + stage); // Verify the Stage is now accessible
+            } else {
+                //System.out.println("Stage is still null! Check your FXML loading process.");
+            }
+        });
     }
 
 }

@@ -84,6 +84,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -129,6 +130,7 @@ public class managerFormController implements Initializable {
     
     
     //All Form Section Start
+    @FXML private StackPane main_window;
     @FXML private AnchorPane main_Form,dashboadrForm,itemsForm,posMenuForm,cullectBillForm,invoicesForm,expensesForm,reportForm,usersForm,settingsForm;
     //End
 
@@ -145,6 +147,16 @@ public class managerFormController implements Initializable {
     @FXML private Label todayOrderDash,todayIncomeDash,todayExpenseDash,pendingAmountDash,
             totalInvoicesDash,totalItemsDash,totalPackageDash,totalUsersDash,
             newsTextLabel,dashDateLabel,dashTimeLabel,todayLabel;
+    private static final String IMAGE_FOLDER = "src/slider_img";
+    private List<File> imageFiles = new ArrayList<>();
+    private int currentIndex = 0;
+    private Timeline slideshowTimeline;
+    private int xOrder;
+    private double xIncome, xExpense, xPendingAmount;
+    private String[] phrases;
+    private int phraseIndex = 0;
+    private String admin =  "";
+    Boolean isWindowStatus = false;
     //End
 
 
@@ -571,16 +583,6 @@ public class managerFormController implements Initializable {
         String xName = "Welcome, " + xUser + "!";     
         userName.setText(xName);
     } 
-    
-    private static final String IMAGE_FOLDER = "src/slider_img";
-    private List<File> imageFiles = new ArrayList<>();
-    private int currentIndex = 0;
-    private Timeline slideshowTimeline;
-    private int xOrder;
-    private double xIncome, xExpense, xPendingAmount;
-    private String[] phrases;
-    private int phraseIndex = 0;
-    private String admin =  "";
     private void loadImagesFromFolder() {
         File folder = new File(IMAGE_FOLDER);
         if (!folder.exists()) {
@@ -669,6 +671,23 @@ public class managerFormController implements Initializable {
         slideshowTimeline = new Timeline(new KeyFrame(Duration.seconds(3), e -> showNextImage()));
         slideshowTimeline.setCycleCount(Timeline.INDEFINITE);
         slideshowTimeline.play();
+    }
+    
+    private void deactiveMsgMax() {
+        slideshowImageView.fitWidthProperty().bind(slideshowAnchorPane.widthProperty());
+        slideshowImageView.fitHeightProperty().bind(slideshowAnchorPane.heightProperty());
+        slideshowImageView.setPreserveRatio(false);
+        slideshowImageView.setImage(image);
+    }
+    private void deactiveMsgDown() {
+        // Unbind properties and restore fixed size with stretching to fit container
+        slideshowImageView.fitWidthProperty().unbind();
+        slideshowImageView.fitHeightProperty().unbind();
+        slideshowImageView.setPreserveRatio(false); // Disable aspect ratio preservation
+        slideshowImageView.setSmooth(true); // Smooth scaling
+        slideshowImageView.setFitWidth(slideshowAnchorPane.getPrefWidth()+2);
+        slideshowImageView.setFitHeight(slideshowAnchorPane.getPrefHeight()+1);
+        slideshowImageView.setImage(image);
     }
     public void dynamicView() {
         // Bind the ImageView's fitWidth and fitHeight to the AnchorPane's width and height
@@ -4234,6 +4253,29 @@ public class managerFormController implements Initializable {
         
         
         //Settings
+        
+        
+        // Schedule logic to execute after the application is fully initialized
+        Platform.runLater(() -> {
+            Stage stage = (Stage) main_window.getScene().getWindow();
+            if (stage != null) {
+                // Add a listener for maximize/restore events
+                stage.maximizedProperty().addListener((observable, oldValue, newValue) -> {
+                    if (newValue) {
+                        deactiveMsgMax();
+                        isWindowStatus = true; // Window is maximized
+                        //System.out.println("------> Window is maximized");
+                    } else {
+                        deactiveMsgDown();
+                        isWindowStatus = false; // Window is restored down
+                        //System.out.println("------> Window is restored down");
+                    }
+                });
+                //System.out.println("Stage is: " + stage); // Verify the Stage is now accessible
+            } else {
+                //System.out.println("Stage is still null! Check your FXML loading process.");
+            }
+        });
         
     }
 

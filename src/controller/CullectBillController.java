@@ -99,7 +99,7 @@ public class CullectBillController implements Initializable{
         }
         
         //Add new for manager
-        if (managerFormController != null) {
+        else if (managerFormController != null) {
             managerFormController.billDisplayCard(); 
         }
     }
