@@ -1197,7 +1197,7 @@ public class MainFormController implements Initializable {
     //// END ITEM SECTION
     
     //// START POS MENU SECTION
-    private final ObservableList<ItemsDataModel> cardListData = FXCollections.observableArrayList();
+    private ObservableList<ItemsDataModel> cardListData = FXCollections.observableArrayList();
     private ObservableList<CartItem> cartData = FXCollections.observableArrayList();
     private ObservableList<String> itemData = FXCollections.observableArrayList();
     private final String[] menuOrderTypeList = {"Table", "Parcel"};
@@ -1281,6 +1281,7 @@ public class MainFormController implements Initializable {
         }
     }
     public void menuDisplayCard(int columnCount) { 
+        
         cardListData.clear();
         cardListData.addAll(menuGetData());
 
@@ -1316,6 +1317,7 @@ public class MainFormController implements Initializable {
             }
         }
     }
+
     public void getDynamicDisplayCard() {
         if (!isWindowStatus) {
             menuDisplayCard(4);
@@ -4569,7 +4571,7 @@ public class MainFormController implements Initializable {
         setDynamicColumnWidthForItem();
         
         //POS Memu
-        getDynamicDisplayCard();
+        //getDynamicDisplayCard();
         filterItemData();
         menuOrderTypeList();
         setupCartTable();

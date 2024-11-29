@@ -130,15 +130,15 @@ public class DB {
             // Check if the admin user already exists
             String checkQuery = "SELECT COUNT(*) FROM admin WHERE username = ?";
             try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
-                checkStatement.setString(1, "a");
+                checkStatement.setString(1, "konok");
                 try (ResultSet resultSet = checkStatement.executeQuery()) {
                     if (resultSet.next() && resultSet.getInt(1) == 0) {
                         // If admin doesn't exist, insert admin user
                         String insertQuery = "INSERT INTO admin (username, password, display_name, question, answer, user_role, status, image, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
                         try (PreparedStatement insertStatement = connection.prepareStatement(insertQuery)) {
-                            insertStatement.setString(1, "a"); //username
-                            insertStatement.setString(2, "a"); //password123
-                            insertStatement.setString(3, "Set Your Name"); //display_name
+                            insertStatement.setString(1, "konok"); //username
+                            insertStatement.setString(2, "123456"); //password123
+                            insertStatement.setString(3, "Konok Da"); //display_name
                             insertStatement.setString(4, "What is your favorite person?");
                             insertStatement.setString(5, "admin"); //answer
                             insertStatement.setString(6, "Admin"); //user_role

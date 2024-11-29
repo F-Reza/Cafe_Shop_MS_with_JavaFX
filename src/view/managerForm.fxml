@@ -59,7 +59,6 @@
                                         <Button fx:id="invoicesBtn" layoutX="20.0" layoutY="371.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="210.0" styleClass="nav-btn" stylesheets="@../css/mainFormDesign.css" text="Invoices" textFill="WHITE" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                                         <Button fx:id="expensesBtn" layoutX="20.0" layoutY="425.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="210.0" styleClass="nav-btn" stylesheets="@../css/mainFormDesign.css" text="Expenses" textFill="WHITE" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                                         <Button fx:id="reportBtn" layoutX="20.0" layoutY="479.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="210.0" styleClass="nav-btn" stylesheets="@../css/mainFormDesign.css" text="Report" textFill="WHITE" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                                        <Button fx:id="usersBtn" layoutX="20.0" layoutY="532.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="210.0" styleClass="nav-btn" stylesheets="@../css/mainFormDesign.css" text="Users" textFill="WHITE" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
                                         <Button fx:id="signoutBtn" layoutX="53.0" layoutY="654.0" mnemonicParsing="false" onAction="#logout" prefHeight="28.0" prefWidth="150.0" styleClass="btn-signout" stylesheets="@../css/mainFormDesign.css" text="Sign Out" textFill="WHITE" AnchorPane.bottomAnchor="45.0">
                                             <font>
                                                 <Font size="13.0" />
@@ -71,10 +70,9 @@
                                                 <Font size="8.0" />
                                             </font>
                                         </Label>
-                              <Button fx:id="settingsBtn" layoutX="19.0" layoutY="584.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="210.0" styleClass="nav-btn" stylesheets="@../css/mainFormDesign.css" text="Settings" textFill="WHITE" />
                               <Button fx:id="cullectBillBtn" layoutX="19.0" layoutY="316.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="40.0" prefWidth="210.0" styleClass="nav-btn" stylesheets="@../css/mainFormDesign.css" text="Cullect Bill" textFill="WHITE" />
-                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#132739" height="80.0" layoutX="19.0" layoutY="634.0" stroke="BLACK" strokeType="INSIDE" width="210.0" AnchorPane.leftAnchor="19.0" AnchorPane.topAnchor="634.0" />
-                              <Text fill="WHITE" layoutX="61.0" layoutY="667.0" strokeType="OUTSIDE" strokeWidth="0.0" text="MANAGER ADMIN PANEL" textAlignment="CENTER" wrappingWidth="127.76171875" AnchorPane.leftAnchor="61.0" AnchorPane.topAnchor="647.0">
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#132739" height="80.0" layoutX="20.0" layoutY="549.0" stroke="BLACK" strokeType="INSIDE" width="210.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="549.0" />
+                              <Text fill="WHITE" layoutX="62.0" layoutY="581.423828125" strokeType="OUTSIDE" strokeWidth="0.0" text="MANAGER ADMIN PANEL" textAlignment="CENTER" wrappingWidth="127.76171875" AnchorPane.leftAnchor="62.0" AnchorPane.topAnchor="562.0">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
