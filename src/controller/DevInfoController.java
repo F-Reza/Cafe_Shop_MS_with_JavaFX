@@ -80,6 +80,6 @@ public class DevInfoController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         int year = LocalDate.now().getYear();
-        currentYear.setText(">2022 - "+year+"<"); 
+        currentYear.setText(">2024 - "+year+"<"); 
     }
 }
